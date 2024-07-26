@@ -1,0 +1,6 @@
+@WebAthenPs_HostAddress = http://localhost:5082
+
+GET {{WebAthenPs_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,112 @@
+﻿@page "/house"
+@rendermode InteractiveServer 
+@inject IProjectService ProjectService
+
+<h3>Projects</h3>
+
+<!-- Formulário para listar todos os projetos -->
+<div class="mb-4">
+    <h4>List All Projects</h4>
+    <button @onclick="GetAllProjects">Load All Projects</button>
+</div>
+
+<!-- Formulário para buscar projeto por ID -->
+<div class="mb-4">
+    <h4>Find Project by ID</h4>
+    <input type="number" @bind="projectId" placeholder="Enter Project ID" />
+    <button @onclick="GetProjectById">Search</button>
+</div>
+
+<!-- Formulário para buscar projetos por status -->
+<div class="mb-4">
+    <h4>Find Projects by Status</h4>
+    <input type="text" @bind="status" placeholder="Enter Project Status" />
+    <button @onclick="GetProjectsByStatus">Search</button>
+</div>
+
+<!-- Formulário para buscar projetos por área -->
+<div class="mb-4">
+    <h4>Find Projects by Area</h4>
+    <input type="number" @bind="area" placeholder="Enter Area in m²" />
+    <button @onclick="GetProjectsByArea">Search</button>
+</div>
+
+<!-- Exibição de projetos -->
+@if (projects != null)
+{
+    if (projects.Any())
+    {
+        foreach (var project in projects)
+        {
+            <div class="card mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h5>@project.ProjectName</h5>
+                </div>
+                <div class="card-body">
+                    <p>Status: @project.Status</p>
+                    <p>Budget: @project.Budget</p>
+                    <p>Start Date: @project.StartDate.ToString("dd/MM/yyyy")</p>
+                    <p>Description: @project.Description</p>
+                    @if (project.TotalArea != 0)
+                    {
+                        <p>Total Area: @project.TotalArea m²</p>
+                    }
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p>No projects found.</p>
+    }
+}
+else if (loading)
+{
+    <h3>Loading...</h3>
+}
+
+@code {
+    private IEnumerable<ProjectsDTO> projects;
+    private bool loading;
+    private int? projectId;
+    private string status;
+    private decimal? area;
+
+    private async Task GetAllProjects()
+    {
+        loading = true;
+        projects = await ProjectService.GetAll();
+        loading = false;
+    }
+
+    private async Task GetProjectById()
+    {
+        if (projectId.HasValue)
+        {
+            loading = true;
+            var project = await ProjectService.GetById(projectId.Value);
+            projects = project != null ? new List<ProjectsDTO> { project } : Enumerable.Empty<ProjectsDTO>();
+            loading = false;
+        }
+    }
+
+    private async Task GetProjectsByStatus()
+    {
+        if (!string.IsNullOrEmpty(status))
+        {
+            loading = true;
+            projects = await ProjectService.GetByStatus(status);
+            loading = false;
+        }
+    }
+
+    private async Task GetProjectsByArea()
+    {
+        if (area.HasValue)
+        {
+            loading = true;
+            projects = await ProjectService.GetByArea(area.Value);
+            loading = false;
+        }
+    }
+}
