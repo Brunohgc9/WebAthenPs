@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Blazored.LocalStorage;
 using System.Security.Claims;
 using System.Text.Json;
@@ -8,26 +9,34 @@ namespace WebAthenPs.Project.Services.Authentication
     public class APIAuthenticationStateProvider : AuthenticationStateProvider
     {
         private readonly ILocalStorageService _localStorage;
-        private string _savedToken;
+        private readonly NavigationManager _navigationManager;
+        private string? _savedToken;
 
-        public APIAuthenticationStateProvider(ILocalStorageService localStorage)
+        public APIAuthenticationStateProvider(ILocalStorageService localStorage, NavigationManager navigationManager)
         {
             _localStorage = localStorage;
+            _navigationManager = navigationManager;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            // Armazene o token temporariamente para uso posterior
-            _savedToken = await _localStorage.GetItemAsync<string>("authToken");
-
-            if (string.IsNullOrWhiteSpace(_savedToken))
+            // Garantir que a chamada só ocorra no cliente
+            if (_navigationManager.Uri.StartsWith("http://localhost"))
             {
-                MarkUserAsLoggedOut();
-                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+                _savedToken = await _localStorage.GetItemAsync<string>("authToken");
+
+                if (string.IsNullOrWhiteSpace(_savedToken))
+                {
+                    MarkUserAsLoggedOut();
+                    return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+                }
+
+                return new AuthenticationState(new ClaimsPrincipal(
+                    new ClaimsIdentity(ParseClaimsFromJwt(_savedToken), "jwt")));
             }
 
-            return new AuthenticationState(new ClaimsPrincipal(
-                new ClaimsIdentity(ParseClaimsFromJwt(_savedToken), "jwt")));
+            // Se não estiver no cliente, retorne um estado anônimo
+            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }
 
         public async Task LoadTokenAfterRender()

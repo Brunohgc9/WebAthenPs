@@ -8,9 +8,9 @@ namespace WebAthenPs.Models.Models
 {
     public class LoginResult
     {
-        public string? Error { get; set; }
-        public string? Token { get; set; }
-        public string? Expiration { get; set; }
-
+        public string Token { get; set; }
+        public DateTime Expiration { get; set; }
+        public string ErrorMessage { get; set; } // Adicione uma propriedade para mensagens de erro, se necessário
     }
+
 }

@@ -16,4 +16,6 @@ namespace WebAthenPs.Models.Models
         public string? Password { get; set; }
 
     }
+
+
 }
