@@ -7,6 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
+    <PackageReference Include="Intersoft.Crosslight" Version="6.0.5000.975" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.7" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.3" />
     <ProjectReference Include="..\..\WebAthenPs.Models\WebAthenPs.Models.csproj" />
     <ProjectReference Include="..\WebAthenPs.Project.Client\WebAthenPs.Project.Client.csproj" />

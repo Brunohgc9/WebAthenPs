@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 using WebAthenPs.API.Data;
 using WebAthenPs.API.Repositories.Implementations;
@@ -12,7 +13,38 @@ var builder = WebApplication.CreateBuilder(args);
 // Configuração dos serviços
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo {Title = "APIWebAthenPs", Version = "v1"});
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = @"JWT Authorization headere usando o scheme Bearer
+                        \r\n\r\n informe 'Bearer'[space].
+                        Example: \'Bearer 12345abcdeF\'",
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement 
+    {
+
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[]{}
+        }
+    
+    });
+});
 
 var connectionString = builder.Configuration.GetConnectionString("APIDefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
@@ -52,6 +84,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+
+        policy =>
+        {
+            policy.AllowAnyHeader()
+            .AllowAnyOrigin()
+            .AllowAnyMethod();
+        }
+
+        );
+});
+
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 
@@ -66,6 +113,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseCors();
 
 app.MapControllers();
 

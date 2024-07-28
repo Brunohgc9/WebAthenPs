@@ -1,0 +1,14 @@
+﻿@* ﻿@using System.Security.Claims;
+@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<AuthorizeView>
+    <Authorized>
+        @context.User.Identity.Name
+        <a href="LogOut">Log out</a>
+    </Authorized>
+    <NotAuthorized>
+        <a href="Login">Log in</a>
+    </NotAuthorized>
+</AuthorizeView> *@
