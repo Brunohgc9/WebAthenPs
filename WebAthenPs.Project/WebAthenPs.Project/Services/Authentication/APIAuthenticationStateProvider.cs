@@ -9,61 +9,32 @@ namespace WebAthenPs.Project.Services.Authentication
     public class APIAuthenticationStateProvider : AuthenticationStateProvider
     {
         private readonly ILocalStorageService _localStorage;
-        private readonly NavigationManager _navigationManager;
-        private string? _savedToken;
 
-        public APIAuthenticationStateProvider(ILocalStorageService localStorage, NavigationManager navigationManager)
+        public APIAuthenticationStateProvider(ILocalStorageService localStorage)
         {
             _localStorage = localStorage;
-            _navigationManager = navigationManager;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            // Garantir que a chamada só ocorra no cliente
-            if (_navigationManager.Uri.StartsWith("http://localhost"))
-            {
-                _savedToken = await _localStorage.GetItemAsync<string>("authToken");
+            var savedToken = await _localStorage.GetItemAsync<string>("authToken");
+            var expirationToken = await _localStorage.GetItemAsync<string>("tokenExpiration");
 
-                if (string.IsNullOrWhiteSpace(_savedToken))
-                {
-                    MarkUserAsLoggedOut();
-                    return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
-                }
-
-                return new AuthenticationState(new ClaimsPrincipal(
-                    new ClaimsIdentity(ParseClaimsFromJwt(_savedToken), "jwt")));
-            }
-
-            // Se não estiver no cliente, retorne um estado anônimo
-            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
-        }
-
-        public async Task LoadTokenAfterRender()
-        {
-            if (_savedToken != null)
-            {
-                return;
-            }
-
-            _savedToken = await _localStorage.GetItemAsync<string>("authToken");
-
-            if (string.IsNullOrWhiteSpace(_savedToken))
+            if (string.IsNullOrWhiteSpace(savedToken))
             {
                 MarkUserAsLoggedOut();
+                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
             }
-            else
-            {
-                NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(
-                    new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(_savedToken), "jwt")))));
-            }
+
+            return new AuthenticationState(new ClaimsPrincipal(
+               new ClaimsIdentity(ParseClaimsFromJwt(savedToken), "jwt")));
         }
 
         public void MarkUserAsAuthenticated(string email)
         {
             var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
-            new Claim(ClaimTypes.Name, email)
+           new Claim(ClaimTypes.Name, email)
         }, "apiauth"));
 
             var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
@@ -84,9 +55,12 @@ namespace WebAthenPs.Project.Services.Authentication
                 DateTime.ParseExact(dataToken, "yyyy-MM-dd'T'HH:mm:ss.fffffff'Z'", null,
                 System.Globalization.DateTimeStyles.RoundtripKind);
 
-            return dataExpiracao < dataAtualUtc;
+            if (dataExpiracao < dataAtualUtc)
+            {
+                return true;
+            }
+            return false;
         }
-
         private IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
         {
             var claims = new List<Claim>();

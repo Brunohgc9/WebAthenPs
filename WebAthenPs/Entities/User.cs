@@ -2,7 +2,7 @@
 {
     public class User
     {
-        public string? TryEmail { get; set; }
-        public string? TryPassword { get; set; }
+        public string TryEmail { get; set; }
+        public string TryPassword { get; set; }
     }
 }

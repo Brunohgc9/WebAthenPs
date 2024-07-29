@@ -1,4 +1,4 @@
-﻿@* @page "/logout"
+﻿@page "/logout"
 @inject IAuthService AuthService
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
@@ -11,4 +11,4 @@
         await AuthService.Logout();
         NavigationManager.NavigateTo("/");
     }
-} *@
+}

@@ -11,17 +11,17 @@ namespace WebAthenPs.Project.Services.Imprementation
 {
     public class AuthService : IAuthService
     {
-        private readonly ILogger<AuthService> _logger; // Corrigido para ILogger<AuthService>
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
-        private readonly ILocalStorageService _localStorageService;
+        private readonly ILocalStorageService _localStorage;
 
-        public AuthService(IHttpClientFactory httpClientFactory, AuthenticationStateProvider authenticationStateProvider, ILocalStorageService localStorageService, ILogger<AuthService> logger)
+        public AuthService(IHttpClientFactory httpClientFactory,
+            AuthenticationStateProvider authenticationStateProvider,
+            ILocalStorageService localStorage)
         {
             _httpClientFactory = httpClientFactory;
             _authenticationStateProvider = authenticationStateProvider;
-            _localStorageService = localStorageService;
-            _logger = logger; // Inicialização do logger
+            _localStorage = localStorage;
         }
 
         public async Task<LoginResult> Login(LoginModel loginModel)
@@ -34,38 +34,26 @@ namespace WebAthenPs.Project.Services.Imprementation
 
                 var response = await httpClient.PostAsync("api/Users/Login", requestContent);
 
-                // Log response status and content
-                var responseContent = await response.Content.ReadAsStringAsync();
-                _logger.LogInformation($"Response status: {response.StatusCode}");
-                _logger.LogInformation($"Response content: {responseContent}");
-
-                if (!response.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode)
                 {
-                    _logger.LogError($"Failed to login: {responseContent}");
-                    return new LoginResult { ErrorMessage = responseContent };
+                    var loginResult = JsonSerializer.Deserialize<LoginResult>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    await _localStorage.SetItemAsync("authToken", loginResult.Token);
+                    await _localStorage.SetItemAsync("tokenExpiration", loginResult.Expiration);
+
+                    ((APIAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(loginModel.Email);
+
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", loginResult.Token);
+                    return loginResult;
                 }
-
-                var loginResult = JsonSerializer.Deserialize<LoginResult>(responseContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                if (loginResult == null)
+                else
                 {
-                    _logger.LogError("Deserialization failed. The response content is not valid JSON.");
-                    return new LoginResult { ErrorMessage = "Deserialization failed." };
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"Error in login: {errorContent}");
                 }
-
-                await _localStorageService.SetItemAsync("authToken", loginResult.Token);
-                await _localStorageService.SetItemAsync("tokenExpiration", loginResult.Expiration);
-
-                ((APIAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(loginModel.Email);
-
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", loginResult.Token);
-
-                return loginResult;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error during login.");
-                return new LoginResult { ErrorMessage = "Unexpected error: " + ex.Message };
+                throw new Exception("An error occurred during login: " + ex.Message, ex);
             }
         }
 
@@ -73,7 +61,7 @@ namespace WebAthenPs.Project.Services.Imprementation
         public async Task Logout()
         {
             var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
-            await _localStorageService.RemoveItemAsync("authToken");
+            await _localStorage.RemoveItemAsync("authToken");
 
             ((APIAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsLoggedOut();
             httpClient.DefaultRequestHeaders.Authorization = null;
