@@ -8,11 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
+    <PackageReference Include="BlazorInputMask" Version="1.0.24" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.7" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.3" />
     <ProjectReference Include="..\..\WebAthenPs.Models\WebAthenPs.Models.csproj" />
     <ProjectReference Include="..\WebAthenPs.Project.Client\WebAthenPs.Project.Client.csproj" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.7" />
 	  <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.7" />
 	  <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.7" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.7" />

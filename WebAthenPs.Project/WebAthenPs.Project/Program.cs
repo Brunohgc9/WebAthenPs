@@ -13,6 +13,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
+
 var baseUrl = "https://localhost:7171";
 builder.Services.AddScoped( AsP => new HttpClient
 {

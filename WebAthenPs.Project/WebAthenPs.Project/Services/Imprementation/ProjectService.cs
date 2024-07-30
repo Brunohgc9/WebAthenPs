@@ -5,6 +5,8 @@ using System.Net.Http.Json;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Blazored.LocalStorage;
+using System.Net.Http.Headers;
 
 namespace WebAthenPs.Project.Services.Imprementation
 {
@@ -12,17 +14,24 @@ namespace WebAthenPs.Project.Services.Imprementation
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<ProjectService> _logger;
+        private readonly ILocalStorageService _localStorage;
 
-        public ProjectService(HttpClient httpClient, ILogger<ProjectService> logger)
+        public ProjectService(HttpClient httpClient, ILogger<ProjectService> logger, ILocalStorageService localStorage)
         {
             _httpClient = httpClient;
             _logger = logger;
+            _localStorage = localStorage;
         }
 
         public async Task<IEnumerable<ProjectsDTO>> GetAll()
         {
             try
             {
+                var token = await _localStorage.GetItemAsync<string>("authToken");
+                if (!string.IsNullOrEmpty(token))
+                {
+                    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                }
                 var projectsDto = await _httpClient.GetFromJsonAsync<IEnumerable<ProjectsDTO>>("api/Projects");
                 if (projectsDto == null)
                 {
@@ -46,6 +55,11 @@ namespace WebAthenPs.Project.Services.Imprementation
         {
             try
             {
+                var token = await _localStorage.GetItemAsync<string>("authToken");
+                if (!string.IsNullOrEmpty(token))
+                {
+                    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                }
                 var projectDto = await _httpClient.GetFromJsonAsync<ProjectsDTO>($"api/Projects/id/{id}");
                 if (projectDto == null)
                 {
@@ -69,6 +83,11 @@ namespace WebAthenPs.Project.Services.Imprementation
         {
             try
             {
+                var token = await _localStorage.GetItemAsync<string>("authToken");
+                if (!string.IsNullOrEmpty(token))
+                {
+                    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                }
                 var projectsDto = await _httpClient.GetFromJsonAsync<IEnumerable<ProjectsDTO>>($"api/Projects/status/{status}");
                 if (projectsDto == null)
                 {
@@ -92,6 +111,11 @@ namespace WebAthenPs.Project.Services.Imprementation
         {
             try
             {
+                var token = await _localStorage.GetItemAsync<string>("authToken");
+                if (!string.IsNullOrEmpty(token))
+                {
+                    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                }
                 var projectsDto = await _httpClient.GetFromJsonAsync<IEnumerable<ProjectsDTO>>($"api/Projects/areaquadrada/{area}");
                 if (projectsDto == null)
                 {

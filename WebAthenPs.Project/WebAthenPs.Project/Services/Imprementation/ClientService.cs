@@ -5,6 +5,8 @@ using System.Net.Http.Json;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
+using Blazored.LocalStorage;
 
 namespace WebAthenPs.Project.Services.Imprementation
 {
@@ -12,17 +14,26 @@ namespace WebAthenPs.Project.Services.Imprementation
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<ClientService> _logger;
+        private readonly ILocalStorageService _localStorage; // Adicione esta linha
 
-        public ClientService(HttpClient httpClient, ILogger<ClientService> logger)
+        public ClientService(HttpClient httpClient, ILogger<ClientService> logger, ILocalStorageService localStorage)
         {
             _httpClient = httpClient;
             _logger = logger;
+            _localStorage = localStorage;
         }
 
         public async Task<IEnumerable<ClientDTO>> GetAll()
         {
             try
             {
+                // Obtém o token do armazenamento local
+                var token = await _localStorage.GetItemAsync<string>("authToken");
+                if (!string.IsNullOrEmpty(token))
+                {
+                    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                }
+
                 var clientsDto = await _httpClient.GetFromJsonAsync<IEnumerable<ClientDTO>>("api/Clients");
                 if (clientsDto == null)
                 {
@@ -41,11 +52,18 @@ namespace WebAthenPs.Project.Services.Imprementation
                 throw;
             }
         }
+    
 
         public async Task<ClientDTO> GetById(int id)
         {
             try
             {
+                var token = await _localStorage.GetItemAsync<string>("authToken");
+                if (!string.IsNullOrEmpty(token))
+                {
+                    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                }
+
                 var clientDto = await _httpClient.GetFromJsonAsync<ClientDTO>($"api/Clients/{id}");
                 if (clientDto == null)
                 {
@@ -69,6 +87,11 @@ namespace WebAthenPs.Project.Services.Imprementation
         {
             try
             {
+                var token = await _localStorage.GetItemAsync<string>("authToken");
+                if (!string.IsNullOrEmpty(token))
+                {
+                    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                }
                 var clientsDto = await _httpClient.GetFromJsonAsync<IEnumerable<ClientDTO>>($"api/Clients/name/{name}");
                 if (clientsDto == null)
                 {

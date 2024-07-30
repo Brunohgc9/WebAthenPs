@@ -36,26 +36,32 @@ namespace WebAthenPs.Project.Services.Imprementation
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var loginResult = JsonSerializer.Deserialize<LoginResult>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                    await _localStorage.SetItemAsync("authToken", loginResult.Token);
-                    await _localStorage.SetItemAsync("tokenExpiration", loginResult.Expiration);
+                    var loginResult = JsonSerializer.Deserialize<LoginResult>(
+                        await response.Content.ReadAsStringAsync(),
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                    ((APIAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(loginModel.Email);
+                    if (loginResult != null)
+                    {
+                        await _localStorage.SetItemAsync("authToken", loginResult.Token);
+                        await _localStorage.SetItemAsync("tokenExpiration", loginResult.Expiration);
+                        await _localStorage.SetItemAsync("userName", loginModel.Email); // Aqui você armazena o nome
 
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", loginResult.Token);
-                    return loginResult;
+                        ((APIAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(loginModel.Email);
+
+                        httpClient.DefaultRequestHeaders.Authorization =
+                            new AuthenticationHeaderValue("bearer", loginResult.Token);
+
+                        return loginResult;
+                    }
                 }
-                else
-                {
-                    var errorContent = await response.Content.ReadAsStringAsync();
-                    throw new Exception($"Error in login: {errorContent}");
-                }
+                return new LoginResult { Token = string.Empty }; // Indicar falha no login
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new Exception("An error occurred during login: " + ex.Message, ex);
+                throw;
             }
         }
+
 
 
         public async Task Logout()
@@ -65,6 +71,25 @@ namespace WebAthenPs.Project.Services.Imprementation
 
             ((APIAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsLoggedOut();
             httpClient.DefaultRequestHeaders.Authorization = null;
+        }
+
+
+        public async Task<bool> Register(RegisterModel registerModel)
+        {
+            try
+            {
+                var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
+                var registerAsJson = JsonSerializer.Serialize(registerModel);
+                var requestContent = new StringContent(registerAsJson, Encoding.UTF8, "application/json");
+
+                var response = await httpClient.PostAsync("api/Users/Register", requestContent);
+
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

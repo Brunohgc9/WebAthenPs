@@ -1,0 +1,196 @@
+﻿@page "/register"
+@using System.ComponentModel.DataAnnotations
+@using WebAthenPs.Models.Models
+@using WebAthenPs.Project.Services.Interfaces
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+@using BlazorInputMask
+
+<h1>Register</h1>
+
+@if (ShowErrors)
+{
+    <p class="alert alert-danger">@Error</p>
+}
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Register</h5>
+
+        @if (currentStep == 1)
+        {
+            <EditForm Model="basicInfo" OnValidSubmit="GoToStepTwo">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-group mt-2">
+                    <label for="email">Email</label>
+                    <InputText Id="email" Class="form-control" @bind-Value="basicInfo.Email" />
+                    <ValidationMessage For="@(() => basicInfo.Email)" />
+                </div>
+                <div class="form-group mt-2">
+                    <label for="password">Password</label>
+                    <InputText Id="password" type="password" Class="form-control" @bind-Value="basicInfo.Password" />
+                    <ValidationMessage For="@(() => basicInfo.Password)" />
+                </div>
+                <div class="form-group mt-2">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <InputText Id="confirmPassword" type="password" Class="form-control" @bind-Value="basicInfo.ConfirmPassword" />
+                    <ValidationMessage For="@(() => basicInfo.ConfirmPassword)" />
+                </div>
+                <button type="submit" class="btn btn-primary mt-2">Next</button>
+            </EditForm>
+        }
+        else if (currentStep == 2)
+        {
+            <EditForm Model="additionalInfo" OnValidSubmit="HandleRegister">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-group mt-2">
+                    <label for="role">Role</label>
+                    <InputText Id="role" Class="form-control" @bind-Value="additionalInfo.Role" />
+                </div>
+                <div class="form-group mt-2">
+                    <label for="userType">User Type</label>
+                    <InputSelect @bind-Value="additionalInfo.UserType" Class="form-control">
+                        <option value="">Select</option>
+                        <option value="Cliente">Cliente</option>
+                        <option value="Profissional">Profissional</option>
+                        <option value="Ambos">Ambos</option>
+                    </InputSelect>
+                </div>
+                <div class="form-group mt-2">
+                    <label for="cpf">CPF</label>
+                    <InputMask Id="cpf" Class="form-control" Mask="000.000.000-00" @bind-Value="additionalInfo.CPF" />
+                </div>
+                <div class="form-group mt-2">
+                    <label for="rg">RG</label>
+                    <InputMask Id="rg" Class="form-control" Mask="00.000.000-0" @bind-Value="additionalInfo.RG" />
+                </div>
+                <div class="form-group mt-2">
+                    <label for="gender">Gender</label>
+                    <InputSelect @bind-Value="additionalInfo.Gender" Class="form-control">
+                        <option value="">Select</option>
+                        <option value="Masculino">Masculino</option>
+                        <option value="Feminino">Feminino</option>
+                        <option value="Prefiro não informar">Prefiro não informar</option>
+                    </InputSelect>
+                </div>
+                <div class="form-group mt-2">
+                    <label for="address">Address</label>
+                    <InputText Id="address" Class="form-control" @bind-Value="additionalInfo.Address" />
+                </div>
+                <div class="form-group mt-2">
+                    <label for="city">City</label>
+                    <InputText Id="city" Class="form-control" @bind-Value="additionalInfo.City" />
+                </div>
+                <div class="form-group mt-2">
+                    <label for="state">State</label>
+                    <InputText Id="state" Class="form-control" @bind-Value="additionalInfo.State" />
+                </div>
+                <div class="form-group mt-2">
+                    <label for="postalCode">Postal Code</label>
+                    <InputMask Id="postalCode" Class="form-control" Mask="00000-000" @bind-Value="additionalInfo.PostalCode" />
+                </div>
+
+                <button type="button" class="btn btn-secondary mt-2" @onclick="GoToStepOne">Back</button>
+                <button type="submit" class="btn btn-primary mt-2">Submit</button>
+            </EditForm>
+        }
+    </div>
+</div>
+
+@code {
+    private int currentStep = 1;
+    private BasicInfoModel basicInfo = new BasicInfoModel();
+    private AdditionalInfoModel additionalInfo = new AdditionalInfoModel();
+    private bool ShowErrors;
+    private string Error = string.Empty;
+
+    private void GoToStepTwo()
+    {
+        if (basicInfo.Password != basicInfo.ConfirmPassword)
+        {
+            Error = "Passwords do not match.";
+            ShowErrors = true;
+        }
+        else
+        {
+            currentStep = 2;
+            ShowErrors = false;
+        }
+    }
+
+    private void GoToStepOne()
+    {
+        currentStep = 1;
+    }
+
+    private async Task HandleRegister()
+    {
+        ShowErrors = false;
+        try
+        {
+            var registerModel = new RegisterModel
+                {
+                    Email = basicInfo.Email,
+                    Password = basicInfo.Password,
+                    ConfirmPassword = basicInfo.ConfirmPassword,
+                    Role = additionalInfo.Role,
+                    UserType = additionalInfo.UserType,
+                    CPF = additionalInfo.CPF,
+                    RG = additionalInfo.RG,
+                    Gender = additionalInfo.Gender,
+                    Address = additionalInfo.Address,
+                    City = additionalInfo.City,
+                    State = additionalInfo.State,
+                    PostalCode = additionalInfo.PostalCode
+                };
+
+            var result = await AuthService.Register(registerModel);
+
+            if (result)
+            {
+                NavigationManager.NavigateTo("/login"); // Redireciona para a página de login após o registro bem-sucedido
+            }
+            else
+            {
+                Error = "Registration failed.";
+                ShowErrors = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            Error = "An error occurred: " + ex.Message;
+            ShowErrors = true;
+        }
+    }
+
+    private class BasicInfoModel
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        [Required]
+        public string Password { get; set; }
+
+        [Required]
+        [Compare(nameof(Password))]
+        public string ConfirmPassword { get; set; }
+    }
+
+    private class AdditionalInfoModel
+    {
+        public string? Role { get; set; }
+        public string? UserType { get; set; }
+        public string? CPF { get; set; }
+        public string? RG { get; set; }
+        public string? Gender { get; set; }
+        public string? Address { get; set; }
+        public string? City { get; set; }
+        public string? State { get; set; }
+        public string? PostalCode { get; set; }
+    }
+}

@@ -32,21 +32,38 @@ namespace WebAthenPs.API.Controllers
         }
 
         [HttpPost("Register")]
-        public async Task<IActionResult> CreateUser([FromBody] User model)
+        public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
-            var user = new ApplicationUser { UserName = model.TryEmail, Email = model.TryEmail };
+            if (model == null || string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.Password))
+            {
+                return BadRequest("Email and password are required.");
+            }
 
-            var result = await _userManager.CreateAsync(user, model.TryPassword);
+            var user = new ApplicationUser
+            {
+                UserName = model.Email,
+                Email = model.Email,
+                Role = model.Role,
+                UserType = model.UserType,
+                CPF = model.CPF,
+                RG = model.RG,
+                Gender = model.Gender,
+                Address = model.Address,
+                City = model.City,
+                State = model.State,
+                PostalCode = model.PostalCode
+            };
+
+            var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
             {
-                return Ok(model);
+                return Ok(new { Message = "User registered successfully" });
             }
-            else
-            {
-                return BadRequest("Usuário ou senha inválidos");
-            }
+
+            return BadRequest(new { Errors = result.Errors });
         }
+
 
         [HttpPost("Login")]
         public async Task<ActionResult<UserToken>> Login([FromBody] LoginModel userInfo)
