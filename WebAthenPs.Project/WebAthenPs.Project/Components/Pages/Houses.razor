@@ -1,5 +1,5 @@
 ﻿@page "/house"
-@rendermode InteractiveServer 
+@rendermode InteractiveServer
 @inject IProjectService ProjectService
 
 <h3>Projects</h3>
@@ -51,6 +51,24 @@
                     {
                         <p>Total Area: @project.TotalArea m²</p>
                     }
+
+                    <!-- Exibição dos profissionais relacionados -->
+                    <div class="mt-3">
+                        <h5>Professionals</h5>
+                        @if (project.Professionals != null && project.Professionals.Any())
+                        {
+                            <ul>
+                                @foreach (var professional in project.Professionals)
+                                {
+                                    <li>@professional.UserName - @professional.ProfessionalType</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <p>No professionals associated with this project.</p>
+                        }
+                    </div>
                 </div>
             </div>
         }

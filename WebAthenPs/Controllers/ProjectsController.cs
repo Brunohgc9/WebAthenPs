@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using WebAthenPs.API.Mappings.MappingProjectDTO;
 using WebAthenPs.API.Repositories.Interfaces;
 using WebAthenPs.Models.DTOs;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace WebAthenPs.API.Controllers
 {
@@ -25,20 +27,16 @@ namespace WebAthenPs.API.Controllers
             try
             {
                 var projects = await _projectRepository.GetAll();
-                if (projects is null)
+                if (projects == null || !projects.Any())
                 {
-                    return NotFound("Não foi possível encontrar o projeto");
+                    return NotFound("Não foi possível encontrar projetos.");
                 }
-                else
-                {
-                    var projectsDTO = projects.ConverterProjetosParaDTO();
-                    return Ok(projectsDTO);
-                }
-
+                var projectsDTO = projects.ConverterProjetosParaDTO();
+                return Ok(projectsDTO);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao acessar a base de dados");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao acessar a base de dados. Detalhes: " + ex.Message);
             }
         }
 
@@ -48,19 +46,16 @@ namespace WebAthenPs.API.Controllers
             try
             {
                 var project = await _projectRepository.GetById(id);
-                if (project is null)
+                if (project == null)
                 {
-                    return NotFound("Não foi possível encontrar o projeto");
+                    return NotFound("Projeto não encontrado.");
                 }
-                else
-                {
-                    var projectDTO = project.ConverterProjetoParaDTO();
-                    return Ok(projectDTO);
-                }
+                var projectDTO = project.ConverterProjetoParaDTO();
+                return Ok(projectDTO);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao acessar a base de dados");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao acessar a base de dados. Detalhes: " + ex.Message);
             }
         }
 
@@ -70,19 +65,16 @@ namespace WebAthenPs.API.Controllers
             try
             {
                 var projects = await _projectRepository.GetByStatus(status);
-                if (projects is null)
+                if (projects == null || !projects.Any())
                 {
-                    return NotFound("Não foi possível encontrar o projeto");
+                    return NotFound("Nenhum projeto encontrado com o status informado.");
                 }
-                else
-                {
-                    var projectsDTO = projects.ConverterProjetosParaDTO();
-                    return Ok(projectsDTO);
-                }
+                var projectsDTO = projects.ConverterProjetosParaDTO();
+                return Ok(projectsDTO);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao acessar a base de dados");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao acessar a base de dados. Detalhes: " + ex.Message);
             }
         }
 
@@ -92,19 +84,16 @@ namespace WebAthenPs.API.Controllers
             try
             {
                 var projects = await _projectRepository.GetByArea(area);
-                if (projects is null)
+                if (projects == null || !projects.Any())
                 {
-                    return NotFound("Não foi possível encontrar o projeto");
+                    return NotFound("Nenhum projeto encontrado com a área informada.");
                 }
-                else
-                {
-                    var projectsDTO = projects.ConverterProjetosParaDTO();
-                    return Ok(projectsDTO);
-                }
+                var projectsDTO = projects.ConverterProjetosParaDTO();
+                return Ok(projectsDTO);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao acessar a base de dados");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao acessar a base de dados. Detalhes: " + ex.Message);
             }
         }
     }

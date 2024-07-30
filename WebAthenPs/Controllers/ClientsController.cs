@@ -32,12 +32,12 @@ namespace WebAthenPs.API.Controllers
                 {
                     return NotFound("Não foi possível encontrar clientes.");
                 }
+
                 var clientsDTO = clients.ConverterClientesParaDTO();
                 return Ok(clientsDTO);
             }
             catch (Exception ex)
             {
-                // Log the exception (use your logging framework)
                 return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao acessar a base de dados. Detalhes: " + ex.Message);
             }
         }
@@ -57,7 +57,6 @@ namespace WebAthenPs.API.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception (use your logging framework)
                 return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao acessar a base de dados. Detalhes: " + ex.Message);
             }
         }
@@ -77,7 +76,6 @@ namespace WebAthenPs.API.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception (use your logging framework)
                 return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao acessar a base de dados. Detalhes: " + ex.Message);
             }
         }

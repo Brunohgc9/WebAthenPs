@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WebAthenPs.Models.DTOs
 {
@@ -14,6 +11,9 @@ namespace WebAthenPs.Models.DTOs
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
         public int ClientId { get; set; }
+        public string? ProfessionalType { get; set; }
         public string ClientName { get; set; }
+        public List<ProjectsDTO> Projects { get; set; } = new List<ProjectsDTO>();
+
     }
 }

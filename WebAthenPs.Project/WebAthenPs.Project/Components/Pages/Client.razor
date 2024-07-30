@@ -1,6 +1,7 @@
 ﻿@page "/client"
 @rendermode InteractiveServer
 @inject IClientService ClientService
+@inject NavigationManager Navigation
 
 <h3>Clients</h3>
 
@@ -31,54 +32,44 @@
     {
         foreach (var client in clients)
         {
-            <div class="card mb-3">
-                <div class="card-header bg-primary text-white">
-                    <h5>@client.UserName</h5>
-                </div>
-                <div class="card-body">
-                    <p>Client ID: @client.ClientId</p>
-                    <p>Phone Number: @client.PhoneNumber</p>
-                    <p>Email: @client.Email</p>
-                    <h6>Houses:</h6>
+                        <div class="card mb-3">
+                            <div class="card-header bg-primary text-white">
+                                <h5>@client.UserName</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>Client ID: @client.ClientId</p>
+                                <p>Phone Number: @client.PhoneNumber</p>
+                                <p>Email: @client.Email</p>
+                                <h6>Projects:</h6>
                     @if (client.Houses != null && client.Houses.Any())
                     {
-                        <ul>
+                                        <ul>
                             @foreach (var house in client.Houses)
                             {
-                                <li>@house.ProjectName</li>
+                                                    <li>
+                                                        <a href="#" @onclick="() => NavigateToProject(house.ProjectId)">
+                                        @house.ProjectName
+                                                        </a>
+                                                    </li>
                             }
-                        </ul>
+                                        </ul>
                     }
                     else
                     {
-                        <p>No houses found.</p>
+                                        <p>No projects found.</p>
                     }
-                    <h6>Professionals:</h6>
-                    @if (client.GenericProfessionals != null && client.GenericProfessionals.Any())
-                    {
-                        <ul>
-                            @foreach (var professional in client.GenericProfessionals)
-                            {
-                                <li>@professional.UserName</li>
-                            }
-                        </ul>
-                    }
-                    else
-                    {
-                        <p>No professionals found.</p>
-                    }
-                </div>
-            </div>
+                            </div>
+                        </div>
         }
     }
     else
     {
-        <p>No clients found.</p>
+                <p>No clients found.</p>
     }
 }
 else if (loading)
 {
-    <h3>Loading...</h3>
+        <h3>Loading...</h3>
 }
 
 @code {
@@ -113,5 +104,11 @@ else if (loading)
             clients = await ClientService.GetByName(name);
             loading = false;
         }
+    }
+
+    private void NavigateToProject(int projectId)
+    {
+        Navigation.NavigateTo($"/project/{projectId}");
+        //adicionar projetos como cards separados e fazer aparecer
     }
 }

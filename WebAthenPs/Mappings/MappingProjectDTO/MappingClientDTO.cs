@@ -28,6 +28,7 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                 GenericProfessionals = c.GenericProfessionals != null
                     ? c.GenericProfessionals.Select(gp => new GProfessionalDTO
                     {
+                        ProfessionalType = gp.ProfessionalType,  // Incluindo ProfessionalType
                         GProfessionalId = gp.GProfessionalId,
                         UserName = gp.User != null ? gp.User.UserName : null
                     }).ToList()
@@ -41,22 +42,22 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
             {
                 ClientId = client.ClientId,
                 UserId = client.UserId,
-                UserName = client.User != null ? client.User.UserName : null,
-                PhoneNumber = client.User != null ? client.User.PhoneNumber : null,
-                Email = client.User != null ? client.User.Email : null,
-                Houses = client.Houses != null ? client.Houses.Select(p => new ProjectsDTO
+                UserName = client.User?.UserName,
+                PhoneNumber = client.User?.PhoneNumber,
+                Email = client.User?.Email,
+                Houses = client.Houses?.Select(p => new ProjectsDTO
                 {
                     ProjectId = p.ProjectId,
                     ProjectName = p.ProjectName
-                }).ToList() : new List<ProjectsDTO>(),
-                GenericProfessionals = client.GenericProfessionals != null
-                    ? client.GenericProfessionals.Select(gp => new GProfessionalDTO
-                    {
-                        GProfessionalId = gp.GProfessionalId,
-                        UserName = gp.User != null ? gp.User.UserName : null
-                    }).ToList()
-                    : new List<GProfessionalDTO>()
+                }).ToList() ?? new List<ProjectsDTO>(),
+                GenericProfessionals = client.GenericProfessionals?.Select(gp => new GProfessionalDTO
+                {
+                    ProfessionalType = gp.ProfessionalType,
+                    GProfessionalId = gp.GProfessionalId,
+                    UserName = gp.User?.UserName
+                }).ToList() ?? new List<GProfessionalDTO>()
             };
         }
+
     }
 }

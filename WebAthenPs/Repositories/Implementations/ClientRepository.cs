@@ -36,6 +36,7 @@ namespace WebAthenPs.API.Repositories.Implementations
             return client;
         }
 
+
         public async Task<IEnumerable<Client>> GetByName(string name)
         {
             var clients = await _context.Clients

@@ -14,7 +14,7 @@ namespace WebAthenPs.Project.Services.Imprementation
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<ClientService> _logger;
-        private readonly ILocalStorageService _localStorage; // Adicione esta linha
+        private readonly ILocalStorageService _localStorage;
 
         public ClientService(HttpClient httpClient, ILogger<ClientService> logger, ILocalStorageService localStorage)
         {
@@ -27,7 +27,6 @@ namespace WebAthenPs.Project.Services.Imprementation
         {
             try
             {
-                // Obtém o token do armazenamento local
                 var token = await _localStorage.GetItemAsync<string>("authToken");
                 if (!string.IsNullOrEmpty(token))
                 {
@@ -52,7 +51,6 @@ namespace WebAthenPs.Project.Services.Imprementation
                 throw;
             }
         }
-    
 
         public async Task<ClientDTO> GetById(int id)
         {
@@ -68,7 +66,28 @@ namespace WebAthenPs.Project.Services.Imprementation
                 if (clientDto == null)
                 {
                     _logger.LogWarning($"Cliente com ID {id} não encontrado.");
+                    return null;
                 }
+
+                // Obtém todos os projetos do cliente
+                var projects = await _httpClient.GetFromJsonAsync<IEnumerable<ProjectsDTO>>($"api/Projects/client/{id}");
+                if (projects != null)
+                {
+                    // Adiciona os profissionais dos projetos aos profissionais do cliente
+                    var professionals = new HashSet<GProfessionalDTO>();
+                    foreach (var project in projects)
+                    {
+                        if (project.Professionals != null)
+                        {
+                            foreach (var professional in project.Professionals)
+                            {
+                                professionals.Add(professional);
+                            }
+                        }
+                    }
+                    clientDto.GenericProfessionals = professionals.ToList();
+                }
+
                 return clientDto;
             }
             catch (HttpRequestException httpEx)

@@ -16,6 +16,8 @@ namespace WebAthenPs.API.Entities
 
         public int ClientId { get; set; }
 
+        public string? ProfessionalType { get; set; }  // Corrigido para 'ProfessionalType'
+
         [ForeignKey("ClientId")]
         public Client Client { get; set; }
 
