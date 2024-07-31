@@ -1,115 +1,130 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using WebAthenPs.API.Entities;
-using WebAthenPs.API.Repositories.Interfaces;
+using WebAthenPs.API.Mappings.MappingProjectDTO;
 using WebAthenPs.Models.DTOs;
+using WebAthenPs.Models.Models;
+using WebAthenPs.API.Repositories.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
+using WebAthenPs.API.Data;
 
 namespace WebAthenPs.API.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize(AuthenticationSchemes = "Bearer")]
     [ApiController]
-    public class GenericProfessionalsController : ControllerBase
+    public class GenericProfessionalController : ControllerBase
     {
-        private readonly IGenericProfessionalRepository _repository;
-        private readonly IMapper _mapper;
-        private readonly ILogger<GenericProfessionalsController> _logger;
+        private readonly IGenericProfessionlRepository _repository;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public GenericProfessionalsController(IGenericProfessionalRepository repository, IMapper mapper, ILogger<GenericProfessionalsController> logger)
+        public GenericProfessionalController(IGenericProfessionlRepository repository, UserManager<ApplicationUser> userManager)
         {
             _repository = repository;
-            _mapper = mapper;
-            _logger = logger;
+            _userManager = userManager;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] RegisterProfessionalModel model)
+        {
+            if (model == null || !ModelState.IsValid)
+                return BadRequest("Invalid data.");
+
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized("User not authenticated.");
+
+            var genericProfessional = GenericProfessionalMapping.CriarProfessionalEmDTO(model);
+            genericProfessional.UserId = userId;
+
+            await _repository.CreateAsync(genericProfessional);
+
+            var createdDto = GenericProfessionalMapping.ConverterProfessionalParaDTO(genericProfessional);
+
+            return CreatedAtAction(nameof(GetById), new { id = createdDto.Id }, createdDto);
+        }
+
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            try
+            {
+                var professional = await _repository.GetByIdAsync(id);
+
+                if (professional == null)
+                    return NotFound("Professional not found.");
+
+                var dto = GenericProfessionalMapping.ConverterProfessionalParaDTO(professional);
+                return Ok(dto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error accessing the database: {ex.Message}");
+            }
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] string professionalType)
         {
-            var professionals = await _repository.GetAll();
-            var professionalsDTO = _mapper.Map<IEnumerable<GenericProfessional>, IEnumerable<GProfessionalDTO>>(professionals);
-            return Ok(professionalsDTO);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            var professional = await _repository.GetById(id);
-            if (professional == null)
+            try
             {
-                return NotFound();
+                var professionals = await _repository.GetByProfessionalTypeAsync(professionalType ?? string.Empty);
+                var dtoList = GenericProfessionalMapping.ConverterProfessionalsParaDTO(professionals);
+                return Ok(dtoList);
             }
-
-            var professionalDTO = _mapper.Map<GenericProfessional, GProfessionalDTO>(professional);
-            return Ok(professionalDTO);
-        }
-
-        [HttpGet("ByName/{name}")]
-        public async Task<IActionResult> GetByName(string name)
-        {
-            var professionals = await _repository.GetByName(name);
-            var professionalsDTO = _mapper.Map<IEnumerable<GenericProfessional>, IEnumerable<GProfessionalDTO>>(professionals);
-            return Ok(professionalsDTO);
-        }
-
-        [HttpGet("ByProfessionalType/{professionalType}")]
-        public async Task<IActionResult> GetByProfessionalType(string professionalType)
-        {
-            var professionals = await _repository.GetByProfessionalType(professionalType);
-            var professionalsDTO = _mapper.Map<IEnumerable<GenericProfessional>, IEnumerable<GProfessionalDTO>>(professionals);
-            return Ok(professionalsDTO);
-        }
-
-        [HttpPost("CreateP")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Add(GProfessionalDTO professionalDTO)
-        {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId))
+            catch (Exception ex)
             {
-                return Unauthorized();
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error accessing the database: {ex.Message}");
             }
-
-            professionalDTO.UserId = userId;
-
-            var prof = _mapper.Map<GenericProfessional>(professionalDTO);
-            await _repository.AddAsync(prof);
-
-            var createdProfessionalDTO = _mapper.Map<GProfessionalDTO>(prof);
-            return Ok(createdProfessionalDTO);
         }
 
         [HttpPut("{id:int}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Update(int id, GProfessionalDTO professionalDTO)
+        public async Task<IActionResult> Update(int id, [FromBody] RegisterProfessionalModel model)
         {
-            if (id != professionalDTO.GProfessionalId) return BadRequest();
+            if (model == null || !ModelState.IsValid)
+                return BadRequest("Invalid data.");
 
-            if (!ModelState.IsValid) return BadRequest();
+            try
+            {
+                var existingProfessional = await _repository.GetByIdAsync(id);
 
-            var prof = _mapper.Map<GenericProfessional>(professionalDTO);
-            await _repository.UpdateAsync(prof);
+                if (existingProfessional == null)
+                    return NotFound("Professional not found.");
 
-            var updatedProfessionalDTO = _mapper.Map<GProfessionalDTO>(prof);
-            return Ok(updatedProfessionalDTO);
+                existingProfessional.ProfessionalType = model.ProfessionalType;
+                // Atualizar outros campos conforme necessário
+
+                await _repository.UpdateAsync(existingProfessional);
+
+                var updatedDto = GenericProfessionalMapping.ConverterProfessionalParaDTO(existingProfessional);
+                return Ok(updatedDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error accessing the database: {ex.Message}");
+            }
         }
 
         [HttpDelete("{id:int}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Remove(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var prof = await _repository.GetById(id);
-            if (prof is null) return NotFound();
-            await _repository.RemoveAsync(prof.Id);
-            return Ok();
+            try
+            {
+                var professional = await _repository.GetByIdAsync(id);
+
+                if (professional == null)
+                    return NotFound("Professional not found.");
+
+                await _repository.DeleteAsync(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error accessing the database: {ex.Message}");
+            }
         }
     }
-
 }

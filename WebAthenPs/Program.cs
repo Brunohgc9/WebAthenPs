@@ -15,6 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(typeof(DomainToDTOProfile));
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddScoped<IGenericProfessionlRepository, GenericProfessionalRepository>();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo {Title = "APIWebAthenPs", Version = "v1"});
@@ -101,9 +102,6 @@ builder.Services.AddCors(options =>
         );
 });
 
-builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
-builder.Services.AddScoped<IClientRepository, ClientRepository>();
-builder.Services.AddScoped<IGenericProfessionalRepository, GenericProfessionalRepository>();
 
 
 var app = builder.Build();

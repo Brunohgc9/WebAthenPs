@@ -23,13 +23,11 @@ builder.Services.AddHttpClient("APIWebAthenPs", options =>
 builder.Services.AddAutoMapper(typeof(Program).Assembly); // Ensure that AutoMapper profiles are registered
 
 
-builder.Services.AddScoped<IProjectService, ProjectService>();
-builder.Services.AddScoped<IClientService, ClientService>();
+
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, APIAuthenticationStateProvider>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IGenericProfessionalService, GenericProfessionalService>();
 builder.Services.AddSingleton(new JsonSerializerOptions
 {
     PropertyNameCaseInsensitive = true,

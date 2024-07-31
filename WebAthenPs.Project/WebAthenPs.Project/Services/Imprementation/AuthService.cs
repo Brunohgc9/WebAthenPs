@@ -16,19 +16,16 @@ namespace WebAthenPs.Project.Services.Imprementation
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly ILocalStorageService _localStorage;
-        private readonly IGenericProfessionalService _genericProfessionalService;
         private readonly NavigationManager _navigationManager;
 
         public AuthService(IHttpClientFactory httpClientFactory,
             AuthenticationStateProvider authenticationStateProvider,
             ILocalStorageService localStorage,
-            IGenericProfessionalService genericProfessionalService,
             NavigationManager navigationManager)
         {
             _httpClientFactory = httpClientFactory;
             _authenticationStateProvider = authenticationStateProvider;
             _localStorage = localStorage;
-            _genericProfessionalService = genericProfessionalService;
             _navigationManager = navigationManager;
         }
 
@@ -60,16 +57,7 @@ namespace WebAthenPs.Project.Services.Imprementation
                             new AuthenticationHeaderValue("bearer", loginResult.Token);
 
                         // Verifica se o usuário é um profissional
-                        var userId = await _localStorage.GetItemAsync<string>("userId");
-                        if (!string.IsNullOrEmpty(userId))
-                        {
-                            var professional = await _genericProfessionalService.GetById(int.Parse(userId));
-                            if (professional == null || string.IsNullOrEmpty(professional.ProfessionalType))
-                            {
-                                // Se não tiver tipo de profissional, redireciona para a página de registro
-                                _navigationManager.NavigateTo("/register-professional");
-                            }
-                        }
+                       
 
                         return loginResult;
                     }

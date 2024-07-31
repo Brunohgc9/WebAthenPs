@@ -1,113 +1,80 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using WebAthenPs.API.Data;
 using WebAthenPs.API.Entities;
 using WebAthenPs.API.Repositories.Interfaces;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Linq.Expressions;
-using System;
 
 namespace WebAthenPs.API.Repositories.Implementations
 {
-    public class GenericProfessionalRepository : Repository<GenericProfessional>, IGenericProfessionalRepository
+    public class GenericProfessionalRepository : IGenericProfessionlRepository
     {
-        private readonly ApplicationDbContext db;
+        private readonly ApplicationDbContext _context;
 
-        public GenericProfessionalRepository(ApplicationDbContext context) : base(context) { }
-
-
-        public async Task<IEnumerable<GenericProfessional>> GetAll()
+        public GenericProfessionalRepository(ApplicationDbContext context)
         {
-            var professionals = await _db.GenericProfessionals
-                .Include(gp => gp.User) // Inclui o usuário associado ao profissional
-                .Include(gp => gp.Client) // Inclui o cliente associado ao profissional
-                .Include(gp => gp.Projects) // Inclui os projetos associados ao profissional
-                .ToListAsync();
-            return professionals;
+            _context = context;
         }
 
-        public async Task<GenericProfessional> GetById(int id)
+        public async Task CreateAsync(GenericProfessional genericProfessional)
         {
-            var professional = await _db.GenericProfessionals
+            if (genericProfessional == null)
+                throw new ArgumentNullException(nameof(genericProfessional));
+
+            // Adiciona o novo profissional ao contexto
+            _context.GenericProfessionals.Add(genericProfessional);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            var genericProfessional = await _context.GenericProfessionals.FindAsync(id);
+            if (genericProfessional != null)
+            {
+                _context.GenericProfessionals.Remove(genericProfessional);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<GenericProfessional> GetByIdAsync(int id)
+        {
+            return await _context.GenericProfessionals
                 .Include(gp => gp.User)
                 .Include(gp => gp.Client)
                 .Include(gp => gp.Projects)
-                .SingleOrDefaultAsync(gp => gp.Id == id);
-            return professional;
+                .FirstOrDefaultAsync(gp => gp.Id == id);
         }
 
-        public async Task<IEnumerable<GenericProfessional>> GetByName(string name)
+        public async Task<GenericProfessional> GetByNameAsync(string name)
         {
-            var professionals = await _db.GenericProfessionals
+            return await _context.GenericProfessionals
                 .Include(gp => gp.User)
                 .Include(gp => gp.Client)
                 .Include(gp => gp.Projects)
-                .Where(gp => gp.User.UserName == name)
-                .Select(gp => new GenericProfessional
-                {
-                    Id = gp.Id,
-                    UserId = gp.UserId,
-                    User = new ApplicationUser
-                    {
-                        UserName = gp.User.UserName,
-                        PhoneNumber = gp.User.PhoneNumber,
-                        Email = gp.User.Email
-                    },
-                    ClientId = gp.ClientId,
-                    Client = new Client
-                    {
-                        ClientId = gp.Client.ClientId,
-                        User = gp.Client.User,
-                        Houses = gp.Client.Houses
-                    },
-                    Projects = gp.Projects.Select(p => new Projects
-                    {
-                        ProjectId = p.ProjectId,
-                        ProjectName = p.ProjectName
-                    }).ToList(),
-                    ProfessionalType = gp.ProfessionalType
-                })
-                .ToListAsync();
-            return professionals;
+                .FirstOrDefaultAsync(gp => gp.User.UserName == name); // Assumindo que 'name' corresponde ao UserName
         }
 
-        public async Task<IEnumerable<GenericProfessional>> GetByProfessionalType(string professionalType)
+        public async Task<IEnumerable<GenericProfessional>> GetByProfessionalTypeAsync(string professionalType)
         {
-            var professionals = await _db.GenericProfessionals
+            if (string.IsNullOrEmpty(professionalType))
+                throw new ArgumentException("ProfessionalType cannot be null or empty", nameof(professionalType));
+
+            return await _context.GenericProfessionals
                 .Include(gp => gp.User)
                 .Include(gp => gp.Client)
                 .Include(gp => gp.Projects)
                 .Where(gp => gp.ProfessionalType == professionalType)
-                .Select(gp => new GenericProfessional
-                {
-                    Id = gp.Id,
-                    UserId = gp.UserId,
-                    User = new ApplicationUser
-                    {
-                        UserName = gp.User.UserName,
-                        PhoneNumber = gp.User.PhoneNumber,
-                        Email = gp.User.Email
-                    },
-                    ClientId = gp.ClientId,
-                    Client = new Client
-                    {
-                        ClientId = gp.Client.ClientId,
-                        User = gp.Client.User,
-                        Houses = gp.Client.Houses
-                    },
-                    Projects = gp.Projects.Select(p => new Projects
-                    {
-                        ProjectId = p.ProjectId,
-                        ProjectName = p.ProjectName
-                    }).ToList(),
-                    ProfessionalType = gp.ProfessionalType
-                })
                 .ToListAsync();
-            return professionals;
         }
 
+        public async Task UpdateAsync(GenericProfessional genericProfessional)
+        {
+            if (genericProfessional == null)
+                throw new ArgumentNullException(nameof(genericProfessional));
 
-
+            _context.GenericProfessionals.Update(genericProfessional);
+            await _context.SaveChangesAsync();
+        }
     }
 }
