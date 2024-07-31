@@ -44,7 +44,7 @@
         }
         else if (currentStep == 2)
         {
-            <EditForm Model="additionalInfo" OnValidSubmit="HandleRegister">
+            <EditForm Model="additionalInfo" OnValidSubmit="GoToStepThree">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
 
@@ -95,16 +95,22 @@
                     <InputMask Id="postalCode" Class="form-control" Mask="00000-000" @bind-Value="additionalInfo.PostalCode" />
                 </div>
 
-                @if (additionalInfo.UserType == "Profissional" || additionalInfo.UserType == "Ambos")
-                {
-                    <div class="form-group mt-2">
-                        <label for="professionalType">Professional Type</label>
-                        <InputText Id="professionalType" Class="form-control" @bind-Value="additionalInfo.ProfessionalType" />
-                    </div>
-
-                }
-
                 <button type="button" class="btn btn-secondary mt-2" @onclick="GoToStepOne">Back</button>
+                <button type="submit" class="btn btn-primary mt-2">Next</button>
+            </EditForm>
+        }
+        else if (currentStep == 3)
+        {
+            <EditForm Model="professionalInfo" OnValidSubmit="HandleProfessionalType">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-group mt-2">
+                    <label for="professionalType">Professional Type</label>
+                    <InputText Id="professionalType" Class="form-control" @bind-Value="professionalInfo.ProfessionalType" />
+                </div>
+
+                <button type="button" class="btn btn-secondary mt-2" @onclick="GoToStepTwo">Back</button>
                 <button type="submit" class="btn btn-primary mt-2">Submit</button>
             </EditForm>
         }
@@ -115,6 +121,7 @@
     private int currentStep = 1;
     private BasicInfoModel basicInfo = new BasicInfoModel();
     private AdditionalInfoModel additionalInfo = new AdditionalInfoModel();
+    private ProfessionalInfoModel professionalInfo = new ProfessionalInfoModel();
     private bool ShowErrors;
     private string Error = string.Empty;
 
@@ -137,12 +144,17 @@
         currentStep = 1;
     }
 
+    private void GoToStepThree()
+    {
+        currentStep = 3;
+    }
+
     private void OnUserTypeChange(ChangeEventArgs e)
     {
         additionalInfo.UserType = e.Value.ToString();
     }
 
-    private async Task HandleRegister()
+    private async Task HandleProfessionalType()
     {
         ShowErrors = false;
         try
@@ -160,15 +172,32 @@
                     Address = additionalInfo.Address,
                     City = additionalInfo.City,
                     State = additionalInfo.State,
-                    PostalCode = additionalInfo.PostalCode,
-                    ProfessionalType = additionalInfo.ProfessionalType,
+                    PostalCode = additionalInfo.PostalCode
                 };
 
-            var result = await AuthService.Register(registerModel);
+            var registerResult = await AuthService.Register(registerModel);
 
-            if (result)
+            if (registerResult)
             {
-                NavigationManager.NavigateTo("/login"); // Redireciona para a página de login após o registro bem-sucedido
+                if (additionalInfo.UserType == "Profissional" || additionalInfo.UserType == "Ambos")
+                {
+                    // Adiciona o perfil profissional após o registro
+                    var professionalDTO = new GProfessionalDTO
+                        {
+                            Email = basicInfo.Email,
+                            ProfessionalType = professionalInfo.ProfessionalType,
+                            // Adicione outros campos se necessário
+                        };
+
+                    var professionalResult = await GenericProfessionalService.CreateProfessional(professionalDTO);
+
+                    if (professionalResult == null)
+                    {
+                        throw new Exception("Failed to create professional profile.");
+                    }
+                }
+
+                NavigationManager.NavigateTo("/login");
             }
             else
             {
@@ -208,6 +237,10 @@
         public string? City { get; set; }
         public string? State { get; set; }
         public string? PostalCode { get; set; }
+    }
+
+    private class ProfessionalInfoModel
+    {
         public string? ProfessionalType { get; set; }
     }
 }
