@@ -1,0 +1,70 @@
+﻿@page "/create-professional"
+@using WebAthenPs.Models.DTOs
+@using WebAthenPs.Project.Services.Interfaces
+@inject IGenericProfessionalService GenericProfessionalService
+@inject NavigationManager NavigationManager
+@using System.ComponentModel.DataAnnotations
+
+<h1>Cadastrar Tipo de Profissional</h1>
+
+@if (ShowErrors)
+{
+    <p class="alert alert-danger">@Error</p>
+}
+
+<EditForm Model="professionalInfo" OnValidSubmit="HandleCreate">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group mt-2">
+        <label for="professionalType">Tipo de Profissional</label>
+        <InputText Id="professionalType" Class="form-control" @bind-Value="professionalInfo.ProfessionalType" />
+        <ValidationMessage For="@(() => professionalInfo.ProfessionalType)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Salvar</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public string? ProfessionalType { get; set; }
+
+    private ProfessionalInfoModel professionalInfo = new ProfessionalInfoModel();
+    private bool ShowErrors;
+    private string Error = string.Empty;
+
+    private async Task HandleCreate()
+    {
+        ShowErrors = false;
+        try
+        {
+            var professionalDTO = new GProfessionalDTO
+                {
+                    ProfessionalType = professionalInfo.ProfessionalType
+                };
+
+            var result = await GenericProfessionalService.CreateProfessional(professionalDTO);
+
+            if (result != null)
+            {
+                NavigationManager.NavigateTo("/login");
+            }
+            else
+            {
+                Error = "Falha ao criar o tipo de profissional.";
+                ShowErrors = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            Error = "Ocorreu um erro: " + ex.Message;
+            ShowErrors = true;
+        }
+    }
+
+    private class ProfessionalInfoModel
+    {
+        [Required]
+        public string ProfessionalType { get; set; }
+    }
+}

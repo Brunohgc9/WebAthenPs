@@ -142,105 +142,105 @@ namespace WebAthenPs.API.Migrations
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 1,
                 column: "UserId",
                 value: "user16");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 2,
                 column: "UserId",
                 value: "user17");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 3,
                 column: "UserId",
                 value: "user18");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 4,
                 column: "UserId",
                 value: "user19");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 5,
                 column: "UserId",
                 value: "user20");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 6,
                 column: "UserId",
                 value: "user21");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 7,
                 column: "UserId",
                 value: "user22");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 8,
                 column: "UserId",
                 value: "user23");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 9,
                 column: "UserId",
                 value: "user24");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 10,
                 column: "UserId",
                 value: "user25");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 11,
                 column: "UserId",
                 value: "user26");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 12,
                 column: "UserId",
                 value: "user27");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 13,
                 column: "UserId",
                 value: "user28");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 14,
                 column: "UserId",
                 value: "user29");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 15,
                 column: "UserId",
                 value: "user30");
@@ -431,105 +431,105 @@ namespace WebAthenPs.API.Migrations
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 1,
                 column: "UserId",
                 value: "user1");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 2,
                 column: "UserId",
                 value: "user2");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 3,
                 column: "UserId",
                 value: "user3");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 4,
                 column: "UserId",
                 value: "user4");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 5,
                 column: "UserId",
                 value: "user5");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 6,
                 column: "UserId",
                 value: "user6");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 7,
                 column: "UserId",
                 value: "user7");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 8,
                 column: "UserId",
                 value: "user8");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 9,
                 column: "UserId",
                 value: "user9");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 10,
                 column: "UserId",
                 value: "user10");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 11,
                 column: "UserId",
                 value: "user11");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 12,
                 column: "UserId",
                 value: "user12");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 13,
                 column: "UserId",
                 value: "user13");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 14,
                 column: "UserId",
                 value: "user14");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 15,
                 column: "UserId",
                 value: "user15");

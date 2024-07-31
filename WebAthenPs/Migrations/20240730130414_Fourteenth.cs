@@ -153,105 +153,105 @@ namespace WebAthenPs.API.Migrations
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 1,
                 column: "ProfessionalType",
                 value: "Arquiteto");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 2,
                 column: "ProfessionalType",
                 value: "Eletricista");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 3,
                 column: "ProfessionalType",
                 value: "Engenheiro");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 4,
                 column: "ProfessionalType",
                 value: "Pedreiro");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 5,
                 column: "ProfessionalType",
                 value: "Encanador");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 6,
                 column: "ProfessionalType",
                 value: "Arquiteto");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 7,
                 column: "ProfessionalType",
                 value: "Eletricista");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 8,
                 column: "ProfessionalType",
                 value: "Engenheiro");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 9,
                 column: "ProfessionalType",
                 value: "Pedreiro");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 10,
                 column: "ProfessionalType",
                 value: "Encanador");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 11,
                 column: "ProfessionalType",
                 value: "Arquiteto");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 12,
                 column: "ProfessionalType",
                 value: "Eletricista");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 13,
                 column: "ProfessionalType",
                 value: "Engenheiro");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 14,
                 column: "ProfessionalType",
                 value: "Pedreiro");
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 15,
                 column: "ProfessionalType",
                 value: "Encanador");
@@ -396,105 +396,105 @@ namespace WebAthenPs.API.Migrations
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 1,
                 column: "ProfessionalTye",
                 value: null);
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 2,
                 column: "ProfessionalTye",
                 value: null);
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 3,
                 column: "ProfessionalTye",
                 value: null);
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 4,
                 column: "ProfessionalTye",
                 value: null);
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 5,
                 column: "ProfessionalTye",
                 value: null);
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 6,
                 column: "ProfessionalTye",
                 value: null);
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 7,
                 column: "ProfessionalTye",
                 value: null);
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 8,
                 column: "ProfessionalTye",
                 value: null);
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 9,
                 column: "ProfessionalTye",
                 value: null);
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 10,
                 column: "ProfessionalTye",
                 value: null);
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 11,
                 column: "ProfessionalTye",
                 value: null);
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 12,
                 column: "ProfessionalTye",
                 value: null);
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 13,
                 column: "ProfessionalTye",
                 value: null);
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 14,
                 column: "ProfessionalTye",
                 value: null);
 
             migrationBuilder.UpdateData(
                 table: "GenericProfessionals",
-                keyColumn: "GProfessionalId",
+                keyColumn: "Id",
                 keyValue: 15,
                 column: "ProfessionalTye",
                 value: null);

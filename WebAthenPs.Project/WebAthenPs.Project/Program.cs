@@ -1,5 +1,6 @@
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
+using System.Text.Json;
 using WebAthenPs.Project.Client.Pages;
 using WebAthenPs.Project.Components;
 using WebAthenPs.Project.Services.Authentication;
@@ -33,7 +34,11 @@ builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, APIAuthenticationStateProvider>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IGenericProfessionalService, GenericProfessionalService>();
-
+builder.Services.AddSingleton(new JsonSerializerOptions
+{
+    PropertyNameCaseInsensitive = true,
+    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+});
 
 
 var app = builder.Build();

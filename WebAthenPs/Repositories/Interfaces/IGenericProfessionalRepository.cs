@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace WebAthenPs.API.Repositories.Interfaces
 {
-    public interface IGenericProfessionalRepository
+    public interface IGenericProfessionalRepository : IRepository<GenericProfessional>
     {
         Task<IEnumerable<GenericProfessional>> GetAll();
         Task<GenericProfessional> GetById(int id);

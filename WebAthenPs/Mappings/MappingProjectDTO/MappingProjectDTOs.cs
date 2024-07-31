@@ -32,7 +32,7 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                 NumberOfBathrooms = item.NumberOfBathrooms,
                 Professionals = item.Professionals?.Select(p => new GProfessionalDTO
                 {
-                    GProfessionalId = p.GProfessionalId,
+                    GProfessionalId = p.Id,
                     UserName = p.User?.UserName,
                     ProfessionalType = p.ProfessionalType
                 }).ToList() ?? new List<GProfessionalDTO>()
@@ -64,7 +64,7 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                 NumberOfBathrooms = project.NumberOfBathrooms,
                 Professionals = project.Professionals?.Select(p => new GProfessionalDTO
                 {
-                    GProfessionalId = p.GProfessionalId,
+                    GProfessionalId = p.Id,
                     UserName = p.User?.UserName,
                     ProfessionalType = p.ProfessionalType
                 }).ToList() ?? new List<GProfessionalDTO>()

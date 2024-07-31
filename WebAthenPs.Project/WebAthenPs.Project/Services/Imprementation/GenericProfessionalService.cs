@@ -7,20 +7,72 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
 using Blazored.LocalStorage;
+using System.Text.Json;
+using System.Text;
+using System.Net;
 
 namespace WebAthenPs.Project.Services.Imprementation
 {
     public class GenericProfessionalService : IGenericProfessionalService
     {
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly JsonSerializerOptions _options;
         private readonly HttpClient _httpClient;
         private readonly ILogger<GenericProfessionalService> _logger;
         private readonly ILocalStorageService _localStorage;
+        private const string apiEndpoint = "/api/GenericProfessionals/";
 
-        public GenericProfessionalService(HttpClient httpClient, ILogger<GenericProfessionalService> logger, ILocalStorageService localStorage)
+        public GenericProfessionalService(IHttpClientFactory httpClientFactory, JsonSerializerOptions options, HttpClient httpClient, ILogger<GenericProfessionalService> logger, ILocalStorageService localStorage)
         {
+            _httpClientFactory = httpClientFactory;
+            _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             _httpClient = httpClient;
             _logger = logger;
             _localStorage = localStorage;
+        }
+
+        public async Task<GProfessionalDTO> CreateProfessional(GProfessionalDTO professionalDTO)
+        {
+            var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
+            StringContent content = new StringContent(JsonSerializer.Serialize(professionalDTO),
+                                                      Encoding.UTF8, "application/json");
+
+            using (var response = await httpClient.PostAsync(apiEndpoint, content))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    var apiResponse = await response.Content.ReadAsStreamAsync();
+
+                    professionalDTO = await JsonSerializer
+                               .DeserializeAsync<GProfessionalDTO>(apiResponse, _options);
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    throw new UnauthorizedAccessException();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            return professionalDTO;
+        }
+
+        public async Task<bool> DeleteProfessional(int id)
+        {
+            var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
+            using (var response = await httpClient.DeleteAsync(apiEndpoint + id))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    return true;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    throw new UnauthorizedAccessException();
+                }
+            }
+            return false;
         }
 
         public async Task<IEnumerable<GProfessionalDTO>> GetAll()
@@ -90,7 +142,7 @@ namespace WebAthenPs.Project.Services.Imprementation
                 {
                     _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 }
-                var professionalsDto = await _httpClient.GetFromJsonAsync<IEnumerable<GProfessionalDTO>>($"api/GenericProfessionals/name/{name}");
+                var professionalsDto = await _httpClient.GetFromJsonAsync<IEnumerable<GProfessionalDTO>>($"api/GenericProfessionals/ByName/{name}");
                 if (professionalsDto == null)
                 {
                     _logger.LogWarning($"Nenhum profissional encontrado com o nome {name}.");
@@ -99,7 +151,7 @@ namespace WebAthenPs.Project.Services.Imprementation
             }
             catch (HttpRequestException httpEx)
             {
-                _logger.LogError(httpEx, $"Erro ao acessar a API de profissionais com o nome {name}. URL: api/GenericProfessionals/name/{name}");
+                _logger.LogError(httpEx, $"Erro ao acessar a API de profissionais com o nome {name}. URL: api/GenericProfessionals/ByName/{name}");
                 throw;
             }
             catch (Exception ex)
@@ -118,7 +170,7 @@ namespace WebAthenPs.Project.Services.Imprementation
                 {
                     _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 }
-                var professionalsDto = await _httpClient.GetFromJsonAsync<IEnumerable<GProfessionalDTO>>($"api/GenericProfessionals/type/{professionalType}");
+                var professionalsDto = await _httpClient.GetFromJsonAsync<IEnumerable<GProfessionalDTO>>($"api/GenericProfessionals/ByProfessionalType/{professionalType}");
                 if (professionalsDto == null)
                 {
                     _logger.LogWarning($"Nenhum profissional encontrado com o tipo {professionalType}.");
@@ -136,5 +188,26 @@ namespace WebAthenPs.Project.Services.Imprementation
                 throw;
             }
         }
+
+        public async Task<GProfessionalDTO> UpdateProfessional(GProfessionalDTO professionalDTO, int id)
+        {
+            var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
+            GProfessionalDTO ProfessionalUpdated = new GProfessionalDTO();
+            using (var response = await httpClient.PutAsJsonAsync(apiEndpoint + id, professionalDTO))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    var apiResponse = await response.Content.ReadAsStreamAsync();
+                    ProfessionalUpdated = await JsonSerializer
+                                        .DeserializeAsync<GProfessionalDTO>(apiResponse, _options);
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    throw new UnauthorizedAccessException();
+                }
+            }
+            return ProfessionalUpdated;
+        }
     }
+    
 }

@@ -163,12 +163,12 @@ namespace WebAthenPs.API.Migrations
                     b.Property<int>("ProjectId")
                         .HasColumnType("int");
 
-                    b.Property<int>("GProfessionalId")
+                    b.Property<int>("Id")
                         .HasColumnType("int");
 
-                    b.HasKey("ProjectId", "GProfessionalId");
+                    b.HasKey("ProjectId", "Id");
 
-                    b.HasIndex("GProfessionalId");
+                    b.HasIndex("Id");
 
                     b.ToTable("ProjectProfessionals");
 
@@ -176,152 +176,152 @@ namespace WebAthenPs.API.Migrations
                         new
                         {
                             ProjectId = 1,
-                            GProfessionalId = 1
+                            Id = 1
                         },
                         new
                         {
                             ProjectId = 1,
-                            GProfessionalId = 2
+                            Id = 2
                         },
                         new
                         {
                             ProjectId = 2,
-                            GProfessionalId = 3
+                            Id = 3
                         },
                         new
                         {
                             ProjectId = 2,
-                            GProfessionalId = 4
+                            Id = 4
                         },
                         new
                         {
                             ProjectId = 3,
-                            GProfessionalId = 5
+                            Id = 5
                         },
                         new
                         {
                             ProjectId = 3,
-                            GProfessionalId = 6
+                            Id = 6
                         },
                         new
                         {
                             ProjectId = 4,
-                            GProfessionalId = 7
+                            Id = 7
                         },
                         new
                         {
                             ProjectId = 4,
-                            GProfessionalId = 8
+                            Id = 8
                         },
                         new
                         {
                             ProjectId = 5,
-                            GProfessionalId = 9
+                            Id = 9
                         },
                         new
                         {
                             ProjectId = 5,
-                            GProfessionalId = 10
+                            Id = 10
                         },
                         new
                         {
                             ProjectId = 6,
-                            GProfessionalId = 11
+                            Id = 11
                         },
                         new
                         {
                             ProjectId = 6,
-                            GProfessionalId = 12
+                            Id = 12
                         },
                         new
                         {
                             ProjectId = 7,
-                            GProfessionalId = 13
+                            Id = 13
                         },
                         new
                         {
                             ProjectId = 7,
-                            GProfessionalId = 14
+                            Id = 14
                         },
                         new
                         {
                             ProjectId = 8,
-                            GProfessionalId = 15
+                            Id = 15
                         },
                         new
                         {
                             ProjectId = 8,
-                            GProfessionalId = 1
+                            Id = 1
                         },
                         new
                         {
                             ProjectId = 9,
-                            GProfessionalId = 2
+                            Id = 2
                         },
                         new
                         {
                             ProjectId = 9,
-                            GProfessionalId = 3
+                            Id = 3
                         },
                         new
                         {
                             ProjectId = 10,
-                            GProfessionalId = 4
+                            Id = 4
                         },
                         new
                         {
                             ProjectId = 10,
-                            GProfessionalId = 5
+                            Id = 5
                         },
                         new
                         {
                             ProjectId = 11,
-                            GProfessionalId = 6
+                            Id = 6
                         },
                         new
                         {
                             ProjectId = 11,
-                            GProfessionalId = 7
+                            Id = 7
                         },
                         new
                         {
                             ProjectId = 12,
-                            GProfessionalId = 8
+                            Id = 8
                         },
                         new
                         {
                             ProjectId = 12,
-                            GProfessionalId = 9
+                            Id = 9
                         },
                         new
                         {
                             ProjectId = 13,
-                            GProfessionalId = 10
+                            Id = 10
                         },
                         new
                         {
                             ProjectId = 13,
-                            GProfessionalId = 11
+                            Id = 11
                         },
                         new
                         {
                             ProjectId = 14,
-                            GProfessionalId = 12
+                            Id = 12
                         },
                         new
                         {
                             ProjectId = 14,
-                            GProfessionalId = 13
+                            Id = 13
                         },
                         new
                         {
                             ProjectId = 15,
-                            GProfessionalId = 14
+                            Id = 14
                         },
                         new
                         {
                             ProjectId = 15,
-                            GProfessionalId = 15
+                            Id = 15
                         });
                 });
 
@@ -883,11 +883,11 @@ namespace WebAthenPs.API.Migrations
 
             modelBuilder.Entity("WebAthenPs.API.Entities.GenericProfessional", b =>
                 {
-                    b.Property<int>("GProfessionalId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GProfessionalId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ClientId")
                         .HasColumnType("int");
@@ -896,7 +896,7 @@ namespace WebAthenPs.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("GProfessionalId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ClientId");
 
@@ -907,91 +907,91 @@ namespace WebAthenPs.API.Migrations
                     b.HasData(
                         new
                         {
-                            GProfessionalId = 1,
+                            Id = 1,
                             ClientId = 1,
                             UserId = "user1"
                         },
                         new
                         {
-                            GProfessionalId = 2,
+                            Id = 2,
                             ClientId = 2,
                             UserId = "user2"
                         },
                         new
                         {
-                            GProfessionalId = 3,
+                            Id = 3,
                             ClientId = 3,
                             UserId = "user3"
                         },
                         new
                         {
-                            GProfessionalId = 4,
+                            Id = 4,
                             ClientId = 4,
                             UserId = "user4"
                         },
                         new
                         {
-                            GProfessionalId = 5,
+                            Id = 5,
                             ClientId = 5,
                             UserId = "user5"
                         },
                         new
                         {
-                            GProfessionalId = 6,
+                            Id = 6,
                             ClientId = 6,
                             UserId = "user6"
                         },
                         new
                         {
-                            GProfessionalId = 7,
+                            Id = 7,
                             ClientId = 7,
                             UserId = "user7"
                         },
                         new
                         {
-                            GProfessionalId = 8,
+                            Id = 8,
                             ClientId = 8,
                             UserId = "user8"
                         },
                         new
                         {
-                            GProfessionalId = 9,
+                            Id = 9,
                             ClientId = 9,
                             UserId = "user9"
                         },
                         new
                         {
-                            GProfessionalId = 10,
+                            Id = 10,
                             ClientId = 10,
                             UserId = "user10"
                         },
                         new
                         {
-                            GProfessionalId = 11,
+                            Id = 11,
                             ClientId = 11,
                             UserId = "user11"
                         },
                         new
                         {
-                            GProfessionalId = 12,
+                            Id = 12,
                             ClientId = 12,
                             UserId = "user12"
                         },
                         new
                         {
-                            GProfessionalId = 13,
+                            Id = 13,
                             ClientId = 13,
                             UserId = "user13"
                         },
                         new
                         {
-                            GProfessionalId = 14,
+                            Id = 14,
                             ClientId = 14,
                             UserId = "user14"
                         },
                         new
                         {
-                            GProfessionalId = 15,
+                            Id = 15,
                             ClientId = 15,
                             UserId = "user15"
                         });
@@ -1435,7 +1435,7 @@ namespace WebAthenPs.API.Migrations
                 {
                     b.HasOne("WebAthenPs.API.Entities.GenericProfessional", null)
                         .WithMany()
-                        .HasForeignKey("GProfessionalId")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

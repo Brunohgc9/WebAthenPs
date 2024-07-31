@@ -14,7 +14,7 @@ namespace WebAthenPs.API.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_ProjectProfessionals_GenericProfessionals_ProfessionalsGProfessionalId",
+                name: "FK_ProjectProfessionals_GenericProfessionals_ProfessionalsId",
                 table: "ProjectProfessionals");
 
             migrationBuilder.DropForeignKey(
@@ -24,17 +24,17 @@ namespace WebAthenPs.API.Migrations
             migrationBuilder.RenameColumn(
                 name: "ProjectsProjectId",
                 table: "ProjectProfessionals",
-                newName: "GProfessionalId");
+                newName: "Id");
 
             migrationBuilder.RenameColumn(
-                name: "ProfessionalsGProfessionalId",
+                name: "ProfessionalsId",
                 table: "ProjectProfessionals",
                 newName: "ProjectId");
 
             migrationBuilder.RenameIndex(
                 name: "IX_ProjectProfessionals_ProjectsProjectId",
                 table: "ProjectProfessionals",
-                newName: "IX_ProjectProfessionals_GProfessionalId");
+                newName: "IX_ProjectProfessionals_Id");
 
             migrationBuilder.UpdateData(
                 table: "AspNetUsers",
@@ -143,7 +143,7 @@ namespace WebAthenPs.API.Migrations
 
             migrationBuilder.InsertData(
                 table: "ProjectProfessionals",
-                columns: new[] { "GProfessionalId", "ProjectId" },
+                columns: new[] { "Id", "ProjectId" },
                 values: new object[,]
                 {
                     { 1, 1 },
@@ -179,11 +179,11 @@ namespace WebAthenPs.API.Migrations
                 });
 
             migrationBuilder.AddForeignKey(
-                name: "FK_ProjectProfessionals_GenericProfessionals_GProfessionalId",
+                name: "FK_ProjectProfessionals_GenericProfessionals_Id",
                 table: "ProjectProfessionals",
-                column: "GProfessionalId",
+                column: "Id",
                 principalTable: "GenericProfessionals",
-                principalColumn: "GProfessionalId",
+                principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
@@ -199,7 +199,7 @@ namespace WebAthenPs.API.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_ProjectProfessionals_GenericProfessionals_GProfessionalId",
+                name: "FK_ProjectProfessionals_GenericProfessionals_Id",
                 table: "ProjectProfessionals");
 
             migrationBuilder.DropForeignKey(
@@ -208,166 +208,166 @@ namespace WebAthenPs.API.Migrations
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 1, 1 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 2, 1 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 3, 2 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 4, 2 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 5, 3 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 6, 3 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 7, 4 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 8, 4 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 9, 5 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 10, 5 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 11, 6 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 12, 6 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 13, 7 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 14, 7 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 1, 8 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 15, 8 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 2, 9 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 3, 9 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 4, 10 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 5, 10 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 6, 11 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 7, 11 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 8, 12 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 9, 12 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 10, 13 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 11, 13 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 12, 14 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 13, 14 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 14, 15 });
 
             migrationBuilder.DeleteData(
                 table: "ProjectProfessionals",
-                keyColumns: new[] { "GProfessionalId", "ProjectId" },
+                keyColumns: new[] { "Id", "ProjectId" },
                 keyValues: new object[] { 15, 15 });
 
             migrationBuilder.RenameColumn(
-                name: "GProfessionalId",
+                name: "Id",
                 table: "ProjectProfessionals",
                 newName: "ProjectsProjectId");
 
             migrationBuilder.RenameColumn(
                 name: "ProjectId",
                 table: "ProjectProfessionals",
-                newName: "ProfessionalsGProfessionalId");
+                newName: "ProfessionalsId");
 
             migrationBuilder.RenameIndex(
-                name: "IX_ProjectProfessionals_GProfessionalId",
+                name: "IX_ProjectProfessionals_Id",
                 table: "ProjectProfessionals",
                 newName: "IX_ProjectProfessionals_ProjectsProjectId");
 
@@ -477,11 +477,11 @@ namespace WebAthenPs.API.Migrations
                 values: new object[] { "521d7cb1-fd36-4f8b-9d25-ad29409afd41", new DateTime(2024, 7, 24, 23, 7, 35, 758, DateTimeKind.Utc).AddTicks(5806), "c058d2a5-9882-4ed8-a3c1-10e9e9b53d13", new DateTime(2024, 7, 24, 23, 7, 35, 758, DateTimeKind.Utc).AddTicks(5806) });
 
             migrationBuilder.AddForeignKey(
-                name: "FK_ProjectProfessionals_GenericProfessionals_ProfessionalsGProfessionalId",
+                name: "FK_ProjectProfessionals_GenericProfessionals_ProfessionalsId",
                 table: "ProjectProfessionals",
-                column: "ProfessionalsGProfessionalId",
+                column: "ProfessionalsId",
                 principalTable: "GenericProfessionals",
-                principalColumn: "GProfessionalId",
+                principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(

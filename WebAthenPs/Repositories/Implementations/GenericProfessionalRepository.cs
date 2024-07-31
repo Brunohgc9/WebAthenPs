@@ -5,21 +5,21 @@ using WebAthenPs.API.Repositories.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Linq.Expressions;
+using System;
 
 namespace WebAthenPs.API.Repositories.Implementations
 {
-    public class GenericProfessionalRepository : IGenericProfessionalRepository
+    public class GenericProfessionalRepository : Repository<GenericProfessional>, IGenericProfessionalRepository
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext db;
 
-        public GenericProfessionalRepository(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        public GenericProfessionalRepository(ApplicationDbContext context) : base(context) { }
+
 
         public async Task<IEnumerable<GenericProfessional>> GetAll()
         {
-            var professionals = await _context.GenericProfessionals
+            var professionals = await db.GenericProfessionals
                 .Include(gp => gp.User) // Inclui o usuário associado ao profissional
                 .Include(gp => gp.Client) // Inclui o cliente associado ao profissional
                 .Include(gp => gp.Projects) // Inclui os projetos associados ao profissional
@@ -27,26 +27,36 @@ namespace WebAthenPs.API.Repositories.Implementations
             return professionals;
         }
 
+        public Task<IEnumerable<GenericProfessional>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<GenericProfessional> GetById(int id)
         {
-            var professional = await _context.GenericProfessionals
+            var professional = await db.GenericProfessionals
                 .Include(gp => gp.User)
                 .Include(gp => gp.Client)
                 .Include(gp => gp.Projects)
-                .SingleOrDefaultAsync(gp => gp.GProfessionalId == id);
+                .SingleOrDefaultAsync(gp => gp.Id == id);
             return professional;
+        }
+
+        public Task<GenericProfessional> GetByIdAsync(int? id)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<IEnumerable<GenericProfessional>> GetByName(string name)
         {
-            var professionals = await _context.GenericProfessionals
+            var professionals = await db.GenericProfessionals
                 .Include(gp => gp.User)
                 .Include(gp => gp.Client)
                 .Include(gp => gp.Projects)
                 .Where(gp => gp.User.UserName == name)
                 .Select(gp => new GenericProfessional
                 {
-                    GProfessionalId = gp.GProfessionalId,
+                    Id = gp.Id,
                     UserId = gp.UserId,
                     User = new ApplicationUser
                     {
@@ -74,14 +84,14 @@ namespace WebAthenPs.API.Repositories.Implementations
 
         public async Task<IEnumerable<GenericProfessional>> GetByProfessionalType(string professionalType)
         {
-            var professionals = await _context.GenericProfessionals
+            var professionals = await db.GenericProfessionals
                 .Include(gp => gp.User)
                 .Include(gp => gp.Client)
                 .Include(gp => gp.Projects)
                 .Where(gp => gp.ProfessionalType == professionalType)
                 .Select(gp => new GenericProfessional
                 {
-                    GProfessionalId = gp.GProfessionalId,
+                    Id = gp.Id,
                     UserId = gp.UserId,
                     User = new ApplicationUser
                     {
@@ -106,5 +116,8 @@ namespace WebAthenPs.API.Repositories.Implementations
                 .ToListAsync();
             return professionals;
         }
+
+
+
     }
 }

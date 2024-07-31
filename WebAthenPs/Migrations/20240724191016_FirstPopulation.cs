@@ -192,14 +192,14 @@ namespace WebAthenPs.API.Migrations
                 name: "GenericProfessionals",
                 columns: table => new
                 {
-                    GProfessionalId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ClientId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GenericProfessionals", x => x.GProfessionalId);
+                    table.PrimaryKey("PK_GenericProfessionals", x => x.Id);
                     table.ForeignKey(
                         name: "FK_GenericProfessionals_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -244,17 +244,17 @@ namespace WebAthenPs.API.Migrations
                 name: "ProjectProfessionals",
                 columns: table => new
                 {
-                    ProfessionalsGProfessionalId = table.Column<int>(type: "int", nullable: false),
+                    ProfessionalsId = table.Column<int>(type: "int", nullable: false),
                     ProjectsProjectId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProjectProfessionals", x => new { x.ProfessionalsGProfessionalId, x.ProjectsProjectId });
+                    table.PrimaryKey("PK_ProjectProfessionals", x => new { x.ProfessionalsId, x.ProjectsProjectId });
                     table.ForeignKey(
-                        name: "FK_ProjectProfessionals_GenericProfessionals_ProfessionalsGProfessionalId",
-                        column: x => x.ProfessionalsGProfessionalId,
+                        name: "FK_ProjectProfessionals_GenericProfessionals_ProfessionalsId",
+                        column: x => x.ProfessionalsId,
                         principalTable: "GenericProfessionals",
-                        principalColumn: "GProfessionalId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ProjectProfessionals_Projects_ProjectsProjectId",
@@ -310,7 +310,7 @@ namespace WebAthenPs.API.Migrations
 
             migrationBuilder.InsertData(
                 table: "GenericProfessionals",
-                columns: new[] { "GProfessionalId", "ClientId", "UserId" },
+                columns: new[] { "Id", "ClientId", "UserId" },
                 values: new object[,]
                 {
                     { 1, 1, "user1" },

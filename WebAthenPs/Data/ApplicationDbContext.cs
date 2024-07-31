@@ -42,43 +42,43 @@ namespace WebAthenPs.API.Data
                 .WithMany(gp => gp.Projects)
                 .UsingEntity<Dictionary<string, object>>(
                     "ProjectProfessionals",
-                    r => r.HasOne<GenericProfessional>().WithMany().HasForeignKey("GProfessionalId"),
+                    r => r.HasOne<GenericProfessional>().WithMany().HasForeignKey("Id"),
                     l => l.HasOne<Projects>().WithMany().HasForeignKey("ProjectId"),
                     je =>
                     {
-                        je.HasKey("ProjectId", "GProfessionalId");
+                        je.HasKey("ProjectId", "Id");
                         je.HasData(
                             // Associações entre projetos e profissionais
-                            new { ProjectId = 1, GProfessionalId = 1 },
-                            new { ProjectId = 1, GProfessionalId = 2 },
-                            new { ProjectId = 2, GProfessionalId = 3 },
-                            new { ProjectId = 2, GProfessionalId = 4 },
-                            new { ProjectId = 3, GProfessionalId = 5 },
-                            new { ProjectId = 3, GProfessionalId = 6 },
-                            new { ProjectId = 4, GProfessionalId = 7 },
-                            new { ProjectId = 4, GProfessionalId = 8 },
-                            new { ProjectId = 5, GProfessionalId = 9 },
-                            new { ProjectId = 5, GProfessionalId = 10 },
-                            new { ProjectId = 6, GProfessionalId = 11 },
-                            new { ProjectId = 6, GProfessionalId = 12 },
-                            new { ProjectId = 7, GProfessionalId = 13 },
-                            new { ProjectId = 7, GProfessionalId = 14 },
-                            new { ProjectId = 8, GProfessionalId = 15 },
-                            new { ProjectId = 8, GProfessionalId = 1 },
-                            new { ProjectId = 9, GProfessionalId = 2 },
-                            new { ProjectId = 9, GProfessionalId = 3 },
-                            new { ProjectId = 10, GProfessionalId = 4 },
-                            new { ProjectId = 10, GProfessionalId = 5 },
-                            new { ProjectId = 11, GProfessionalId = 6 },
-                            new { ProjectId = 11, GProfessionalId = 7 },
-                            new { ProjectId = 12, GProfessionalId = 8 },
-                            new { ProjectId = 12, GProfessionalId = 9 },
-                            new { ProjectId = 13, GProfessionalId = 10 },
-                            new { ProjectId = 13, GProfessionalId = 11 },
-                            new { ProjectId = 14, GProfessionalId = 12 },
-                            new { ProjectId = 14, GProfessionalId = 13 },
-                            new { ProjectId = 15, GProfessionalId = 14 },
-                            new { ProjectId = 15, GProfessionalId = 15 }
+                            new { ProjectId = 1, Id = 1 },
+                            new { ProjectId = 1, Id = 2 },
+                            new { ProjectId = 2, Id = 3 },
+                            new { ProjectId = 2, Id = 4 },
+                            new { ProjectId = 3, Id = 5 },
+                            new { ProjectId = 3, Id = 6 },
+                            new { ProjectId = 4, Id = 7 },
+                            new { ProjectId = 4, Id = 8 },
+                            new { ProjectId = 5, Id = 9 },
+                            new { ProjectId = 5, Id = 10 },
+                            new { ProjectId = 6, Id = 11 },
+                            new { ProjectId = 6, Id = 12 },
+                            new { ProjectId = 7, Id = 13 },
+                            new { ProjectId = 7, Id = 14 },
+                            new { ProjectId = 8, Id = 15 },
+                            new { ProjectId = 8, Id = 1 },
+                            new { ProjectId = 9, Id = 2 },
+                            new { ProjectId = 9, Id = 3 },
+                            new { ProjectId = 10, Id = 4 },
+                            new { ProjectId = 10, Id = 5 },
+                            new { ProjectId = 11, Id = 6 },
+                            new { ProjectId = 11, Id = 7 },
+                            new { ProjectId = 12, Id = 8 },
+                            new { ProjectId = 12, Id = 9 },
+                            new { ProjectId = 13, Id = 10 },
+                            new { ProjectId = 13, Id = 11 },
+                            new { ProjectId = 14, Id = 12 },
+                            new { ProjectId = 14, Id = 13 },
+                            new { ProjectId = 15, Id = 14 },
+                            new { ProjectId = 15, Id = 15 }
                         );
                     });
 
@@ -141,21 +141,21 @@ namespace WebAthenPs.API.Data
             );
 
             modelBuilder.Entity<GenericProfessional>().HasData(
-                new GenericProfessional { GProfessionalId = 1, UserId = "user16", ClientId = 1, ProfessionalType = "Arquiteto" },
-                new GenericProfessional { GProfessionalId = 2, UserId = "user17", ClientId = 2, ProfessionalType = "Eletricista" },
-                new GenericProfessional { GProfessionalId = 3, UserId = "user18", ClientId = 3, ProfessionalType = "Engenheiro" },
-                new GenericProfessional { GProfessionalId = 4, UserId = "user19", ClientId = 4, ProfessionalType = "Pedreiro" },
-                new GenericProfessional { GProfessionalId = 5, UserId = "user20", ClientId = 5, ProfessionalType = "Encanador" },
-                new GenericProfessional { GProfessionalId = 6, UserId = "user21", ClientId = 6, ProfessionalType = "Arquiteto" },
-                new GenericProfessional { GProfessionalId = 7, UserId = "user22", ClientId = 7, ProfessionalType = "Eletricista" },
-                new GenericProfessional { GProfessionalId = 8, UserId = "user23", ClientId = 8, ProfessionalType = "Engenheiro" },
-                new GenericProfessional { GProfessionalId = 9, UserId = "user24", ClientId = 9, ProfessionalType = "Pedreiro" },
-                new GenericProfessional { GProfessionalId = 10, UserId = "user25", ClientId = 10, ProfessionalType = "Encanador" },
-                new GenericProfessional { GProfessionalId = 11, UserId = "user26", ClientId = 11, ProfessionalType = "Arquiteto" },
-                new GenericProfessional { GProfessionalId = 12, UserId = "user27", ClientId = 12, ProfessionalType = "Eletricista" },
-                new GenericProfessional { GProfessionalId = 13, UserId = "user28", ClientId = 13, ProfessionalType = "Engenheiro" },
-                new GenericProfessional { GProfessionalId = 14, UserId = "user29", ClientId = 14, ProfessionalType = "Pedreiro" },
-                new GenericProfessional { GProfessionalId = 15, UserId = "user30", ClientId = 15, ProfessionalType = "Encanador" }
+                new GenericProfessional { Id = 1, UserId = "user16", ClientId = 1, ProfessionalType = "Arquiteto" },
+                new GenericProfessional { Id = 2, UserId = "user17", ClientId = 2, ProfessionalType = "Eletricista" },
+                new GenericProfessional { Id = 3, UserId = "user18", ClientId = 3, ProfessionalType = "Engenheiro" },
+                new GenericProfessional { Id = 4, UserId = "user19", ClientId = 4, ProfessionalType = "Pedreiro" },
+                new GenericProfessional { Id = 5, UserId = "user20", ClientId = 5, ProfessionalType = "Encanador" },
+                new GenericProfessional { Id = 6, UserId = "user21", ClientId = 6, ProfessionalType = "Arquiteto" },
+                new GenericProfessional { Id = 7, UserId = "user22", ClientId = 7, ProfessionalType = "Eletricista" },
+                new GenericProfessional { Id = 8, UserId = "user23", ClientId = 8, ProfessionalType = "Engenheiro" },
+                new GenericProfessional { Id = 9, UserId = "user24", ClientId = 9, ProfessionalType = "Pedreiro" },
+                new GenericProfessional { Id = 10, UserId = "user25", ClientId = 10, ProfessionalType = "Encanador" },
+                new GenericProfessional { Id = 11, UserId = "user26", ClientId = 11, ProfessionalType = "Arquiteto" },
+                new GenericProfessional { Id = 12, UserId = "user27", ClientId = 12, ProfessionalType = "Eletricista" },
+                new GenericProfessional { Id = 13, UserId = "user28", ClientId = 13, ProfessionalType = "Engenheiro" },
+                new GenericProfessional { Id = 14, UserId = "user29", ClientId = 14, ProfessionalType = "Pedreiro" },
+                new GenericProfessional { Id = 15, UserId = "user30", ClientId = 15, ProfessionalType = "Encanador" }
             );
 
             modelBuilder.Entity<Projects>().HasData(

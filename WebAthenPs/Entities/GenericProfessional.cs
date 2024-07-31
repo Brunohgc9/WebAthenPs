@@ -4,10 +4,9 @@ using WebAthenPs.API.Data;
 
 namespace WebAthenPs.API.Entities
 {
-    public class GenericProfessional
+    public class GenericProfessional : Entity
     {
-        [Key]
-        public int GProfessionalId { get; set; }
+
 
         public string UserId { get; set; }
 

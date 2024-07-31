@@ -15,7 +15,7 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
 
             return professionals.Select(p => new GProfessionalDTO
             {
-                GProfessionalId = p.GProfessionalId,
+                GProfessionalId = p.Id,
                 UserId = p.UserId,
                 UserName = p.User != null ? p.User.UserName : null,
                 PhoneNumber = p.User != null ? p.User.PhoneNumber : null,
@@ -36,7 +36,7 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
         {
             return new GProfessionalDTO
             {
-                GProfessionalId = professional.GProfessionalId,
+                GProfessionalId = professional.Id,
                 UserId = professional.UserId,
                 UserName = professional.User != null ? professional.User.UserName : null,
                 PhoneNumber = professional.User != null ? professional.User.PhoneNumber : null,

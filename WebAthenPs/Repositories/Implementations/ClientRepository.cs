@@ -62,7 +62,7 @@ namespace WebAthenPs.API.Repositories.Implementations
                     }).ToList(),
                     GenericProfessionals = c.GenericProfessionals.Select(gp => new GenericProfessional
                     {
-                        GProfessionalId = gp.GProfessionalId,
+                        Id = gp.Id,
                         User = new ApplicationUser
                         {
                             UserName = gp.User.UserName
