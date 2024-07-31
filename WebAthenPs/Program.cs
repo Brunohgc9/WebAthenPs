@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using WebAthenPs.API.Data;
+using WebAthenPs.API.Mappings.MappingProjectDTO;
 using WebAthenPs.API.Repositories.Implementations;
 using WebAthenPs.API.Repositories.Interfaces;
 
@@ -12,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configuração dos serviços
 builder.Services.AddControllers();
+builder.Services.AddAutoMapper(typeof(DomainToDTOProfile));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {

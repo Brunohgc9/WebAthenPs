@@ -8,10 +8,9 @@ namespace WebAthenPs.Project.Services.Interfaces
         Task<GProfessionalDTO> GetById(int id);
         Task<IEnumerable<GProfessionalDTO>> GetByName(string name);
         Task<IEnumerable<GProfessionalDTO>> GetByProfessionalType(string professionalType);
-        Task<GProfessionalDTO> CreateProfessional(GProfessionalDTO professionalDTO);
+        Task<bool> CreateProfessional(GProfessionalDTO professionalDTO); // Atualizado para bool
         Task<GProfessionalDTO> UpdateProfessional(GProfessionalDTO professionalDTO, int id);
-        Task<bool> DeleteProfessional(int id);
-
-
+        Task<bool> DeleteProfessional(int id); // Atualizado para bool
     }
+
 }

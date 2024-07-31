@@ -19,7 +19,7 @@ namespace WebAthenPs.API.Repositories.Implementations
 
         public async Task<IEnumerable<GenericProfessional>> GetAll()
         {
-            var professionals = await db.GenericProfessionals
+            var professionals = await _db.GenericProfessionals
                 .Include(gp => gp.User) // Inclui o usuário associado ao profissional
                 .Include(gp => gp.Client) // Inclui o cliente associado ao profissional
                 .Include(gp => gp.Projects) // Inclui os projetos associados ao profissional
@@ -27,14 +27,9 @@ namespace WebAthenPs.API.Repositories.Implementations
             return professionals;
         }
 
-        public Task<IEnumerable<GenericProfessional>> GetAllAsync()
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<GenericProfessional> GetById(int id)
         {
-            var professional = await db.GenericProfessionals
+            var professional = await _db.GenericProfessionals
                 .Include(gp => gp.User)
                 .Include(gp => gp.Client)
                 .Include(gp => gp.Projects)
@@ -42,14 +37,9 @@ namespace WebAthenPs.API.Repositories.Implementations
             return professional;
         }
 
-        public Task<GenericProfessional> GetByIdAsync(int? id)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<IEnumerable<GenericProfessional>> GetByName(string name)
         {
-            var professionals = await db.GenericProfessionals
+            var professionals = await _db.GenericProfessionals
                 .Include(gp => gp.User)
                 .Include(gp => gp.Client)
                 .Include(gp => gp.Projects)
@@ -84,7 +74,7 @@ namespace WebAthenPs.API.Repositories.Implementations
 
         public async Task<IEnumerable<GenericProfessional>> GetByProfessionalType(string professionalType)
         {
-            var professionals = await db.GenericProfessionals
+            var professionals = await _db.GenericProfessionals
                 .Include(gp => gp.User)
                 .Include(gp => gp.Client)
                 .Include(gp => gp.Projects)

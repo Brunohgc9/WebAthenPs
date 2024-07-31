@@ -17,11 +17,6 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
             {
                 GProfessionalId = p.Id,
                 UserId = p.UserId,
-                UserName = p.User != null ? p.User.UserName : null,
-                PhoneNumber = p.User != null ? p.User.PhoneNumber : null,
-                Email = p.User != null ? p.User.Email : null,
-                ClientId = p.ClientId,
-                ClientName = p.Client != null ? p.Client.User?.UserName : null,  // Adiciona ? para evitar NullReferenceException
                 ProfessionalType = p.ProfessionalType,
                 Projects = p.Projects != null ? p.Projects.Select(pr => new ProjectsDTO
                 {
@@ -39,10 +34,6 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                 GProfessionalId = professional.Id,
                 UserId = professional.UserId,
                 UserName = professional.User != null ? professional.User.UserName : null,
-                PhoneNumber = professional.User != null ? professional.User.PhoneNumber : null,
-                Email = professional.User != null ? professional.User.Email : null,
-                ClientId = professional.ClientId,
-                ClientName = professional.Client != null ? professional.Client.User.UserName : null,
                 ProfessionalType = professional.ProfessionalType,
                 Projects = professional.Projects != null ? professional.Projects.Select(pr => new ProjectsDTO
                 {

@@ -20,48 +20,52 @@ namespace WebAthenPs.Project.Services.Imprementation
         private readonly HttpClient _httpClient;
         private readonly ILogger<GenericProfessionalService> _logger;
         private readonly ILocalStorageService _localStorage;
-        private const string apiEndpoint = "/api/GenericProfessionals/";
+        private const string apiEndpoint = "api/GenericProfessionals/";
 
-        public GenericProfessionalService(IHttpClientFactory httpClientFactory, JsonSerializerOptions options, HttpClient httpClient, ILogger<GenericProfessionalService> logger, ILocalStorageService localStorage)
+        public GenericProfessionalService(IHttpClientFactory httpClientFactory, JsonSerializerOptions options, ILogger<GenericProfessionalService> logger, ILocalStorageService localStorage)
         {
             _httpClientFactory = httpClientFactory;
-            _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            _httpClient = httpClient;
+            _options = options;
             _logger = logger;
             _localStorage = localStorage;
+            _httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
         }
 
-        public async Task<GProfessionalDTO> CreateProfessional(GProfessionalDTO professionalDTO)
+        public async Task<bool> CreateProfessional(GProfessionalDTO professionalDTO)
         {
-            var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
-            StringContent content = new StringContent(JsonSerializer.Serialize(professionalDTO),
-                                                      Encoding.UTF8, "application/json");
-
-            using (var response = await httpClient.PostAsync(apiEndpoint, content))
+            try
             {
-                if (response.IsSuccessStatusCode)
-                {
-                    var apiResponse = await response.Content.ReadAsStreamAsync();
+                StringContent content = new StringContent(JsonSerializer.Serialize(professionalDTO),
+                                                          Encoding.UTF8, "application/json");
 
-                    professionalDTO = await JsonSerializer
-                               .DeserializeAsync<GProfessionalDTO>(apiResponse, _options);
-                }
-                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                using (var response = await _httpClient.PostAsync(apiEndpoint + "CreateP", content))
                 {
-                    throw new UnauthorizedAccessException();
-                }
-                else
-                {
-                    return null;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return true;
+                    }
+                    else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        throw new UnauthorizedAccessException();
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
             }
-            return professionalDTO;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao criar profissional.");
+                return false;
+            }
         }
+
+
 
         public async Task<bool> DeleteProfessional(int id)
         {
-            var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
-            using (var response = await httpClient.DeleteAsync(apiEndpoint + id))
+            using (var response = await _httpClient.DeleteAsync(apiEndpoint + id))
             {
                 if (response.IsSuccessStatusCode)
                 {
@@ -85,7 +89,7 @@ namespace WebAthenPs.Project.Services.Imprementation
                     _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 }
 
-                var professionalsDto = await _httpClient.GetFromJsonAsync<IEnumerable<GProfessionalDTO>>("api/GenericProfessionals");
+                var professionalsDto = await _httpClient.GetFromJsonAsync<IEnumerable<GProfessionalDTO>>(apiEndpoint);
                 if (professionalsDto == null)
                 {
                     _logger.LogWarning("Nenhum profissional encontrado na API em 'api/GenericProfessionals'.");
@@ -114,7 +118,7 @@ namespace WebAthenPs.Project.Services.Imprementation
                     _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 }
 
-                var professionalDto = await _httpClient.GetFromJsonAsync<GProfessionalDTO>($"api/GenericProfessionals/{id}");
+                var professionalDto = await _httpClient.GetFromJsonAsync<GProfessionalDTO>($"{apiEndpoint}{id}");
                 if (professionalDto == null)
                 {
                     _logger.LogWarning($"Profissional com ID {id} não encontrado.");
@@ -123,7 +127,7 @@ namespace WebAthenPs.Project.Services.Imprementation
             }
             catch (HttpRequestException httpEx)
             {
-                _logger.LogError(httpEx, $"Erro ao acessar a API de profissionais para ID {id}. URL: api/GenericProfessionals/{id}");
+                _logger.LogError(httpEx, $"Erro ao acessar a API de profissionais para ID {id}. URL: {apiEndpoint}{id}");
                 throw;
             }
             catch (Exception ex)
@@ -142,7 +146,7 @@ namespace WebAthenPs.Project.Services.Imprementation
                 {
                     _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 }
-                var professionalsDto = await _httpClient.GetFromJsonAsync<IEnumerable<GProfessionalDTO>>($"api/GenericProfessionals/ByName/{name}");
+                var professionalsDto = await _httpClient.GetFromJsonAsync<IEnumerable<GProfessionalDTO>>($"{apiEndpoint}ByName/{name}");
                 if (professionalsDto == null)
                 {
                     _logger.LogWarning($"Nenhum profissional encontrado com o nome {name}.");
@@ -151,7 +155,7 @@ namespace WebAthenPs.Project.Services.Imprementation
             }
             catch (HttpRequestException httpEx)
             {
-                _logger.LogError(httpEx, $"Erro ao acessar a API de profissionais com o nome {name}. URL: api/GenericProfessionals/ByName/{name}");
+                _logger.LogError(httpEx, $"Erro ao acessar a API de profissionais com o nome {name}. URL: {apiEndpoint}ByName/{name}");
                 throw;
             }
             catch (Exception ex)
@@ -170,7 +174,7 @@ namespace WebAthenPs.Project.Services.Imprementation
                 {
                     _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 }
-                var professionalsDto = await _httpClient.GetFromJsonAsync<IEnumerable<GProfessionalDTO>>($"api/GenericProfessionals/ByProfessionalType/{professionalType}");
+                var professionalsDto = await _httpClient.GetFromJsonAsync<IEnumerable<GProfessionalDTO>>($"{apiEndpoint}ByProfessionalType/{professionalType}");
                 if (professionalsDto == null)
                 {
                     _logger.LogWarning($"Nenhum profissional encontrado com o tipo {professionalType}.");
@@ -179,7 +183,7 @@ namespace WebAthenPs.Project.Services.Imprementation
             }
             catch (HttpRequestException httpEx)
             {
-                _logger.LogError(httpEx, $"Erro ao acessar a API de profissionais com o tipo {professionalType}. URL: api/GenericProfessionals/type/{professionalType}");
+                _logger.LogError(httpEx, $"Erro ao acessar a API de profissionais com o tipo {professionalType}. URL: {apiEndpoint}ByProfessionalType/{professionalType}");
                 throw;
             }
             catch (Exception ex)
@@ -191,6 +195,11 @@ namespace WebAthenPs.Project.Services.Imprementation
 
         public async Task<GProfessionalDTO> UpdateProfessional(GProfessionalDTO professionalDTO, int id)
         {
+            var token = await _localStorage.GetItemAsync<string>("authToken");
+            if (!string.IsNullOrEmpty(token))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
             var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
             GProfessionalDTO ProfessionalUpdated = new GProfessionalDTO();
             using (var response = await httpClient.PutAsJsonAsync(apiEndpoint + id, professionalDTO))
@@ -209,5 +218,4 @@ namespace WebAthenPs.Project.Services.Imprementation
             return ProfessionalUpdated;
         }
     }
-    
 }

@@ -8,5 +8,6 @@ namespace WebAthenPs.Models.Models
 {
     public class ProfessionalRegisterModel
     {
+        public string? ProfessionalType { get; set; }
     }
 }

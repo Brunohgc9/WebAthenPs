@@ -10,7 +10,9 @@ namespace WebAthenPs.Models.Models
     {
         public string Token { get; set; }
         public DateTime Expiration { get; set; }
-        public string ErrorMessage { get; set; } // Adicione uma propriedade para mensagens de erro, se necessário
+        public string ErrorMessage { get; set; }
+        public bool? IsProfessional { get; set; }
+        public bool NeedsProfessionalTypeRegistration { get; set; }
     }
 
 }

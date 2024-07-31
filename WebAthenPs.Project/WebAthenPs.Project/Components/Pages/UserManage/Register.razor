@@ -3,7 +3,6 @@
 @using WebAthenPs.Models.Models
 @using WebAthenPs.Project.Services.Interfaces
 @inject IAuthService AuthService
-@inject IGenericProfessionalService GenericProfessionalService
 @inject NavigationManager NavigationManager
 @using BlazorInputMask
 
@@ -44,7 +43,7 @@
         }
         else if (currentStep == 2)
         {
-            <EditForm Model="additionalInfo" OnValidSubmit="GoToStepThree">
+            <EditForm Model="additionalInfo" OnValidSubmit="HandleSubmit">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
 
@@ -54,7 +53,7 @@
                 </div>
                 <div class="form-group mt-2">
                     <label for="userType">User Type</label>
-                    <InputSelect @bind-Value="additionalInfo.UserType" Class="form-control" @onchange="OnUserTypeChange">
+                    <InputSelect @bind-Value="additionalInfo.UserType" Class="form-control">
                         <option value="">Select</option>
                         <option value="Cliente">Cliente</option>
                         <option value="Profissional">Profissional</option>
@@ -96,21 +95,6 @@
                 </div>
 
                 <button type="button" class="btn btn-secondary mt-2" @onclick="GoToStepOne">Back</button>
-                <button type="submit" class="btn btn-primary mt-2">Next</button>
-            </EditForm>
-        }
-        else if (currentStep == 3)
-        {
-            <EditForm Model="professionalInfo" OnValidSubmit="HandleProfessionalType">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-
-                <div class="form-group mt-2">
-                    <label for="professionalType">Professional Type</label>
-                    <InputText Id="professionalType" Class="form-control" @bind-Value="professionalInfo.ProfessionalType" />
-                </div>
-
-                <button type="button" class="btn btn-secondary mt-2" @onclick="GoToStepTwo">Back</button>
                 <button type="submit" class="btn btn-primary mt-2">Submit</button>
             </EditForm>
         }
@@ -121,7 +105,6 @@
     private int currentStep = 1;
     private BasicInfoModel basicInfo = new BasicInfoModel();
     private AdditionalInfoModel additionalInfo = new AdditionalInfoModel();
-    private ProfessionalInfoModel professionalInfo = new ProfessionalInfoModel();
     private bool ShowErrors;
     private string Error = string.Empty;
 
@@ -144,17 +127,7 @@
         currentStep = 1;
     }
 
-    private void GoToStepThree()
-    {
-        currentStep = 3;
-    }
-
-    private void OnUserTypeChange(ChangeEventArgs e)
-    {
-        additionalInfo.UserType = e.Value.ToString();
-    }
-
-    private async Task HandleProfessionalType()
+    private async Task HandleSubmit()
     {
         ShowErrors = false;
         try
@@ -179,24 +152,6 @@
 
             if (registerResult)
             {
-                if (additionalInfo.UserType == "Profissional" || additionalInfo.UserType == "Ambos")
-                {
-                    // Adiciona o perfil profissional após o registro
-                    var professionalDTO = new GProfessionalDTO
-                        {
-                            Email = basicInfo.Email,
-                            ProfessionalType = professionalInfo.ProfessionalType,
-                            // Adicione outros campos se necessário
-                        };
-
-                    var professionalResult = await GenericProfessionalService.CreateProfessional(professionalDTO);
-
-                    if (professionalResult == null)
-                    {
-                        throw new Exception("Failed to create professional profile.");
-                    }
-                }
-
                 NavigationManager.NavigateTo("/login");
             }
             else
@@ -237,10 +192,5 @@
         public string? City { get; set; }
         public string? State { get; set; }
         public string? PostalCode { get; set; }
-    }
-
-    private class ProfessionalInfoModel
-    {
-        public string? ProfessionalType { get; set; }
     }
 }

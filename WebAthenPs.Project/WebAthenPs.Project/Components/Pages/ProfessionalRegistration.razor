@@ -1,70 +1,34 @@
-﻿@page "/create-professional"
-@using WebAthenPs.Models.DTOs
-@using WebAthenPs.Project.Services.Interfaces
+﻿@page "/register-professional"
 @inject IGenericProfessionalService GenericProfessionalService
 @inject NavigationManager NavigationManager
-@using System.ComponentModel.DataAnnotations
 
-<h1>Cadastrar Tipo de Profissional</h1>
+<h3>Register Professional</h3>
 
-@if (ShowErrors)
-{
-    <p class="alert alert-danger">@Error</p>
-}
-
-<EditForm Model="professionalInfo" OnValidSubmit="HandleCreate">
+<EditForm Model="@professional" OnValidSubmit="RegisterProfessional">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
-    <div class="form-group mt-2">
-        <label for="professionalType">Tipo de Profissional</label>
-        <InputText Id="professionalType" Class="form-control" @bind-Value="professionalInfo.ProfessionalType" />
-        <ValidationMessage For="@(() => professionalInfo.ProfessionalType)" />
+    <div class="form-group">
+        <label for="professionalType">Professional Type</label>
+        <InputText id="professionalType" class="form-control" @bind-Value="professional.ProfessionalType" />
     </div>
 
-    <button type="submit" class="btn btn-primary mt-2">Salvar</button>
+    <button type="submit" class="btn btn-primary">Register</button>
 </EditForm>
 
 @code {
-    [Parameter]
-    public string? ProfessionalType { get; set; }
+    private GProfessionalDTO professional = new GProfessionalDTO();
 
-    private ProfessionalInfoModel professionalInfo = new ProfessionalInfoModel();
-    private bool ShowErrors;
-    private string Error = string.Empty;
-
-    private async Task HandleCreate()
+    private async Task RegisterProfessional()
     {
-        ShowErrors = false;
-        try
+        var result = await GenericProfessionalService.CreateProfessional(professional);
+        if (result)
         {
-            var professionalDTO = new GProfessionalDTO
-                {
-                    ProfessionalType = professionalInfo.ProfessionalType
-                };
-
-            var result = await GenericProfessionalService.CreateProfessional(professionalDTO);
-
-            if (result != null)
-            {
-                NavigationManager.NavigateTo("/login");
-            }
-            else
-            {
-                Error = "Falha ao criar o tipo de profissional.";
-                ShowErrors = true;
-            }
+            NavigationManager.NavigateTo("/");
         }
-        catch (Exception ex)
+        else
         {
-            Error = "Ocorreu um erro: " + ex.Message;
-            ShowErrors = true;
+            // Handle registration failure (show error message, etc.)
         }
-    }
-
-    private class ProfessionalInfoModel
-    {
-        [Required]
-        public string ProfessionalType { get; set; }
     }
 }

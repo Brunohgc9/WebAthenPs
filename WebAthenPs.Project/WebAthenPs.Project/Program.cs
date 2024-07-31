@@ -16,15 +16,11 @@ builder.Services.AddRazorComponents()
 
 
 var baseUrl = "https://localhost:7171";
-builder.Services.AddScoped( AsP => new HttpClient
-{
-    BaseAddress = new Uri(baseUrl)
-});
-
 builder.Services.AddHttpClient("APIWebAthenPs", options =>
 {
     options.BaseAddress = new Uri(baseUrl);
 });
+builder.Services.AddAutoMapper(typeof(Program).Assembly); // Ensure that AutoMapper profiles are registered
 
 
 builder.Services.AddScoped<IProjectService, ProjectService>();
