@@ -21,7 +21,7 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                 PhoneNumber = p.User != null ? p.User.PhoneNumber : null,
                 Email = p.User != null ? p.User.Email : null,
                 ClientId = p.ClientId,
-                ClientName = p.Client != null ? p.Client.User.UserName : null,
+                ClientName = p.Client != null ? p.Client.User?.UserName : null,  // Adiciona ? para evitar NullReferenceException
                 ProfessionalType = p.ProfessionalType,
                 Projects = p.Projects != null ? p.Projects.Select(pr => new ProjectsDTO
                 {
@@ -30,6 +30,7 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                 }).ToList() : new List<ProjectsDTO>()
             });
         }
+
 
         public static GProfessionalDTO ConverterProfissionalParaDTO(this GenericProfessional professional)
         {

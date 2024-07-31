@@ -101,6 +101,8 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
+builder.Services.AddScoped<IGenericProfessionalRepository, GenericProfessionalRepository>();
+
 
 var app = builder.Build();
 

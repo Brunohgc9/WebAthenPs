@@ -3,6 +3,7 @@
 @using WebAthenPs.Models.Models
 @using WebAthenPs.Project.Services.Interfaces
 @inject IAuthService AuthService
+@inject IGenericProfessionalService GenericProfessionalService
 @inject NavigationManager NavigationManager
 @using BlazorInputMask
 
@@ -53,7 +54,7 @@
                 </div>
                 <div class="form-group mt-2">
                     <label for="userType">User Type</label>
-                    <InputSelect @bind-Value="additionalInfo.UserType" Class="form-control">
+                    <InputSelect @bind-Value="additionalInfo.UserType" Class="form-control" @onchange="OnUserTypeChange">
                         <option value="">Select</option>
                         <option value="Cliente">Cliente</option>
                         <option value="Profissional">Profissional</option>
@@ -94,6 +95,15 @@
                     <InputMask Id="postalCode" Class="form-control" Mask="00000-000" @bind-Value="additionalInfo.PostalCode" />
                 </div>
 
+                @if (additionalInfo.UserType == "Profissional" || additionalInfo.UserType == "Ambos")
+                {
+                    <div class="form-group mt-2">
+                        <label for="professionalType">Professional Type</label>
+                        <InputText Id="professionalType" Class="form-control" @bind-Value="additionalInfo.ProfessionalType" />
+                    </div>
+
+                }
+
                 <button type="button" class="btn btn-secondary mt-2" @onclick="GoToStepOne">Back</button>
                 <button type="submit" class="btn btn-primary mt-2">Submit</button>
             </EditForm>
@@ -127,6 +137,11 @@
         currentStep = 1;
     }
 
+    private void OnUserTypeChange(ChangeEventArgs e)
+    {
+        additionalInfo.UserType = e.Value.ToString();
+    }
+
     private async Task HandleRegister()
     {
         ShowErrors = false;
@@ -145,7 +160,8 @@
                     Address = additionalInfo.Address,
                     City = additionalInfo.City,
                     State = additionalInfo.State,
-                    PostalCode = additionalInfo.PostalCode
+                    PostalCode = additionalInfo.PostalCode,
+                    ProfessionalType = additionalInfo.ProfessionalType,
                 };
 
             var result = await AuthService.Register(registerModel);
@@ -192,5 +208,6 @@
         public string? City { get; set; }
         public string? State { get; set; }
         public string? PostalCode { get; set; }
+        public string? ProfessionalType { get; set; }
     }
 }
