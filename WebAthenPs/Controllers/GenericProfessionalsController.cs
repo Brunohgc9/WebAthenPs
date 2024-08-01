@@ -30,22 +30,31 @@ namespace WebAthenPs.API.Controllers
         public async Task<IActionResult> Create([FromBody] RegisterProfessionalModel model)
         {
             if (model == null || !ModelState.IsValid)
-                return BadRequest("Invalid data.");
+                return BadRequest("Dados inválidos.");
 
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-            if (string.IsNullOrEmpty(userId))
-                return Unauthorized("User not authenticated.");
+            // Remover a verificação de autenticação
+            // var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            // if (string.IsNullOrEmpty(userId))
+            //     return Unauthorized("Usuário não autenticado.");
 
             var genericProfessional = GenericProfessionalMapping.CriarProfessionalEmDTO(model);
-            genericProfessional.UserId = userId;
+            // Aqui você pode definir um UserId padrão ou deixar como nulo se não for necessário
+            // genericProfessional.UserId = userId;
 
-            await _repository.CreateAsync(genericProfessional);
+            try
+            {
+                await _repository.CreateAsync(genericProfessional);
 
-            var createdDto = GenericProfessionalMapping.ConverterProfessionalParaDTO(genericProfessional);
+                var createdDto = GenericProfessionalMapping.ConverterProfessionalParaDTO(genericProfessional);
 
-            return CreatedAtAction(nameof(GetById), new { id = createdDto.Id }, createdDto);
+                return CreatedAtAction(nameof(GetById), new { id = createdDto.Id }, createdDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao criar profissional: {ex.Message}");
+            }
         }
+
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById(int id)

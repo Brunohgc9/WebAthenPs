@@ -5,9 +5,9 @@ namespace WebAthenPs.API.Repositories.Interfaces
 {
     public interface IProjectRepository
     {
-        Task<IEnumerable<Projects>> GetAll();
-        Task<Projects> GetById(int id);
-        Task<IEnumerable<Projects>> GetByStatus(string status);
-        Task<IEnumerable<Projects>> GetByArea(decimal area);
+        Task<IEnumerable<Projecty>> GetAll();
+        Task<Projecty> GetById(int id);
+        Task<IEnumerable<Projecty>> GetByStatus(string status);
+        Task<IEnumerable<Projecty>> GetByArea(decimal area);
     }
 }

@@ -1,8 +1,11 @@
 ﻿@page "/register"
 @using System.ComponentModel.DataAnnotations
+@using WebAthenPs.API.Services.Interfaces
 @using WebAthenPs.Models.Models
 @using WebAthenPs.Project.Services.Interfaces
 @inject IAuthService AuthService
+@inject IClientService ClientService
+@inject IGenericProfessionalService ProfessionalService
 @inject NavigationManager NavigationManager
 @using BlazorInputMask
 
@@ -94,6 +97,14 @@
                     <InputMask Id="postalCode" Class="form-control" Mask="00000-000" @bind-Value="additionalInfo.PostalCode" />
                 </div>
 
+                @if (additionalInfo.UserType == "Profissional" || additionalInfo.UserType == "Ambos")
+                {
+                    <div class="form-group mt-2">
+                        <label for="professionalType">Professional Type</label>
+                        <InputText Id="professionalType" Class="form-control" @bind-Value="additionalInfo.ProfessionalType" />
+                    </div>
+                }
+
                 <button type="button" class="btn btn-secondary mt-2" @onclick="GoToStepOne">Back</button>
                 <button type="submit" class="btn btn-primary mt-2">Submit</button>
             </EditForm>
@@ -127,6 +138,11 @@
         currentStep = 1;
     }
 
+    private void OnUserTypeChanged(ChangeEventArgs e)
+    {
+        additionalInfo.UserType = e.Value.ToString();
+    }
+
     private async Task HandleSubmit()
     {
         ShowErrors = false;
@@ -148,10 +164,46 @@
                     PostalCode = additionalInfo.PostalCode
                 };
 
-            var registerResult = await AuthService.Register(registerModel);
+            // Registre o usuário e obtenha o UserId
+            var userId = await AuthService.Register(registerModel);
 
-            if (registerResult)
+            if (userId != null)
             {
+                // Registre o cliente se necessário
+                if (additionalInfo.UserType == "Cliente" || additionalInfo.UserType == "Ambos")
+                {
+                    var clientDto = new RegisterClientModel
+                        {
+                            UserId = userId
+                        };
+
+                    var clientCreationResult = await ClientService.CreateAsync(clientDto, userId);
+                    if (clientCreationResult == null)
+                    {
+                        Error = "Failed to register client.";
+                        ShowErrors = true;
+                        return;
+                    }
+                }
+
+                // Registre o profissional se necessário
+                if (additionalInfo.UserType == "Profissional" || additionalInfo.UserType == "Ambos")
+                {
+                    var professionalModel = new RegisterProfessionalModel
+                        {
+                            UserId = userId,
+                            ProfessionalType = additionalInfo.ProfessionalType
+                        };
+
+                    var professionalCreationResult = await ProfessionalService.CreateAsync(professionalModel, userId);
+                    if (professionalCreationResult == null)
+                    {
+                        Error = "Failed to register professional.";
+                        ShowErrors = true;
+                        return;
+                    }
+                }
+
                 NavigationManager.NavigateTo("/login");
             }
             else
@@ -167,18 +219,20 @@
         }
     }
 
+
+
     private class BasicInfoModel
     {
         [Required]
         [EmailAddress]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         [Required]
-        public string Password { get; set; }
+        public string Password { get; set; } = string.Empty;
 
         [Required]
         [Compare(nameof(Password))]
-        public string ConfirmPassword { get; set; }
+        public string ConfirmPassword { get; set; } = string.Empty;
     }
 
     private class AdditionalInfoModel
@@ -192,5 +246,7 @@
         public string? City { get; set; }
         public string? State { get; set; }
         public string? PostalCode { get; set; }
+        public string? ProfessionalType { get; set; } // Adicione esta propriedade
     }
+
 }

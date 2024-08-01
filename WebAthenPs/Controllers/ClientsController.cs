@@ -8,7 +8,6 @@ using System.Linq;
 using WebAthenPs.API.Mappings.MappingProjectDTO;
 using Microsoft.AspNetCore.Authorization;
 using WebAthenPs.API.Entities;
-using Microsoft.Build.Evaluation;
 
 namespace WebAthenPs.API.Controllers
 {
@@ -83,33 +82,21 @@ namespace WebAthenPs.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ClientDTO>> Create(ClientDTO clientDTO)
+        public async Task<ActionResult<ClientDTO>> Create([FromBody] ClientDTO clientDTO)
         {
+            if (clientDTO == null)
+            {
+                return BadRequest("Cliente não pode ser nulo.");
+            }
+
+            var client = new Client
+            {
+                ClientId = clientDTO.ClientId,
+                UserId = clientDTO.UserId
+            };
+
             try
             {
-                if (clientDTO == null)
-                {
-                    return BadRequest("Cliente não pode ser nulo.");
-                }
-
-                var client = new Client
-                {
-                    ClientId = clientDTO.ClientId,
-                    UserId = clientDTO.UserId,
-                    // Mapeie outros campos conforme necessário
-                    GenericProfessionals = clientDTO.GenericProfessionals?.Select(gp => new GenericProfessional
-                    {
-                        ProfessionalType = gp.ProfessionalType,
-                        Id = gp.Id,
-                        // Mapeie outros campos conforme necessário
-                    }).ToList(),
-                    Houses = clientDTO.Houses?.Select(p => new Projecty
-                    {
-                        ProjectId = p.ProjectId,
-                        ProjectName = p.ProjectName
-                    }).ToList()
-                };
-
                 var createdClient = await _clientRepository.Create(client);
                 var createdClientDTO = createdClient.ConverterClienteParaDTO();
 
@@ -117,9 +104,10 @@ namespace WebAthenPs.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao criar o cliente. Detalhes: " + ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao criar cliente: {ex.Message}");
             }
         }
+
 
         [HttpPut("{id:int}")]
         public async Task<ActionResult> Update(int id, ClientDTO clientDTO)
@@ -141,7 +129,6 @@ namespace WebAthenPs.API.Controllers
                 {
                     ClientId = clientDTO.ClientId,
                     UserId = clientDTO.UserId,
-                    // Mapeie outros campos conforme necessário
                     GenericProfessionals = clientDTO.GenericProfessionals?.Select(gp => new GenericProfessional
                     {
                         ProfessionalType = gp.ProfessionalType,

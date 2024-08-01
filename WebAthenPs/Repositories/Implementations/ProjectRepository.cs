@@ -14,7 +14,7 @@ namespace WebAthenPs.API.Repositories.Implementations
             _context = context;
         }
 
-        public async Task<IEnumerable<Projects>> GetAll()
+        public async Task<IEnumerable<Projecty>> GetAll()
         {
             var projects = await _context.Projects
                 .Include(p => p.Client)
@@ -25,7 +25,7 @@ namespace WebAthenPs.API.Repositories.Implementations
             return projects;
         }
 
-        public async Task<IEnumerable<Projects>> GetByArea(decimal area)
+        public async Task<IEnumerable<Projecty>> GetByArea(decimal area)
         {
             var projects = await _context.Projects
                 .Where(a => a.TotalArea >= area)
@@ -38,7 +38,7 @@ namespace WebAthenPs.API.Repositories.Implementations
             return projects;
         }
 
-        public async Task<Projects> GetById(int id)
+        public async Task<Projecty> GetById(int id)
         {
             var projects = await _context.Projects
                 .Include(p => p.Client)
@@ -49,7 +49,7 @@ namespace WebAthenPs.API.Repositories.Implementations
             return projects;
         }
 
-        public async Task<IEnumerable<Projects>> GetByStatus(string status)
+        public async Task<IEnumerable<Projecty>> GetByStatus(string status)
         {
             var projects = await _context.Projects
                 .Where(s => s.Status == status)

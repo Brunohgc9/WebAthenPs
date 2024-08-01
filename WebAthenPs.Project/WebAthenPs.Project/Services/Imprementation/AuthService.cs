@@ -86,7 +86,7 @@ namespace WebAthenPs.Project.Services.Imprementation
             httpClient.DefaultRequestHeaders.Authorization = null;
         }
 
-        public async Task<bool> Register(RegisterModel registerModel)
+        public async Task<string?> Register(RegisterModel registerModel)
         {
             try
             {
@@ -96,13 +96,28 @@ namespace WebAthenPs.Project.Services.Imprementation
 
                 var response = await httpClient.PostAsync("api/Users/Register", requestContent);
 
-                return response.IsSuccessStatusCode;
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadAsStringAsync();
+                    var registerResult = JsonSerializer.Deserialize<RegisterResult>(result, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    if (registerResult != null)
+                    {
+                        // Retorne o UserId do usuário registrado
+                        return registerResult.UserId;
+                    }
+                }
+
+                // Retorne null se não for possível obter o UserId
+                return null;
             }
             catch (Exception)
             {
+                // Trate a exceção conforme necessário
                 throw;
             }
         }
+
 
 
     }

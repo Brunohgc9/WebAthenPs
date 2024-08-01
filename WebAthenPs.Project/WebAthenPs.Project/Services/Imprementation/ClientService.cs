@@ -1,17 +1,17 @@
-﻿using WebAthenPs.Models.DTOs;
-using WebAthenPs.Project.Services.Interfaces;
+﻿using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Json;
-using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
-using System.Text.Json;
-using System.Text;
+using Microsoft.Extensions.Logging;
+using WebAthenPs.API.Services.Interfaces;
+using WebAthenPs.Models.DTOs;
+using WebAthenPs.Models.Models;
 
-namespace WebAthenPs.Project.Services.Imprementation
+namespace WebAthenPs.API.Services.Implementation
 {
     public class ClientService : IClientService
     {
@@ -20,7 +20,11 @@ namespace WebAthenPs.Project.Services.Imprementation
         private readonly ILocalStorageService _localStorage;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
 
-        public ClientService(IHttpClientFactory httpClientFactory, ILogger<ClientService> logger, ILocalStorageService localStorage, AuthenticationStateProvider authenticationStateProvider)
+        public ClientService(
+            IHttpClientFactory httpClientFactory,
+            ILogger<ClientService> logger,
+            ILocalStorageService localStorage,
+            AuthenticationStateProvider authenticationStateProvider)
         {
             _httpClientFactory = httpClientFactory;
             _logger = logger;
@@ -40,30 +44,40 @@ namespace WebAthenPs.Project.Services.Imprementation
             return httpClient;
         }
 
-        public async Task<IEnumerable<ClientDTO>> GetAll()
+        public async Task<ClientDTO> CreateAsync(RegisterClientModel clientModel, string userId)
         {
             try
             {
                 var httpClient = await CreateAuthorizedClientAsync();
-                var clientsDto = await httpClient.GetFromJsonAsync<IEnumerable<ClientDTO>>("api/Clients");
+                clientModel.UserId = userId; // Associate the user ID with the client
+                var clientAsJson = JsonSerializer.Serialize(clientModel);
+                var requestContent = new StringContent(clientAsJson, Encoding.UTF8, "application/json");
 
-                if (clientsDto == null)
+                var response = await httpClient.PostAsync("api/Clients", requestContent);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    _logger.LogWarning("Nenhum cliente encontrado na API em 'api/Clients'.");
+                    var createdDto = JsonSerializer.Deserialize<ClientDTO>(
+                        await response.Content.ReadAsStringAsync(),
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    return createdDto;
                 }
-                return clientsDto;
-            }
-            catch (HttpRequestException httpEx)
-            {
-                _logger.LogError(httpEx, "Erro ao acessar a API de clientes. URL: api/Clients");
-                throw;
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogError($"Error creating client. Status code: {response.StatusCode}, Content: {errorContent}");
+                    return null;
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro inesperado ao acessar a API de clientes.");
+                _logger.LogError(ex, "Error creating client.");
                 throw;
             }
         }
+
+
 
         public async Task<ClientDTO> GetById(int id)
         {
@@ -77,36 +91,11 @@ namespace WebAthenPs.Project.Services.Imprementation
                     _logger.LogWarning($"Cliente com ID {id} não encontrado.");
                     return null;
                 }
-
-                // Obtém todos os projetos do cliente
-                var projects = await httpClient.GetFromJsonAsync<IEnumerable<ProjectsDTO>>($"api/Projects/client/{id}");
-                if (projects != null)
-                {
-                    // Adiciona os profissionais dos projetos aos profissionais do cliente
-                    var professionals = new HashSet<GenericProfessionalDTO>();
-                    foreach (var project in projects)
-                    {
-                        if (project.Professionals != null)
-                        {
-                            foreach (var professional in project.Professionals)
-                            {
-                                professionals.Add(professional);
-                            }
-                        }
-                    }
-                    clientDto.GenericProfessionals = professionals.ToList();
-                }
-
                 return clientDto;
-            }
-            catch (HttpRequestException httpEx)
-            {
-                _logger.LogError(httpEx, $"Erro ao acessar a API de clientes para ID {id}. URL: api/Clients/{id}");
-                throw;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Erro inesperado ao acessar a API de clientes para ID {id}.");
+                _logger.LogError(ex, $"Erro ao acessar cliente com ID {id}.");
                 throw;
             }
         }
@@ -124,41 +113,9 @@ namespace WebAthenPs.Project.Services.Imprementation
                 }
                 return clientsDto;
             }
-            catch (HttpRequestException httpEx)
-            {
-                _logger.LogError(httpEx, $"Erro ao acessar a API de clientes com o nome {name}. URL: api/Clients/name/{name}");
-                throw;
-            }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Erro inesperado ao acessar a API de clientes com o nome {name}.");
-                throw;
-            }
-        }
-
-        public async Task<ClientDTO> CreateAsync(ClientDTO clientDto)
-        {
-            try
-            {
-                var httpClient = await CreateAuthorizedClientAsync();
-                var clientAsJson = JsonSerializer.Serialize(clientDto);
-                var requestContent = new StringContent(clientAsJson, Encoding.UTF8, "application/json");
-
-                var response = await httpClient.PostAsync("api/Clients", requestContent);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var createdDto = JsonSerializer.Deserialize<ClientDTO>(
-                        await response.Content.ReadAsStringAsync(),
-                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                    return createdDto;
-                }
-                return null;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro ao criar cliente.");
+                _logger.LogError(ex, $"Erro ao acessar clientes com o nome {name}.");
                 throw;
             }
         }
@@ -181,11 +138,15 @@ namespace WebAthenPs.Project.Services.Imprementation
 
                     return updatedDto;
                 }
-                return null;
+                else
+                {
+                    _logger.LogError($"Erro ao atualizar cliente. Status code: {response.StatusCode}");
+                    return null;
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao atualizar cliente.");
+                _logger.LogError(ex, $"Erro ao atualizar cliente com ID {id}.");
                 throw;
             }
         }
@@ -205,7 +166,27 @@ namespace WebAthenPs.Project.Services.Imprementation
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao excluir cliente.");
+                _logger.LogError(ex, $"Erro ao excluir cliente com ID {id}.");
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<ClientDTO>> GetAll()
+        {
+            try
+            {
+                var httpClient = await CreateAuthorizedClientAsync();
+                var clientsDto = await httpClient.GetFromJsonAsync<IEnumerable<ClientDTO>>("api/Clients");
+
+                if (clientsDto == null)
+                {
+                    _logger.LogWarning("Nenhum cliente encontrado na API.");
+                }
+                return clientsDto;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao acessar todos os clientes.");
                 throw;
             }
         }

@@ -27,18 +27,9 @@ public class GenericProfessionalService : IGenericProfessionalService
         try
         {
             var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
-            var authToken = await _localStorage.GetItemAsync<string>("authToken");
-            httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("bearer", authToken);
 
-            var modelWithUserId = new RegisterProfessionalModel
-            {
-                ProfessionalType = model.ProfessionalType,
-                UserId = userId
-            };
 
-            var modelAsJson = JsonSerializer.Serialize(modelWithUserId);
-
+            var modelAsJson = JsonSerializer.Serialize(model);
             var requestContent = new StringContent(modelAsJson, Encoding.UTF8, "application/json");
 
             var response = await httpClient.PostAsync("api/GenericProfessional", requestContent);
@@ -51,13 +42,19 @@ public class GenericProfessionalService : IGenericProfessionalService
 
                 return createdDto;
             }
-            return null;
+            else
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Error from server: {errorMessage}");
+            }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            throw;
+            // Log or handle the exception as needed
+            throw new Exception($"Error creating professional: {ex.Message}", ex);
         }
     }
+
 
     public async Task<GenericProfessionalDTO> GetByIdAsync(int id)
     {

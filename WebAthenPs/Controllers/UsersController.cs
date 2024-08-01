@@ -58,11 +58,13 @@ namespace WebAthenPs.API.Controllers
 
             if (result.Succeeded)
             {
-                return Ok(new { Message = "User registered successfully" });
+                // Retorne o UserId do usuário registrado
+                return Ok(new RegisterResult { UserId = user.Id });
             }
 
             return BadRequest(new { Errors = result.Errors });
         }
+
 
 
         [HttpPost("Login")]
