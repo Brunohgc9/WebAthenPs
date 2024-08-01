@@ -6,6 +6,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using WebAthenPs.API.Data;
 using WebAthenPs.API.Mappings.MappingProjectDTO;
+using WebAthenPs.API.Repositories;
 using WebAthenPs.API.Repositories.Implementations;
 using WebAthenPs.API.Repositories.Interfaces;
 
@@ -15,6 +16,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(typeof(DomainToDTOProfile));
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IGenericProfessionlRepository, GenericProfessionalRepository>();
 builder.Services.AddSwaggerGen(c =>
 {

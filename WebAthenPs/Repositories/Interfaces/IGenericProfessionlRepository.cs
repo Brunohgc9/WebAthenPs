@@ -10,5 +10,7 @@ namespace WebAthenPs.API.Repositories.Interfaces
         Task CreateAsync(GenericProfessional genericProfessional);
         Task DeleteAsync(int id);
         Task UpdateAsync(GenericProfessional genericProfessional);
+        Task<IEnumerable<GenericProfessional>> GetAllAsync();
+
     }
 }

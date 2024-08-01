@@ -67,11 +67,21 @@ namespace WebAthenPs.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] string professionalType)
+        public async Task<IActionResult> GetAll([FromQuery] string professionalType = null)
         {
             try
             {
-                var professionals = await _repository.GetByProfessionalTypeAsync(professionalType ?? string.Empty);
+                IEnumerable<GenericProfessional> professionals;
+
+                if (string.IsNullOrEmpty(professionalType))
+                {
+                    professionals = await _repository.GetAllAsync(); // Método para obter todos
+                }
+                else
+                {
+                    professionals = await _repository.GetByProfessionalTypeAsync(professionalType);
+                }
+
                 var dtoList = GenericProfessionalMapping.ConverterProfessionalsParaDTO(professionals);
                 return Ok(dtoList);
             }

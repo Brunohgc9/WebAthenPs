@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebAthenPs.API.Entities
 {
-    public class Projects
+    public class Projecty
     {
         [Key]
         public int ProjectId { get; set; }

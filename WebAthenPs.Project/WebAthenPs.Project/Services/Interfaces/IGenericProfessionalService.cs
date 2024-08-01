@@ -12,5 +12,6 @@ namespace WebAthenPs.API.Services.Interfaces
         Task<IEnumerable<GenericProfessionalDTO>> GetByProfessionalTypeAsync(string professionalType);
         Task<GenericProfessionalDTO> UpdateAsync(int id, RegisterProfessionalModel model);
         Task DeleteAsync(int id);
+        Task<IEnumerable<GenericProfessionalDTO>> GetAllAsync(string professionalType);
     }
 }

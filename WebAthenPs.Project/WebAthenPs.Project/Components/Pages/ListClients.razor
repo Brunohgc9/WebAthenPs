@@ -1,0 +1,148 @@
+﻿@page "/client"
+@inject IClientService ClientService
+@inject NavigationManager Navigation
+
+<h3>Clients</h3>
+
+<!-- Formulário para listar todos os clientes -->
+<div class="mb-4">
+    <h4>List All Clients</h4>
+    <button @onclick="GetAllClients">Load All Clients</button>
+</div>
+
+<!-- Formulário para buscar cliente por ID -->
+<div class="mb-4">
+    <h4>Find Client by ID</h4>
+    <input type="number" @bind="clientId" placeholder="Enter Client ID" />
+    <button @onclick="GetClientById">Search</button>
+</div>
+
+<!-- Formulário para buscar clientes por nome -->
+<div class="mb-4">
+    <h4>Find Clients by Name</h4>
+    <input type="text" @bind="name" placeholder="Enter Client Name" />
+    <button @onclick="GetClientsByName">Search</button>
+</div>
+
+<!-- Exibição de clientes -->
+@if (clients != null)
+{
+    if (clients.Any())
+    {
+        <div class="card-container">
+            @foreach (var client in clients)
+            {
+                <div class="card mb-3">
+                    <div class="card-header bg-primary text-white">
+                        <h5>@client.UserName</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Client ID:</strong> @client.ClientId</p>
+                        <p><strong>Phone Number:</strong> @client.PhoneNumber</p>
+                        <p><strong>Email:</strong> @client.Email</p>
+                        <h6>Projects:</h6>
+                        @if (client.Houses != null && client.Houses.Any())
+                        {
+                            <ul>
+                                @foreach (var house in client.Houses)
+                                {
+                                    <li>
+                                        <a href="#" @onclick="() => NavigateToProject(house.ProjectId)">
+                                            @house.ProjectName
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <p>No projects found.</p>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>No clients found.</p>
+    }
+}
+else if (loading)
+{
+    <h3>Loading...</h3>
+}
+
+@code {
+    private IEnumerable<ClientDTO> clients;
+    private bool loading;
+    private int? clientId;
+    private string name;
+
+    private async Task GetAllClients()
+    {
+        loading = true;
+        clients = await ClientService.GetAll();
+        loading = false;
+    }
+
+    private async Task GetClientById()
+    {
+        if (clientId.HasValue)
+        {
+            loading = true;
+            var client = await ClientService.GetById(clientId.Value);
+            clients = client != null ? new List<ClientDTO> { client } : Enumerable.Empty<ClientDTO>();
+            loading = false;
+        }
+    }
+
+    private async Task GetClientsByName()
+    {
+        if (!string.IsNullOrEmpty(name))
+        {
+            loading = true;
+            clients = await ClientService.GetByName(name);
+            loading = false;
+        }
+    }
+
+    private void NavigateToProject(int projectId)
+    {
+        Navigation.NavigateTo($"/project/{projectId}");
+    }
+}
+
+<style>
+    .card-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .card {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+        padding: 16px;
+        width: 300px;
+    }
+
+    .card-header {
+        border-bottom: 1px solid #dee2e6;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+    }
+
+    .card-body p {
+        margin: 8px 0;
+    }
+
+    .card-footer {
+        border-top: 1px solid #dee2e6;
+        margin-top: 16px;
+        padding-top: 8px;
+        text-align: right;
+    }
+</style>

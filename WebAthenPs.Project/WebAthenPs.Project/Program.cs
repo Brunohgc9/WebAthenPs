@@ -29,6 +29,8 @@ builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, APIAuthenticationStateProvider>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IGenericProfessionalService, GenericProfessionalService>();
 builder.Services.AddSingleton(new JsonSerializerOptions
 {

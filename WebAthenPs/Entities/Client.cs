@@ -17,7 +17,7 @@ namespace WebAthenPs.API.Entities
 
 
         //Properties 1-N
-        public ICollection<Projects> Houses { get; set; } = new List<Projects>();
+        public ICollection<Projecty> Houses { get; set; } = new List<Projecty>();
         public ICollection<GenericProfessional> GenericProfessionals { get; set; }
 
     }

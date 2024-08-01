@@ -1,175 +1,200 @@
 ﻿using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Json;
-using WebAthenPs.Models.DTOs;
-using WebAthenPs.Project.Services.Interfaces;
-using System.Threading.Tasks;
+using System.Text;
 using WebAthenPs.API.Services.Interfaces;
+using WebAthenPs.Models.DTOs;
 using WebAthenPs.Models.Models;
 
-namespace WebAthenPs.Project.Services.Imprementation
+public class GenericProfessionalService : IGenericProfessionalService
 {
-    public class GenericProfessionalService : IGenericProfessionalService
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILocalStorageService _localStorage;
+    private readonly AuthenticationStateProvider _authenticationStateProvider;
+
+    public GenericProfessionalService(IHttpClientFactory httpClientFactory,
+        ILocalStorageService localStorage,
+        AuthenticationStateProvider authenticationStateProvider)
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly ILocalStorageService _localStorage;
-        private readonly AuthenticationStateProvider _authenticationStateProvider;
+        _httpClientFactory = httpClientFactory;
+        _localStorage = localStorage;
+        _authenticationStateProvider = authenticationStateProvider;
+    }
 
-        public GenericProfessionalService(IHttpClientFactory httpClientFactory,
-            ILocalStorageService localStorage,
-            AuthenticationStateProvider authenticationStateProvider)
+    public async Task<GenericProfessionalDTO> CreateAsync(RegisterProfessionalModel model, string userId)
+    {
+        try
         {
-            _httpClientFactory = httpClientFactory;
-            _localStorage = localStorage;
-            _authenticationStateProvider = authenticationStateProvider;
-        }
+            var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
+            var authToken = await _localStorage.GetItemAsync<string>("authToken");
+            httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("bearer", authToken);
 
-        public async Task<GenericProfessionalDTO> CreateAsync(RegisterProfessionalModel model, string userId)
+            var modelWithUserId = new RegisterProfessionalModel
+            {
+                ProfessionalType = model.ProfessionalType,
+                UserId = userId
+            };
+
+            var modelAsJson = JsonSerializer.Serialize(modelWithUserId);
+
+            var requestContent = new StringContent(modelAsJson, Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PostAsync("api/GenericProfessional", requestContent);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var createdDto = JsonSerializer.Deserialize<GenericProfessionalDTO>(
+                    await response.Content.ReadAsStringAsync(),
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                return createdDto;
+            }
+            return null;
+        }
+        catch (Exception)
         {
-            try
-            {
-                var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
-                var authToken = await _localStorage.GetItemAsync<string>("authToken");
-                httpClient.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("bearer", authToken);
-
-                var modelWithUserId = new RegisterProfessionalModel
-                {
-                    ProfessionalType = model.ProfessionalType,
-                    UserId = userId
-                };
-
-                var modelAsJson = JsonSerializer.Serialize(modelWithUserId);
-
-                var requestContent = new StringContent(modelAsJson, Encoding.UTF8, "application/json");
-
-                var response = await httpClient.PostAsync("api/GenericProfessional", requestContent);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var createdDto = JsonSerializer.Deserialize<GenericProfessionalDTO>(
-                        await response.Content.ReadAsStringAsync(),
-                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                    return createdDto;
-                }
-                return null; // Indica falha na criação
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            throw;
         }
+    }
 
-
-        public async Task<GenericProfessionalDTO> GetByIdAsync(int id)
+    public async Task<GenericProfessionalDTO> GetByIdAsync(int id)
+    {
+        try
         {
-            try
+            var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
+            var authToken = await _localStorage.GetItemAsync<string>("authToken");
+            httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("bearer", authToken);
+
+            var response = await httpClient.GetAsync($"api/GenericProfessional/{id}");
+
+            if (response.IsSuccessStatusCode)
             {
-                var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
-                var authToken = await _localStorage.GetItemAsync<string>("authToken");
-                httpClient.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("bearer", authToken);
+                var dto = JsonSerializer.Deserialize<GenericProfessionalDTO>(
+                    await response.Content.ReadAsStringAsync(),
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                var response = await httpClient.GetAsync($"api/GenericProfessional/{id}");
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var dto = JsonSerializer.Deserialize<GenericProfessionalDTO>(
-                        await response.Content.ReadAsStringAsync(),
-                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                    return dto;
-                }
-                return null; // Indica que o profissional não foi encontrado
+                return dto;
             }
-            catch (Exception)
-            {
-                throw;
-            }
+            return null;
         }
-
-        public async Task<IEnumerable<GenericProfessionalDTO>> GetByProfessionalTypeAsync(string professionalType)
+        catch (Exception)
         {
-            try
-            {
-                var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
-                var authToken = await _localStorage.GetItemAsync<string>("authToken");
-                httpClient.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("bearer", authToken);
-
-                var response = await httpClient.GetAsync($"api/GenericProfessional?professionalType={professionalType}");
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var dtoList = JsonSerializer.Deserialize<IEnumerable<GenericProfessionalDTO>>(
-                        await response.Content.ReadAsStringAsync(),
-                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                    return dtoList;
-                }
-                return Enumerable.Empty<GenericProfessionalDTO>(); // Indica que nenhum profissional foi encontrado
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            throw;
         }
+    }
 
-        public async Task<GenericProfessionalDTO> UpdateAsync(int id, RegisterProfessionalModel model)
+    public async Task<IEnumerable<GenericProfessionalDTO>> GetAllAsync(string professionalType)
+    {
+        try
         {
-            try
+            var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
+            var authToken = await _localStorage.GetItemAsync<string>("authToken");
+            httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("bearer", authToken);
+
+            var url = "api/GenericProfessional";
+            if (!string.IsNullOrEmpty(professionalType))
             {
-                var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
-                var authToken = await _localStorage.GetItemAsync<string>("authToken");
-                httpClient.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("bearer", authToken);
-
-                var modelAsJson = JsonSerializer.Serialize(model);
-                var requestContent = new StringContent(modelAsJson, Encoding.UTF8, "application/json");
-
-                var response = await httpClient.PutAsync($"api/GenericProfessional/{id}", requestContent);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var updatedDto = JsonSerializer.Deserialize<GenericProfessionalDTO>(
-                        await response.Content.ReadAsStringAsync(),
-                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                    return updatedDto;
-                }
-                return null; // Indica falha na atualização
+                url += $"?professionalType={professionalType}";
             }
-            catch (Exception)
+
+            var response = await httpClient.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
             {
-                throw;
+                var dtoList = JsonSerializer.Deserialize<IEnumerable<GenericProfessionalDTO>>(
+                    await response.Content.ReadAsStringAsync(),
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                return dtoList;
             }
+            return Enumerable.Empty<GenericProfessionalDTO>();
         }
-
-        public async Task DeleteAsync(int id)
+        catch (Exception)
         {
-            try
+            throw;
+        }
+    }
+
+    public async Task<IEnumerable<GenericProfessionalDTO>> GetByProfessionalTypeAsync(string professionalType)
+    {
+        try
+        {
+            var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
+            var authToken = await _localStorage.GetItemAsync<string>("authToken");
+            httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("bearer", authToken);
+
+            var response = await httpClient.GetAsync($"api/GenericProfessional?professionalType={professionalType}");
+
+            if (response.IsSuccessStatusCode)
             {
-                var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
-                var authToken = await _localStorage.GetItemAsync<string>("authToken");
-                httpClient.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("bearer", authToken);
+                var dtoList = JsonSerializer.Deserialize<IEnumerable<GenericProfessionalDTO>>(
+                    await response.Content.ReadAsStringAsync(),
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                var response = await httpClient.DeleteAsync($"api/GenericProfessional/{id}");
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new Exception("Error deleting the professional.");
-                }
+                return dtoList;
             }
-            catch (Exception)
+            return Enumerable.Empty<GenericProfessionalDTO>();
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task<GenericProfessionalDTO> UpdateAsync(int id, RegisterProfessionalModel model)
+    {
+        try
+        {
+            var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
+            var authToken = await _localStorage.GetItemAsync<string>("authToken");
+            httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("bearer", authToken);
+
+            var modelAsJson = JsonSerializer.Serialize(model);
+            var requestContent = new StringContent(modelAsJson, Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PutAsync($"api/GenericProfessional/{id}", requestContent);
+
+            if (response.IsSuccessStatusCode)
             {
-                throw;
+                var updatedDto = JsonSerializer.Deserialize<GenericProfessionalDTO>(
+                    await response.Content.ReadAsStringAsync(),
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                return updatedDto;
+            }
+            return null;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task DeleteAsync(int id)
+    {
+        try
+        {
+            var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
+            var authToken = await _localStorage.GetItemAsync<string>("authToken");
+            httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("bearer", authToken);
+
+            var response = await httpClient.DeleteAsync($"api/GenericProfessional/{id}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Error deleting the professional.");
             }
         }
-
-
+        catch (Exception)
+        {
+            throw;
+        }
     }
 }

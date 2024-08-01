@@ -20,6 +20,6 @@ namespace WebAthenPs.API.Entities
         [ForeignKey("ClientId")]
         public Client? Client { get; set; }
 
-        public ICollection<Projects> Projects { get; set; } = new List<Projects>();
+        public ICollection<Projecty> Projects { get; set; } = new List<Projecty>();
     }
 }

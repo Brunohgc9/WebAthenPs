@@ -8,7 +8,7 @@ namespace WebAthenPs.Models.DTOs
 {
     public class GenericProfessionalDTO
     {
-        public int? Id { get; set; }
+        public int Id { get; set; }
         public string? UserId { get; set; }
         public string? UserName { get; set; }  // Se necessário para exibir o nome do usuário
         public string? PhoneNumber { get; set; }

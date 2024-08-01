@@ -36,6 +36,15 @@ namespace WebAthenPs.API.Repositories.Implementations
                 await _context.SaveChangesAsync();
             }
         }
+        public async Task<IEnumerable<GenericProfessional>> GetAllAsync()
+        {
+            return await _context.GenericProfessionals
+                .Include(gp => gp.User)
+                .Include(gp => gp.Client)
+                .Include(gp => gp.Projects)
+                .ToListAsync();
+        }
+
 
         public async Task<GenericProfessional> GetByIdAsync(int id)
         {
