@@ -73,11 +73,17 @@ namespace WebAthenPs.API.Controllers
                 return BadRequest("Email e senha são obrigatórios.");
             }
 
+            var user = await _userManager.FindByEmailAsync(userInfo.Email);
+            if (user == null)
+            {
+                return BadRequest("Usuário não encontrado.");
+            }
+
             var result = await _signInManager.PasswordSignInAsync(userInfo.Email, userInfo.Password, isPersistent: false, lockoutOnFailure: false);
 
             if (result.Succeeded)
             {
-                var token = BuildToken(userInfo);
+                var token = BuildToken(userInfo, user.Id);
                 return Ok(token);
             }
             else
@@ -87,12 +93,11 @@ namespace WebAthenPs.API.Controllers
             }
         }
 
-
-
-        private UserToken BuildToken(LoginModel userInfo)
+        private UserToken BuildToken(LoginModel userInfo, string userId)
         {
             var claims = new[]
             {
+        new Claim(JwtRegisteredClaimNames.Sub, userId), // Adicione o UserId como claim
         new Claim(JwtRegisteredClaimNames.UniqueName, userInfo.Email),
         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
     };
@@ -112,9 +117,11 @@ namespace WebAthenPs.API.Controllers
             return new UserToken
             {
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
-                TokenExpiration = expiration
+                TokenExpiration = expiration,
+                UserId = userId // Inclua o UserId no token
             };
         }
+
 
     }
 }

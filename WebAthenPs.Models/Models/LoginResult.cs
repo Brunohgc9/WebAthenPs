@@ -13,6 +13,7 @@ namespace WebAthenPs.Models.Models
         public string ErrorMessage { get; set; }
         public bool? IsProfessional { get; set; }
         public bool NeedsProfessionalTypeRegistration { get; set; }
+        public string UserId { get; set; }
     }
 
 }

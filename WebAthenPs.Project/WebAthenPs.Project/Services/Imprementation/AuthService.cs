@@ -47,28 +47,35 @@ namespace WebAthenPs.Project.Services.Imprementation
 
                     if (loginResult != null)
                     {
+                        // Armazenar dados no LocalStorage
                         await _localStorage.SetItemAsync("authToken", loginResult.Token);
                         await _localStorage.SetItemAsync("tokenExpiration", loginResult.Expiration);
-                        await _localStorage.SetItemAsync("userName", loginModel.Email); // Armazena o nome
+                        await _localStorage.SetItemAsync("userName", loginModel.Email);
+                        await _localStorage.SetItemAsync("userId", loginResult.UserId); // Armazene o UserId
 
                         ((APIAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(loginModel.Email);
 
+                        // Configurar o cabeçalho de autorização para a próxima requisição
                         httpClient.DefaultRequestHeaders.Authorization =
                             new AuthenticationHeaderValue("bearer", loginResult.Token);
 
-                        // Verifica se o usuário é um profissional
-                       
-
-                        return loginResult;
+                        // Retornar o LoginResult com Token e UserId
+                        return new LoginResult { Token = loginResult.Token, UserId = loginResult.UserId };
                     }
                 }
-                return new LoginResult { Token = string.Empty }; // Indica falha no login
+
+                // Retornar um LoginResult indicando falha no login
+                return new LoginResult { Token = string.Empty };
             }
             catch (Exception)
             {
+                // Tratar exceções e relançar
                 throw;
             }
         }
+
+
+
 
         public async Task Logout()
         {
@@ -96,5 +103,7 @@ namespace WebAthenPs.Project.Services.Imprementation
                 throw;
             }
         }
+
+
     }
 }

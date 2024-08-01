@@ -1,8 +1,10 @@
 ﻿@page "/login"
+@using Blazored.LocalStorage
 @using WebAthenPs.Models.Models
 @using WebAthenPs.Project.Components.Layout
 @inject IAuthService AuthService
 @inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorageService
 
 <h1>Login</h1>
 
@@ -47,7 +49,15 @@
 
             if (!string.IsNullOrEmpty(result.Token)) // Verifique se o Token não está vazio ou nulo
             {
-                NavigationManager.NavigateTo("/"); // Redireciona para a página inicial após o login bem-sucedido
+                // Armazene o token e o ID do usuário no LocalStorage
+                await LocalStorageService.SetItemAsync("authToken", result.Token);
+                if (!string.IsNullOrEmpty(result.UserId))
+                {
+                    await LocalStorageService.SetItemAsync("userId", result.UserId);
+                }
+
+                // Redirecione para a página inicial após o login bem-sucedido
+                NavigationManager.NavigateTo("/");
             }
             else
             {
@@ -61,5 +71,4 @@
             ShowErrors = true;
         }
     }
-
 }
