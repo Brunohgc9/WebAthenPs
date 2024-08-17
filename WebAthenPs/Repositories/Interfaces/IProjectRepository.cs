@@ -9,5 +9,9 @@ namespace WebAthenPs.API.Repositories.Interfaces
         Task<Projecty> GetById(int id);
         Task<IEnumerable<Projecty>> GetByStatus(string status);
         Task<IEnumerable<Projecty>> GetByArea(decimal area);
+        Task<Projecty> CreateNewProject(Projecty projecty);
+        Task UpdateProject(Projecty projecty);
+        Task DeleteProject(int id);
+
     }
 }

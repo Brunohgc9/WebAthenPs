@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WebAthenPs.Models.DTOs
 {
-    public class ProjectsDTO
+    public class CreateProjectDTO
     {
         public int ProjectId { get; set; }
         public string? ProjectName { get; set; }
@@ -17,18 +17,12 @@ namespace WebAthenPs.Models.DTOs
         public DateTime? EndDate { get; set; }
         public string? Description { get; set; }
         public int ClientId { get; set; }
-        public string? ClientName { get; set; }  // Se necessário para exibir o nome do cliente
         public string? Address { get; set; }
-        public string? Neighborhood { get; set; }  // Bairro
+        public string? Neighborhood { get; set; }
         public string? City { get; set; }
         public string? State { get; set; }
         public string? PostalCode { get; set; }
-        public string Country { get; set; }  // País
-
-        // Detalhes adicionais
-        public decimal? TotalArea { get; set; }  // Área total do projeto
-        public int? NumberOfRooms { get; set; }  // Número de quartos
-        public int? NumberOfBathrooms { get; set; }  // Número de banheiros
+        public string? Country { get; set; }
 
         public ICollection<GenericProfessionalDTO>? Professionals { get; set; } = new List<GenericProfessionalDTO>();
     }

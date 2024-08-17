@@ -14,6 +14,7 @@ namespace WebAthenPs.API.Repositories.Implementations
             _context = context;
         }
 
+
         public async Task<IEnumerable<Projecty>> GetAll()
         {
             var projects = await _context.Projects
@@ -60,5 +61,28 @@ namespace WebAthenPs.API.Repositories.Implementations
                 .ToListAsync();
             return projects;
         }
+
+        public async Task<Projecty> CreateNewProject(Projecty projecty)
+        {
+            _context.Projects.Add(projecty);
+            await _context.SaveChangesAsync();
+            return projecty;
+        }
+        public async Task UpdateProject(Projecty projecty)
+        {
+            _context.Entry(projecty).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteProject(int id)
+        {
+            var projecty = await _context.Projects.FindAsync(id);
+            if(projecty != null)
+            {
+                _context.Projects.Remove(projecty);
+                await _context.SaveChangesAsync();
+            }
+        }
+
     }
 }

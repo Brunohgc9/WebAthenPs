@@ -48,10 +48,11 @@ namespace WebAthenPs.API.Services.Implementation
         {
             try
             {
-                var httpClient = await CreateAuthorizedClientAsync();
-                clientModel.UserId = userId; // Associate the user ID with the client
-                var clientAsJson = JsonSerializer.Serialize(clientModel);
-                var requestContent = new StringContent(clientAsJson, Encoding.UTF8, "application/json");
+                var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
+
+
+                var modelAsJson = JsonSerializer.Serialize(clientModel);
+                var requestContent = new StringContent(modelAsJson, Encoding.UTF8, "application/json");
 
                 var response = await httpClient.PostAsync("api/Clients", requestContent);
 
@@ -65,9 +66,8 @@ namespace WebAthenPs.API.Services.Implementation
                 }
                 else
                 {
-                    var errorContent = await response.Content.ReadAsStringAsync();
-                    _logger.LogError($"Error creating client. Status code: {response.StatusCode}, Content: {errorContent}");
-                    return null;
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"Error from server: {errorMessage}");
                 }
             }
             catch (Exception ex)

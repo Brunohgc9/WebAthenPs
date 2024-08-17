@@ -8,11 +8,11 @@ using System.Linq;
 using WebAthenPs.API.Mappings.MappingProjectDTO;
 using Microsoft.AspNetCore.Authorization;
 using WebAthenPs.API.Entities;
+using WebAthenPs.Models.Models;
 
 namespace WebAthenPs.API.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize(AuthenticationSchemes = "Bearer")]
     [ApiController]
     public class ClientsController : ControllerBase
     {
@@ -24,6 +24,7 @@ namespace WebAthenPs.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<ActionResult<IEnumerable<ClientDTO>>> GetAll()
         {
             try
@@ -44,6 +45,7 @@ namespace WebAthenPs.API.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<ActionResult<ClientDTO>> GetById(int id)
         {
             try
@@ -63,6 +65,7 @@ namespace WebAthenPs.API.Controllers
         }
 
         [HttpGet("name/{name}")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<ActionResult<IEnumerable<ClientDTO>>> GetByName(string name)
         {
             try
@@ -82,25 +85,20 @@ namespace WebAthenPs.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ClientDTO>> Create([FromBody] ClientDTO clientDTO)
+        public async Task<ActionResult<ClientDTO>> Create([FromBody] RegisterClientModel model)
         {
-            if (clientDTO == null)
-            {
-                return BadRequest("Cliente não pode ser nulo.");
-            }
+            if (model == null || !ModelState.IsValid)
+                return BadRequest("Dados inválidos.");
 
-            var client = new Client
-            {
-                ClientId = clientDTO.ClientId,
-                UserId = clientDTO.UserId
-            };
+            var client = MappingClientDTO.CriarClienteEmDTO(model);
 
             try
             {
-                var createdClient = await _clientRepository.Create(client);
-                var createdClientDTO = createdClient.ConverterClienteParaDTO();
+                await _clientRepository.Create(client);
 
-                return CreatedAtAction(nameof(GetById), new { id = createdClientDTO.ClientId }, createdClientDTO);
+                var createdDto = MappingClientDTO.ConverterClienteParaDTO(client);
+
+                return CreatedAtAction(nameof(GetById), new { id = createdDto.ClientId }, createdDto);
             }
             catch (Exception ex)
             {
@@ -110,6 +108,7 @@ namespace WebAthenPs.API.Controllers
 
 
         [HttpPut("{id:int}")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<ActionResult> Update(int id, ClientDTO clientDTO)
         {
             try
@@ -152,6 +151,7 @@ namespace WebAthenPs.API.Controllers
         }
 
         [HttpDelete("{id:int}")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<ActionResult> Delete(int id)
         {
             try

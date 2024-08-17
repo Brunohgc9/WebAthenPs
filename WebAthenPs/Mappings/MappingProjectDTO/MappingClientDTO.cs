@@ -1,5 +1,6 @@
 ﻿using WebAthenPs.API.Entities;
 using WebAthenPs.Models.DTOs;
+using WebAthenPs.Models.Models;
 
 namespace WebAthenPs.API.Mappings.MappingProjectDTO
 {
@@ -56,6 +57,14 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                     Id = gp.Id,
                     UserName = gp.User?.UserName
                 }).ToList() ?? new List<GenericProfessionalDTO>()
+            };
+        }
+
+        public static Client CriarClienteEmDTO(this RegisterClientModel dto)
+        {
+            return new Client
+            {
+                UserId = dto.UserId
             };
         }
 

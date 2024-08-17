@@ -68,7 +68,7 @@ namespace WebAthenPs.Project.Services.Imprementation
             try
             {
                 var httpClient = await CreateAuthorizedClientAsync();
-                var projectDto = await httpClient.GetFromJsonAsync<ProjectsDTO>($"api/Projects/{id}");
+                var projectDto = await httpClient.GetFromJsonAsync<ProjectsDTO>($"api/Projects/id/{id}");
 
                 if (projectDto == null)
                 {
