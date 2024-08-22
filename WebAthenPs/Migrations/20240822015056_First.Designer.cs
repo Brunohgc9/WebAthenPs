@@ -12,8 +12,8 @@ using WebAthenPs.API.Data;
 namespace WebAthenPs.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240725000247_SixthUpdate")]
-    partial class SixthUpdate
+    [Migration("20240822015056_First")]
+    partial class First
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -334,15 +334,12 @@ namespace WebAthenPs.API.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CPF")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("City")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -360,7 +357,6 @@ namespace WebAthenPs.API.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Gender")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -387,22 +383,18 @@ namespace WebAthenPs.API.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("PostalCode")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RG")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Role")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("State")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("TwoFactorEnabled")
@@ -416,7 +408,6 @@ namespace WebAthenPs.API.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("UserType")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -436,361 +427,691 @@ namespace WebAthenPs.API.Migrations
                         {
                             Id = "user1",
                             AccessFailedCount = 0,
-                            Address = "123 Main St",
+                            Address = "Rua A, 123",
                             CPF = "12345678901",
-                            City = "CityA",
-                            ConcurrencyStamp = "7c2a6338-c5bc-46e6-a5ad-d4abb15174a8",
-                            CreatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3217),
-                            Email = "john.doe@example.com",
+                            City = "São Paulo",
+                            ConcurrencyStamp = "fcda258d-26c7-43bd-9c63-ad100a7d7558",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3788),
+                            Email = "carlos.silva@example.com",
                             EmailConfirmed = false,
                             Gender = "M",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            PostalCode = "12345",
+                            PostalCode = "01000-000",
                             RG = "1234567",
-                            Role = "Admin",
-                            SecurityStamp = "d9302b76-1c92-4435-bfd6-c2afe6f53d14",
-                            State = "StateA",
+                            SecurityStamp = "d42e8cbe-1a32-4765-b81a-94ee794a58ca",
+                            State = "SP",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3219),
-                            UserName = "John Doe",
-                            UserType = "Residential"
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3788),
+                            UserName = "Carlos Silva",
+                            UserType = "Client"
                         },
                         new
                         {
                             Id = "user2",
                             AccessFailedCount = 0,
-                            Address = "456 Oak St",
+                            Address = "Rua B, 456",
                             CPF = "23456789012",
-                            City = "CityB",
-                            ConcurrencyStamp = "b027d0a2-dd12-4b15-b421-dd6393549bec",
-                            CreatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3284),
-                            Email = "jane.smith@example.com",
+                            City = "Rio de Janeiro",
+                            ConcurrencyStamp = "234d754e-d379-446d-b995-d12bd60bfa6c",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3874),
+                            Email = "ana.souza@example.com",
                             EmailConfirmed = false,
                             Gender = "F",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            PostalCode = "23456",
+                            PostalCode = "20000-000",
                             RG = "2345678",
-                            Role = "User",
-                            SecurityStamp = "26085792-6635-41d3-a3aa-d2b37048c643",
-                            State = "StateB",
+                            SecurityStamp = "76db39d5-19ff-41f2-873d-d38a94cefba4",
+                            State = "RJ",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3285),
-                            UserName = "Jane Smith",
-                            UserType = "Commercial"
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3874),
+                            UserName = "Ana Souza",
+                            UserType = "Client"
                         },
                         new
                         {
                             Id = "user3",
                             AccessFailedCount = 0,
-                            Address = "789 Pine St",
+                            Address = "Rua C, 789",
                             CPF = "34567890123",
-                            City = "CityC",
-                            ConcurrencyStamp = "41a32bde-53a5-4eae-b5bd-d2946f6918f9",
-                            CreatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3305),
-                            Email = "michael.johnson@example.com",
+                            City = "Belo Horizonte",
+                            ConcurrencyStamp = "de26146a-760d-4e99-83a4-e595fbac0140",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3889),
+                            Email = "joao.oliveira@example.com",
                             EmailConfirmed = false,
                             Gender = "M",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            PostalCode = "34567",
+                            PostalCode = "30000-000",
                             RG = "3456789",
-                            Role = "Admin",
-                            SecurityStamp = "a7bc3a98-afb2-4949-8b17-e1ecad9b2197",
-                            State = "StateC",
+                            SecurityStamp = "372f8ad0-27c5-40b4-b49d-b0c2e27d9a00",
+                            State = "MG",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3305),
-                            UserName = "Michael Johnson",
-                            UserType = "Residential"
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3889),
+                            UserName = "João Oliveira",
+                            UserType = "Client"
                         },
                         new
                         {
                             Id = "user4",
                             AccessFailedCount = 0,
-                            Address = "101 Maple St",
+                            Address = "Rua D, 101",
                             CPF = "45678901234",
-                            City = "CityD",
-                            ConcurrencyStamp = "a2d5b4a7-197b-4698-a59d-9a13f0934a1c",
-                            CreatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3317),
-                            Email = "emily.davis@example.com",
+                            City = "Salvador",
+                            ConcurrencyStamp = "97fb2734-9133-4737-ada5-f4927ad2883e",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3902),
+                            Email = "maria.santos@example.com",
                             EmailConfirmed = false,
                             Gender = "F",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            PostalCode = "45678",
+                            PostalCode = "40000-000",
                             RG = "4567890",
-                            Role = "User",
-                            SecurityStamp = "c7e494fa-6bf8-41ac-872f-1cce26649367",
-                            State = "StateD",
+                            SecurityStamp = "310b14ab-dfa6-4615-bd63-5eba044dd77d",
+                            State = "BA",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3318),
-                            UserName = "Emily Davis",
-                            UserType = "Commercial"
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3903),
+                            UserName = "Maria Santos",
+                            UserType = "Client"
                         },
                         new
                         {
                             Id = "user5",
                             AccessFailedCount = 0,
-                            Address = "202 Birch St",
+                            Address = "Rua E, 202",
                             CPF = "56789012345",
-                            City = "CityE",
-                            ConcurrencyStamp = "efef9ca1-1ec3-4ecb-8a29-37514d7d3edc",
-                            CreatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3329),
-                            Email = "david.wilson@example.com",
+                            City = "Fortaleza",
+                            ConcurrencyStamp = "54294449-57b8-4d31-a251-5c135ed83352",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3918),
+                            Email = "pedro.almeida@example.com",
                             EmailConfirmed = false,
                             Gender = "M",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            PostalCode = "56789",
+                            PostalCode = "60000-000",
                             RG = "5678901",
-                            Role = "Admin",
-                            SecurityStamp = "bb767e2b-fcce-4b29-9d21-d31db589df56",
-                            State = "StateE",
+                            SecurityStamp = "a76c6b6d-05c0-480e-9d21-25ad17718604",
+                            State = "CE",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3329),
-                            UserName = "David Wilson",
-                            UserType = "Residential"
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3919),
+                            UserName = "Pedro Almeida",
+                            UserType = "Client"
                         },
                         new
                         {
                             Id = "user6",
                             AccessFailedCount = 0,
-                            Address = "303 Cedar St",
+                            Address = "Rua F, 303",
                             CPF = "67890123456",
-                            City = "CityF",
-                            ConcurrencyStamp = "6303d868-bcad-46f3-8878-85af2004640d",
-                            CreatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3343),
-                            Email = "sarah.miller@example.com",
+                            City = "Curitiba",
+                            ConcurrencyStamp = "b0c5d792-34f4-4aa8-acd2-da54c40aa816",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3932),
+                            Email = "juliana.costa@example.com",
                             EmailConfirmed = false,
                             Gender = "F",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            PostalCode = "67890",
+                            PostalCode = "80000-000",
                             RG = "6789012",
-                            Role = "User",
-                            SecurityStamp = "332f37d7-4609-45f5-9a54-87323eee0871",
-                            State = "StateF",
+                            SecurityStamp = "47abe447-3cf6-4b68-9788-7a0683360879",
+                            State = "PR",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3343),
-                            UserName = "Sarah Miller",
-                            UserType = "Commercial"
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3932),
+                            UserName = "Juliana Costa",
+                            UserType = "Client"
                         },
                         new
                         {
                             Id = "user7",
                             AccessFailedCount = 0,
-                            Address = "404 Fir St",
+                            Address = "Rua G, 404",
                             CPF = "78901234567",
-                            City = "CityG",
-                            ConcurrencyStamp = "07116e02-8b4c-4dbc-948d-7d74c9da1569",
-                            CreatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3355),
-                            Email = "james.moore@example.com",
+                            City = "Porto Alegre",
+                            ConcurrencyStamp = "caa1b828-f98b-4b9e-b11f-e03e21b404b0",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3945),
+                            Email = "roberto.lima@example.com",
                             EmailConfirmed = false,
                             Gender = "M",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            PostalCode = "78901",
+                            PostalCode = "90000-000",
                             RG = "7890123",
-                            Role = "Admin",
-                            SecurityStamp = "b6776e53-bf7d-409d-b1f5-fe963b1b3795",
-                            State = "StateG",
+                            SecurityStamp = "57d421eb-2efd-474c-8d1b-04bd251d4259",
+                            State = "RS",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3355),
-                            UserName = "James Moore",
-                            UserType = "Residential"
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3945),
+                            UserName = "Roberto Lima",
+                            UserType = "Client"
                         },
                         new
                         {
                             Id = "user8",
                             AccessFailedCount = 0,
-                            Address = "505 Spruce St",
+                            Address = "Rua H, 505",
                             CPF = "89012345678",
-                            City = "CityH",
-                            ConcurrencyStamp = "ca5c3c5d-2f30-4c43-807b-f9bcc5d9ae35",
-                            CreatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3367),
-                            Email = "olivia.taylor@example.com",
+                            City = "Recife",
+                            ConcurrencyStamp = "8ad603ee-5be9-4f1c-bbd3-bd900719be18",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3960),
+                            Email = "patricia.martins@example.com",
                             EmailConfirmed = false,
                             Gender = "F",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            PostalCode = "89012",
+                            PostalCode = "50000-000",
                             RG = "8901234",
-                            Role = "User",
-                            SecurityStamp = "4dfd6b84-4aea-478a-a03f-1a5370a85a17",
-                            State = "StateH",
+                            SecurityStamp = "a0f6a7dd-f15e-4c0b-b76f-bf96d2f6b92b",
+                            State = "PE",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3367),
-                            UserName = "Olivia Taylor",
-                            UserType = "Commercial"
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3960),
+                            UserName = "Patricia Martins",
+                            UserType = "Client"
                         },
                         new
                         {
                             Id = "user9",
                             AccessFailedCount = 0,
-                            Address = "606 Hemlock St",
+                            Address = "Rua I, 606",
                             CPF = "90123456789",
-                            City = "CityI",
-                            ConcurrencyStamp = "fb727d68-a608-479d-b5d3-41f68deafd0a",
-                            CreatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3378),
-                            Email = "daniel.anderson@example.com",
+                            City = "Belém",
+                            ConcurrencyStamp = "f863446a-d085-411b-ba01-a240d59cf9c9",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3973),
+                            Email = "ricardo.fernandes@example.com",
                             EmailConfirmed = false,
                             Gender = "M",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            PostalCode = "90123",
+                            PostalCode = "66000-000",
                             RG = "9012345",
-                            Role = "Admin",
-                            SecurityStamp = "83a3ec5e-550a-41b6-8753-f0d8ddd50603",
-                            State = "StateI",
+                            SecurityStamp = "189323b2-c344-4244-a70d-346d3b95aa04",
+                            State = "PA",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3378),
-                            UserName = "Daniel Anderson",
-                            UserType = "Residential"
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3974),
+                            UserName = "Ricardo Fernandes",
+                            UserType = "Client"
                         },
                         new
                         {
                             Id = "user10",
                             AccessFailedCount = 0,
-                            Address = "707 Juniper St",
+                            Address = "Rua J, 707",
                             CPF = "01234567890",
-                            City = "CityJ",
-                            ConcurrencyStamp = "d5135f8c-82fd-4a1f-99b1-c6186a51eecf",
-                            CreatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3389),
-                            Email = "madison.lee@example.com",
+                            City = "Manaus",
+                            ConcurrencyStamp = "eff2455b-94ca-4f2f-9b82-e2d8feb2e87d",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3988),
+                            Email = "claudia.rodrigues@example.com",
                             EmailConfirmed = false,
                             Gender = "F",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            PostalCode = "01234",
+                            PostalCode = "69000-000",
                             RG = "0123456",
-                            Role = "User",
-                            SecurityStamp = "7274a4af-848c-408c-bda5-3d3f0b18e24f",
-                            State = "StateJ",
+                            SecurityStamp = "451ccd31-0eb2-49e0-a849-3789b25ab469",
+                            State = "AM",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3389),
-                            UserName = "Madison Lee",
-                            UserType = "Commercial"
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3988),
+                            UserName = "Claudia Rodrigues",
+                            UserType = "Client"
                         },
                         new
                         {
                             Id = "user11",
                             AccessFailedCount = 0,
-                            Address = "808 Willow St",
+                            Address = "Rua K, 808",
                             CPF = "12345678901",
-                            City = "CityK",
-                            ConcurrencyStamp = "4dfabeb1-2e27-4771-9292-bf92a01d9a03",
-                            CreatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3402),
-                            Email = "ethan.harris@example.com",
+                            City = "São Luís",
+                            ConcurrencyStamp = "33116b12-789b-4497-bb2a-517e360ffcd2",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4002),
+                            Email = "fernando.oliveira@example.com",
                             EmailConfirmed = false,
                             Gender = "M",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            PostalCode = "12346",
-                            RG = "1234568",
-                            Role = "Admin",
-                            SecurityStamp = "a6150ec6-0033-4974-acf0-57cf7cb99be7",
-                            State = "StateK",
+                            PostalCode = "65000-000",
+                            RG = "1234567",
+                            SecurityStamp = "01c06d94-71f8-4a76-b24f-15cd14a46b3e",
+                            State = "MA",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3403),
-                            UserName = "Ethan Harris",
-                            UserType = "Residential"
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4002),
+                            UserName = "Fernando Oliveira",
+                            UserType = "Client"
                         },
                         new
                         {
                             Id = "user12",
                             AccessFailedCount = 0,
-                            Address = "909 Poplar St",
+                            Address = "Rua L, 909",
                             CPF = "23456789012",
-                            City = "CityL",
-                            ConcurrencyStamp = "4c580dd6-9bfa-49c2-a5db-e1a1d7fa9cb6",
-                            CreatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3414),
-                            Email = "isabella.clark@example.com",
+                            City = "São José de Ribamar",
+                            ConcurrencyStamp = "e7d46dac-d144-4dc4-a23a-2e1708f37dd3",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4015),
+                            Email = "luciana.pereira@example.com",
                             EmailConfirmed = false,
                             Gender = "F",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            PostalCode = "23457",
-                            RG = "2345679",
-                            Role = "User",
-                            SecurityStamp = "f37c9bcd-abf3-4727-bdc2-f66ba3738893",
-                            State = "StateL",
+                            PostalCode = "65100-000",
+                            RG = "2345678",
+                            SecurityStamp = "4db87ec0-16a0-4d05-a1a0-e916b789916e",
+                            State = "MA",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3415),
-                            UserName = "Isabella Clark",
-                            UserType = "Commercial"
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4016),
+                            UserName = "Luciana Pereira",
+                            UserType = "Client"
                         },
                         new
                         {
                             Id = "user13",
                             AccessFailedCount = 0,
-                            Address = "1010 Redwood St",
+                            Address = "Rua M, 1010",
                             CPF = "34567890123",
-                            City = "CityM",
-                            ConcurrencyStamp = "6805f778-cf58-4775-9d49-3e5de5b9ff60",
-                            CreatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3425),
-                            Email = "alexander.lewis@example.com",
+                            City = "Teresina",
+                            ConcurrencyStamp = "290ef670-a72f-4483-9d90-8ba72d941ee3",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4030),
+                            Email = "eduardo.costa@example.com",
                             EmailConfirmed = false,
                             Gender = "M",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            PostalCode = "34568",
-                            RG = "3456790",
-                            Role = "Admin",
-                            SecurityStamp = "464dbe33-e802-4862-bd80-94cebafcc4f2",
-                            State = "StateM",
+                            PostalCode = "64000-000",
+                            RG = "3456789",
+                            SecurityStamp = "70297c42-4806-4736-87e7-90c0cba9a59b",
+                            State = "PI",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3425),
-                            UserName = "Alexander Lewis",
-                            UserType = "Residential"
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4031),
+                            UserName = "Eduardo Costa",
+                            UserType = "Client"
                         },
                         new
                         {
                             Id = "user14",
                             AccessFailedCount = 0,
-                            Address = "1111 Fir St",
+                            Address = "Rua N, 1111",
                             CPF = "45678901234",
-                            City = "CityN",
-                            ConcurrencyStamp = "bcaeab15-21cc-4200-840f-bf70191d8998",
-                            CreatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3437),
-                            Email = "ava.walker@example.com",
+                            City = "Maceió",
+                            ConcurrencyStamp = "20cb1cdf-5dbb-4e17-af32-7f9a406884f5",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4043),
+                            Email = "renata.almeida@example.com",
                             EmailConfirmed = false,
                             Gender = "F",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            PostalCode = "45679",
-                            RG = "4567901",
-                            Role = "User",
-                            SecurityStamp = "2cc9efb5-99d5-45cf-958c-fb0eb0238c28",
-                            State = "StateN",
+                            PostalCode = "57000-000",
+                            RG = "4567890",
+                            SecurityStamp = "2b9891cf-a09c-4b09-a6cc-70308d92a9df",
+                            State = "AL",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3437),
-                            UserName = "Ava Walker",
-                            UserType = "Commercial"
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4043),
+                            UserName = "Renata Almeida",
+                            UserType = "Client"
                         },
                         new
                         {
                             Id = "user15",
                             AccessFailedCount = 0,
-                            Address = "1212 Elm St",
+                            Address = "Rua O, 1212",
                             CPF = "56789012345",
-                            City = "CityO",
-                            ConcurrencyStamp = "0cf168bf-fbe0-4165-a289-b022143ba145",
-                            CreatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3476),
-                            Email = "liam.young@example.com",
+                            City = "João Pessoa",
+                            ConcurrencyStamp = "f0bc900e-9139-4b63-bf2c-a28dd21974fc",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4056),
+                            Email = "carlos.eduardo@example.com",
                             EmailConfirmed = false,
                             Gender = "M",
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            PostalCode = "56780",
-                            RG = "5678912",
-                            Role = "Admin",
-                            SecurityStamp = "2643554d-9871-44ac-abd2-ea2400605b27",
-                            State = "StateO",
+                            PostalCode = "58000-000",
+                            RG = "5678901",
+                            SecurityStamp = "5309f291-a5e5-4487-a940-58291d85d248",
+                            State = "PB",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 7, 25, 0, 2, 47, 513, DateTimeKind.Utc).AddTicks(3476),
-                            UserName = "Liam Young",
-                            UserType = "Residential"
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4056),
+                            UserName = "Carlos Eduardo",
+                            UserType = "Client"
+                        },
+                        new
+                        {
+                            Id = "user16",
+                            AccessFailedCount = 0,
+                            Address = "Rua P, 1313",
+                            CPF = "67890123456",
+                            City = "São Paulo",
+                            ConcurrencyStamp = "4aa0ba65-7a88-427b-a469-1d5635c7269c",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4071),
+                            Email = "lucas.oliveira@example.com",
+                            EmailConfirmed = false,
+                            Gender = "M",
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            PostalCode = "01001-000",
+                            RG = "6789012",
+                            SecurityStamp = "6561e1ed-26f4-432a-9fec-87fd4900eba3",
+                            State = "SP",
+                            TwoFactorEnabled = false,
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4071),
+                            UserName = "Lucas Oliveira",
+                            UserType = "Professional"
+                        },
+                        new
+                        {
+                            Id = "user17",
+                            AccessFailedCount = 0,
+                            Address = "Rua Q, 1414",
+                            CPF = "78901234567",
+                            City = "Rio de Janeiro",
+                            ConcurrencyStamp = "12206bd9-a92d-4709-abef-7f93c6cf1508",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4110),
+                            Email = "mariana.silva@example.com",
+                            EmailConfirmed = false,
+                            Gender = "F",
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            PostalCode = "20001-000",
+                            RG = "7890123",
+                            SecurityStamp = "8b604f9a-3f26-4a41-8075-ff67cf66724a",
+                            State = "RJ",
+                            TwoFactorEnabled = false,
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4110),
+                            UserName = "Mariana Silva",
+                            UserType = "Professional"
+                        },
+                        new
+                        {
+                            Id = "user18",
+                            AccessFailedCount = 0,
+                            Address = "Rua R, 1515",
+                            CPF = "89012345678",
+                            City = "Belo Horizonte",
+                            ConcurrencyStamp = "5069b5a0-90e5-44dd-b672-ff02b6a0ccce",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4124),
+                            Email = "gabriel.santos@example.com",
+                            EmailConfirmed = false,
+                            Gender = "M",
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            PostalCode = "30001-000",
+                            RG = "8901234",
+                            SecurityStamp = "01d06ccf-3265-4d2f-97d1-2dcd62091a11",
+                            State = "MG",
+                            TwoFactorEnabled = false,
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4124),
+                            UserName = "Gabriel Santos",
+                            UserType = "Professional"
+                        },
+                        new
+                        {
+                            Id = "user19",
+                            AccessFailedCount = 0,
+                            Address = "Rua S, 1616",
+                            CPF = "90123456789",
+                            City = "Salvador",
+                            ConcurrencyStamp = "49e4357c-e98d-4c95-8e83-4bdc391631e4",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4139),
+                            Email = "juliana.costa@example.com",
+                            EmailConfirmed = false,
+                            Gender = "F",
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            PostalCode = "40001-000",
+                            RG = "9012345",
+                            SecurityStamp = "d622aa39-c523-47af-9308-159fcf7fdc12",
+                            State = "BA",
+                            TwoFactorEnabled = false,
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4139),
+                            UserName = "Juliana Costa",
+                            UserType = "Professional"
+                        },
+                        new
+                        {
+                            Id = "user20",
+                            AccessFailedCount = 0,
+                            Address = "Rua T, 1717",
+                            CPF = "01234567890",
+                            City = "Fortaleza",
+                            ConcurrencyStamp = "cda0f4b7-a808-49bb-9abd-e7b9ecc86dec",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4150),
+                            Email = "roberto.almeida@example.com",
+                            EmailConfirmed = false,
+                            Gender = "M",
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            PostalCode = "60001-000",
+                            RG = "0123456",
+                            SecurityStamp = "4c7af87f-e430-407e-950f-cf44b094d6d2",
+                            State = "CE",
+                            TwoFactorEnabled = false,
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4150),
+                            UserName = "Roberto Almeida",
+                            UserType = "Professional"
+                        },
+                        new
+                        {
+                            Id = "user21",
+                            AccessFailedCount = 0,
+                            Address = "Rua U, 1818",
+                            CPF = "12345678901",
+                            City = "Curitiba",
+                            ConcurrencyStamp = "3e5dc66e-a605-4dc3-bf89-a3c13086c6c5",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4162),
+                            Email = "patricia.martins@example.com",
+                            EmailConfirmed = false,
+                            Gender = "F",
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            PostalCode = "80001-000",
+                            RG = "1234567",
+                            SecurityStamp = "5bf24aef-e28e-4b59-9601-f472c7831540",
+                            State = "PR",
+                            TwoFactorEnabled = false,
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4162),
+                            UserName = "Patricia Martins",
+                            UserType = "Professional"
+                        },
+                        new
+                        {
+                            Id = "user22",
+                            AccessFailedCount = 0,
+                            Address = "Rua V, 1919",
+                            CPF = "23456789012",
+                            City = "Porto Alegre",
+                            ConcurrencyStamp = "1ef796ac-eb67-4800-8138-00f98f71488e",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4173),
+                            Email = "ricardo.lima@example.com",
+                            EmailConfirmed = false,
+                            Gender = "M",
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            PostalCode = "90001-000",
+                            RG = "2345678",
+                            SecurityStamp = "f1dc65ad-843a-450e-80b1-953e3f9de8fa",
+                            State = "RS",
+                            TwoFactorEnabled = false,
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4173),
+                            UserName = "Ricardo Lima",
+                            UserType = "Professional"
+                        },
+                        new
+                        {
+                            Id = "user23",
+                            AccessFailedCount = 0,
+                            Address = "Rua W, 2020",
+                            CPF = "34567890123",
+                            City = "São Luís",
+                            ConcurrencyStamp = "5aaf5e21-5765-40f9-837b-6afccec1a733",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4184),
+                            Email = "claudia.souza@example.com",
+                            EmailConfirmed = false,
+                            Gender = "F",
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            PostalCode = "65001-000",
+                            RG = "3456789",
+                            SecurityStamp = "7181f68d-977f-4b79-bf18-352098e2c97d",
+                            State = "MA",
+                            TwoFactorEnabled = false,
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4184),
+                            UserName = "Claudia Souza",
+                            UserType = "Professional"
+                        },
+                        new
+                        {
+                            Id = "user24",
+                            AccessFailedCount = 0,
+                            Address = "Rua X, 2121",
+                            CPF = "45678901234",
+                            City = "Teresina",
+                            ConcurrencyStamp = "dfd82097-e1e4-4cc8-9efe-0d64e6663e08",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4196),
+                            Email = "fernando.santos@example.com",
+                            EmailConfirmed = false,
+                            Gender = "M",
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            PostalCode = "64001-000",
+                            RG = "4567890",
+                            SecurityStamp = "f3997ba6-1e81-4997-8049-986187a5ad96",
+                            State = "PI",
+                            TwoFactorEnabled = false,
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4196),
+                            UserName = "Fernando Santos",
+                            UserType = "Professional"
+                        },
+                        new
+                        {
+                            Id = "user25",
+                            AccessFailedCount = 0,
+                            Address = "Rua Y, 2222",
+                            CPF = "56789012345",
+                            City = "Maceió",
+                            ConcurrencyStamp = "3d64bc6d-ec53-4dd1-a563-337120138d82",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4206),
+                            Email = "juliana.lima@example.com",
+                            EmailConfirmed = false,
+                            Gender = "F",
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            PostalCode = "57001-000",
+                            RG = "5678901",
+                            SecurityStamp = "24e5d69b-1d7b-45f0-851f-610ec7087b08",
+                            State = "AL",
+                            TwoFactorEnabled = false,
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4207),
+                            UserName = "Juliana Lima",
+                            UserType = "Professional"
+                        },
+                        new
+                        {
+                            Id = "user26",
+                            AccessFailedCount = 0,
+                            Address = "Rua Z, 2323",
+                            CPF = "67890123456",
+                            City = "João Pessoa",
+                            ConcurrencyStamp = "1d884b51-996c-441f-b862-365889811cb8",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4218),
+                            Email = "ricardo.costa@example.com",
+                            EmailConfirmed = false,
+                            Gender = "M",
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            PostalCode = "58001-000",
+                            RG = "6789012",
+                            SecurityStamp = "396c0220-af25-4f9f-a11a-8424c7aa4e17",
+                            State = "PB",
+                            TwoFactorEnabled = false,
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4219),
+                            UserName = "Ricardo Costa",
+                            UserType = "Professional"
+                        },
+                        new
+                        {
+                            Id = "user27",
+                            AccessFailedCount = 0,
+                            Address = "Rua AA, 2424",
+                            CPF = "78901234567",
+                            City = "São Paulo",
+                            ConcurrencyStamp = "beae7b21-3d35-4003-a976-f356b5a0d6f3",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4230),
+                            Email = "mariana.almeida@example.com",
+                            EmailConfirmed = false,
+                            Gender = "F",
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            PostalCode = "01002-000",
+                            RG = "7890123",
+                            SecurityStamp = "a61a102e-3dc4-42ab-8e23-33f8ec2c9e09",
+                            State = "SP",
+                            TwoFactorEnabled = false,
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4230),
+                            UserName = "Mariana Almeida",
+                            UserType = "Professional"
+                        },
+                        new
+                        {
+                            Id = "user28",
+                            AccessFailedCount = 0,
+                            Address = "Rua BB, 2525",
+                            CPF = "89012345678",
+                            City = "Rio de Janeiro",
+                            ConcurrencyStamp = "9ea26f46-d7de-43d4-9dff-bedbfbb2e18e",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4241),
+                            Email = "gabriel.souza@example.com",
+                            EmailConfirmed = false,
+                            Gender = "M",
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            PostalCode = "20002-000",
+                            RG = "8901234",
+                            SecurityStamp = "c3e7cbf9-68e9-4cc6-92b1-16810127d3f7",
+                            State = "RJ",
+                            TwoFactorEnabled = false,
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4241),
+                            UserName = "Gabriel Souza",
+                            UserType = "Professional"
+                        },
+                        new
+                        {
+                            Id = "user29",
+                            AccessFailedCount = 0,
+                            Address = "Rua CC, 2626",
+                            CPF = "90123456789",
+                            City = "Belo Horizonte",
+                            ConcurrencyStamp = "e69dae3d-cd34-4103-8ce2-61bb495c6c88",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4253),
+                            Email = "juliana.rodrigues@example.com",
+                            EmailConfirmed = false,
+                            Gender = "F",
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            PostalCode = "30002-000",
+                            RG = "9012345",
+                            SecurityStamp = "ab978af4-860d-4910-af92-db322107e2ef",
+                            State = "MG",
+                            TwoFactorEnabled = false,
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4253),
+                            UserName = "Juliana Rodrigues",
+                            UserType = "Professional"
+                        },
+                        new
+                        {
+                            Id = "user30",
+                            AccessFailedCount = 0,
+                            Address = "Rua DD, 2727",
+                            CPF = "01234567890",
+                            City = "Salvador",
+                            ConcurrencyStamp = "53a8368e-3603-48d3-9414-8e0f1d33c7e4",
+                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4264),
+                            Email = "roberto.fernandes@example.com",
+                            EmailConfirmed = false,
+                            Gender = "M",
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            PostalCode = "40002-000",
+                            RG = "0123456",
+                            SecurityStamp = "fc1ab42a-ace7-4467-b065-842038ebae1c",
+                            State = "BA",
+                            TwoFactorEnabled = false,
+                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4264),
+                            UserName = "Roberto Fernandes",
+                            UserType = "Professional"
                         });
                 });
 
@@ -898,8 +1219,11 @@ namespace WebAthenPs.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ClientId")
+                    b.Property<int?>("ClientId")
                         .HasColumnType("int");
+
+                    b.Property<string>("ProfessionalType")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -918,95 +1242,110 @@ namespace WebAthenPs.API.Migrations
                         {
                             Id = 1,
                             ClientId = 1,
-                            UserId = "user1"
+                            ProfessionalType = "Arquiteto",
+                            UserId = "user16"
                         },
                         new
                         {
                             Id = 2,
                             ClientId = 2,
-                            UserId = "user2"
+                            ProfessionalType = "Eletricista",
+                            UserId = "user17"
                         },
                         new
                         {
                             Id = 3,
                             ClientId = 3,
-                            UserId = "user3"
+                            ProfessionalType = "Engenheiro",
+                            UserId = "user18"
                         },
                         new
                         {
                             Id = 4,
                             ClientId = 4,
-                            UserId = "user4"
+                            ProfessionalType = "Pedreiro",
+                            UserId = "user19"
                         },
                         new
                         {
                             Id = 5,
                             ClientId = 5,
-                            UserId = "user5"
+                            ProfessionalType = "Encanador",
+                            UserId = "user20"
                         },
                         new
                         {
                             Id = 6,
                             ClientId = 6,
-                            UserId = "user6"
+                            ProfessionalType = "Arquiteto",
+                            UserId = "user21"
                         },
                         new
                         {
                             Id = 7,
                             ClientId = 7,
-                            UserId = "user7"
+                            ProfessionalType = "Eletricista",
+                            UserId = "user22"
                         },
                         new
                         {
                             Id = 8,
                             ClientId = 8,
-                            UserId = "user8"
+                            ProfessionalType = "Engenheiro",
+                            UserId = "user23"
                         },
                         new
                         {
                             Id = 9,
                             ClientId = 9,
-                            UserId = "user9"
+                            ProfessionalType = "Pedreiro",
+                            UserId = "user24"
                         },
                         new
                         {
                             Id = 10,
                             ClientId = 10,
-                            UserId = "user10"
+                            ProfessionalType = "Encanador",
+                            UserId = "user25"
                         },
                         new
                         {
                             Id = 11,
                             ClientId = 11,
-                            UserId = "user11"
+                            ProfessionalType = "Arquiteto",
+                            UserId = "user26"
                         },
                         new
                         {
                             Id = 12,
                             ClientId = 12,
-                            UserId = "user12"
+                            ProfessionalType = "Eletricista",
+                            UserId = "user27"
                         },
                         new
                         {
                             Id = 13,
                             ClientId = 13,
-                            UserId = "user13"
+                            ProfessionalType = "Engenheiro",
+                            UserId = "user28"
                         },
                         new
                         {
                             Id = 14,
                             ClientId = 14,
-                            UserId = "user14"
+                            ProfessionalType = "Pedreiro",
+                            UserId = "user29"
                         },
                         new
                         {
                             Id = 15,
                             ClientId = 15,
-                            UserId = "user15"
+                            ProfessionalType = "Encanador",
+                            UserId = "user30"
                         });
                 });
 
-            modelBuilder.Entity("WebAthenPs.API.Entities.Projects", b =>
+            modelBuilder.Entity("WebAthenPs.API.Entities.Projecty", b =>
                 {
                     b.Property<int>("ProjectId")
                         .ValueGeneratedOnAdd()
@@ -1014,15 +1353,16 @@ namespace WebAthenPs.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProjectId"));
 
-                    b.Property<string>("Address")
-                        .IsRequired()
+                    b.Property<string>("ActStep")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Budget")
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("Budget")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("City")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ClientId")
@@ -1037,14 +1377,12 @@ namespace WebAthenPs.API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Neighborhood")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("NumberOfBathrooms")
@@ -1054,18 +1392,15 @@ namespace WebAthenPs.API.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("PostalCode")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ProjectName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("State")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
@@ -1085,6 +1420,7 @@ namespace WebAthenPs.API.Migrations
                         new
                         {
                             ProjectId = 1,
+                            ActStep = "Phase 1",
                             Address = "123 Main St",
                             Budget = 500000m,
                             City = "CityA",
@@ -1105,6 +1441,7 @@ namespace WebAthenPs.API.Migrations
                         new
                         {
                             ProjectId = 2,
+                            ActStep = "Phase 2",
                             Address = "456 Oak St",
                             Budget = 1000000m,
                             City = "CityB",
@@ -1126,6 +1463,7 @@ namespace WebAthenPs.API.Migrations
                         new
                         {
                             ProjectId = 3,
+                            ActStep = "Initial Planning",
                             Address = "789 Pine St",
                             Budget = 250000m,
                             City = "CityC",
@@ -1146,6 +1484,7 @@ namespace WebAthenPs.API.Migrations
                         new
                         {
                             ProjectId = 4,
+                            ActStep = "Construction",
                             Address = "101 Maple St",
                             Budget = 750000m,
                             City = "CityD",
@@ -1166,6 +1505,7 @@ namespace WebAthenPs.API.Migrations
                         new
                         {
                             ProjectId = 5,
+                            ActStep = "Final Touches",
                             Address = "202 Birch St",
                             Budget = 300000m,
                             City = "CityE",
@@ -1187,6 +1527,7 @@ namespace WebAthenPs.API.Migrations
                         new
                         {
                             ProjectId = 6,
+                            ActStep = "Site Selection",
                             Address = "303 Cedar St",
                             Budget = 1200000m,
                             City = "CityF",
@@ -1207,6 +1548,7 @@ namespace WebAthenPs.API.Migrations
                         new
                         {
                             ProjectId = 7,
+                            ActStep = "Structural Work",
                             Address = "404 Fir St",
                             Budget = 600000m,
                             City = "CityG",
@@ -1227,6 +1569,7 @@ namespace WebAthenPs.API.Migrations
                         new
                         {
                             ProjectId = 8,
+                            ActStep = "Inspection",
                             Address = "505 Spruce St",
                             Budget = 500000m,
                             City = "CityH",
@@ -1248,6 +1591,7 @@ namespace WebAthenPs.API.Migrations
                         new
                         {
                             ProjectId = 9,
+                            ActStep = "Budget Approval",
                             Address = "606 Hemlock St",
                             Budget = 400000m,
                             City = "CityI",
@@ -1268,6 +1612,7 @@ namespace WebAthenPs.API.Migrations
                         new
                         {
                             ProjectId = 10,
+                            ActStep = "Interior Design",
                             Address = "707 Juniper St",
                             Budget = 800000m,
                             City = "CityJ",
@@ -1288,6 +1633,7 @@ namespace WebAthenPs.API.Migrations
                         new
                         {
                             ProjectId = 11,
+                            ActStep = "Landscaping",
                             Address = "808 Willow St",
                             Budget = 350000m,
                             City = "CityK",
@@ -1309,6 +1655,7 @@ namespace WebAthenPs.API.Migrations
                         new
                         {
                             ProjectId = 12,
+                            ActStep = "Permitting",
                             Address = "909 Poplar St",
                             Budget = 950000m,
                             City = "CityL",
@@ -1329,6 +1676,7 @@ namespace WebAthenPs.API.Migrations
                         new
                         {
                             ProjectId = 13,
+                            ActStep = "Framing",
                             Address = "1010 Redwood St",
                             Budget = 700000m,
                             City = "CityM",
@@ -1349,43 +1697,45 @@ namespace WebAthenPs.API.Migrations
                         new
                         {
                             ProjectId = 14,
-                            Address = "1111 Fir St",
+                            ActStep = "Final Inspection",
+                            Address = "1111 Cedar St",
                             Budget = 1100000m,
                             City = "CityN",
                             ClientId = 14,
                             ConstructionType = "Commercial",
                             Country = "CountryN",
-                            Description = "Hotel",
+                            Description = "Tech campus",
                             EndDate = new DateTime(2024, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Neighborhood = "Resort Area",
-                            NumberOfBathrooms = 30,
-                            NumberOfRooms = 50,
+                            Neighborhood = "Innovation Hub",
+                            NumberOfBathrooms = 15,
+                            NumberOfRooms = 30,
                             PostalCode = "45679",
                             ProjectName = "Project Xi",
                             StartDate = new DateTime(2023, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             State = "StateN",
                             Status = "Completed",
-                            TotalArea = 600.0m
+                            TotalArea = 1000.0m
                         },
                         new
                         {
                             ProjectId = 15,
-                            Address = "1212 Elm St",
-                            Budget = 500000m,
+                            ActStep = "Design Approval",
+                            Address = "1212 Birch St",
+                            Budget = 550000m,
                             City = "CityO",
                             ClientId = 15,
                             ConstructionType = "Residential",
                             Country = "CountryO",
-                            Description = "Family home",
-                            Neighborhood = "Suburban",
+                            Description = "Eco-friendly home",
+                            Neighborhood = "Green Valley",
                             NumberOfBathrooms = 3,
-                            NumberOfRooms = 5,
-                            PostalCode = "56780",
+                            NumberOfRooms = 4,
+                            PostalCode = "56790",
                             ProjectName = "Project Omicron",
-                            StartDate = new DateTime(2024, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            StartDate = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             State = "StateO",
-                            Status = "In Progress",
-                            TotalArea = 270.0m
+                            Status = "Planning",
+                            TotalArea = 275.0m
                         });
                 });
 
@@ -1448,7 +1798,7 @@ namespace WebAthenPs.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebAthenPs.API.Entities.Projects", null)
+                    b.HasOne("WebAthenPs.API.Entities.Projecty", null)
                         .WithMany()
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1471,8 +1821,7 @@ namespace WebAthenPs.API.Migrations
                     b.HasOne("WebAthenPs.API.Entities.Client", "Client")
                         .WithMany("GenericProfessionals")
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("WebAthenPs.API.Data.ApplicationUser", "User")
                         .WithMany()
@@ -1485,7 +1834,7 @@ namespace WebAthenPs.API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WebAthenPs.API.Entities.Projects", b =>
+            modelBuilder.Entity("WebAthenPs.API.Entities.Projecty", b =>
                 {
                     b.HasOne("WebAthenPs.API.Entities.Client", "Client")
                         .WithMany("Houses")

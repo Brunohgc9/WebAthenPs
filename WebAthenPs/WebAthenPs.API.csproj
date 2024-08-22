@@ -28,4 +28,8 @@
     <ProjectReference Include="..\WebAthenPs.Project\WebAthenPs.Project\WebAthenPs.Project.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>
