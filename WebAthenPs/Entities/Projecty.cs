@@ -28,7 +28,7 @@ namespace WebAthenPs.API.Entities
         public decimal? TotalArea { get; set; }
         public int? NumberOfRooms { get; set; }
         public int? NumberOfBathrooms { get; set; }
-        public string? Step {  get; set; }
+        public string? ActStep {  get; set; }
 
         public ICollection<GenericProfessional>? Professionals { get; set; } = new List<GenericProfessional>();
     }

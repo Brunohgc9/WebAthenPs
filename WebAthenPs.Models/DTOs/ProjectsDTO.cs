@@ -24,6 +24,7 @@ namespace WebAthenPs.Models.DTOs
         public string? State { get; set; }
         public string? PostalCode { get; set; }
         public string Country { get; set; }  // País
+        public string? Step { get; set; }
 
         // Detalhes adicionais
         public decimal? TotalArea { get; set; }  // Área total do projeto

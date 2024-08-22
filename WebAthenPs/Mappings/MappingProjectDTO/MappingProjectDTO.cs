@@ -29,6 +29,7 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                 Country = item.Country,
                 TotalArea = item.TotalArea,
                 NumberOfRooms = item.NumberOfRooms,
+                Step = item.ActStep,
                 NumberOfBathrooms = item.NumberOfBathrooms,
                 Professionals = item.Professionals?.Select(p => new GenericProfessionalDTO
                 {
@@ -59,6 +60,7 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                 State = project.State,
                 PostalCode = project.PostalCode,
                 Country = project.Country,
+                Step = project.ActStep,
                 TotalArea = project.TotalArea,
                 NumberOfRooms = project.NumberOfRooms,
                 NumberOfBathrooms = project.NumberOfBathrooms,
