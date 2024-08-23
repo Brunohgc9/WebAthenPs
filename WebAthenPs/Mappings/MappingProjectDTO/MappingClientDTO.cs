@@ -1,4 +1,4 @@
-﻿using WebAthenPs.API.Entities;
+﻿using WebAthenPs.API.Entities.Clients;
 using WebAthenPs.Models.DTOs;
 using WebAthenPs.Models.Models;
 

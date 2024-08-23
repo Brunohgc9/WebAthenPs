@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using WebAthenPs.API.Entities;
+using WebAthenPs.API.Entities.Professional;
 using WebAthenPs.Models.DTOs;
 using WebAthenPs.Models.Models;
 

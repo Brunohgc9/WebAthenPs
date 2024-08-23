@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WebAthenPs.API.Data;
-using WebAthenPs.API.Entities;
+using WebAthenPs.API.Entities.Professional;
 using WebAthenPs.API.Repositories.Interfaces;
 
 namespace WebAthenPs.API.Repositories.Implementations

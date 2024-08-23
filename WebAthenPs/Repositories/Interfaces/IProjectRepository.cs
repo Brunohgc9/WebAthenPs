@@ -1,5 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
-using WebAthenPs.API.Entities;
+using WebAthenPs.API.Entities.Project;
 
 namespace WebAthenPs.API.Repositories.Interfaces
 {

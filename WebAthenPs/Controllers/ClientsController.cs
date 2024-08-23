@@ -7,8 +7,10 @@ using System.Collections.Generic;
 using System.Linq;
 using WebAthenPs.API.Mappings.MappingProjectDTO;
 using Microsoft.AspNetCore.Authorization;
-using WebAthenPs.API.Entities;
 using WebAthenPs.Models.Models;
+using WebAthenPs.API.Entities.Project;
+using WebAthenPs.API.Entities.Professional;
+using WebAthenPs.API.Entities.Clients;
 
 namespace WebAthenPs.API.Controllers
 {
@@ -105,7 +107,6 @@ namespace WebAthenPs.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao criar cliente: {ex.Message}");
             }
         }
-
 
         [HttpPut("{id:int}")]
         [Authorize(AuthenticationSchemes = "Bearer")]

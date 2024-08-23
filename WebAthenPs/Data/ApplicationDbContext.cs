@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using WebAthenPs.API.Entities;
+using WebAthenPs.API.Entities.Clients;
+using WebAthenPs.API.Entities.Professional;
+using WebAthenPs.API.Entities.Project;
 
 namespace WebAthenPs.API.Data
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebAthenPs.API.Data;
-using WebAthenPs.API.Entities;
+using WebAthenPs.API.Entities.Project;
 using WebAthenPs.API.Repositories.Interfaces;
 
 namespace WebAthenPs.API.Repositories.Implementations

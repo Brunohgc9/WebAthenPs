@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using WebAthenPs.API.Entities.Professional;
+using WebAthenPs.API.Entities.Clients;
 
-namespace WebAthenPs.API.Entities
+namespace WebAthenPs.API.Entities.Project
 {
     public class Projecty
     {
@@ -28,7 +30,9 @@ namespace WebAthenPs.API.Entities
         public decimal? TotalArea { get; set; }
         public int? NumberOfRooms { get; set; }
         public int? NumberOfBathrooms { get; set; }
-        public string? ActStep {  get; set; }
+        public string? ActStep { get; set; }
+
+        public string? ClientDescription { get; set; }
 
         public ICollection<GenericProfessional>? Professionals { get; set; } = new List<GenericProfessional>();
     }

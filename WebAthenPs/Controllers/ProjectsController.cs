@@ -6,6 +6,8 @@ using WebAthenPs.API.Repositories.Interfaces;
 using WebAthenPs.Models.DTOs;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using WebAthenPs.Models.Models;
+using WebAthenPs.API.Repositories;
 
 namespace WebAthenPs.API.Controllers
 {
@@ -78,7 +80,7 @@ namespace WebAthenPs.API.Controllers
             }
         }
 
-        [HttpGet("areaquadrada/{area:decimal}")]
+        [HttpGet("area/{area:decimal}")]
         public async Task<ActionResult<IEnumerable<ProjectsDTO>>> GetByArea(decimal area)
         {
             try
@@ -94,6 +96,49 @@ namespace WebAthenPs.API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao acessar a base de dados. Detalhes: " + ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ProjectsDTO>> CreateProject([FromBody] RegisterProjectModel model)
+        {
+            if (model == null || !ModelState.IsValid)
+                return BadRequest("Dados inválidos.");
+
+            var project = MappingProjectDTO.CriarProjetoEmDTO(model);
+
+            try
+            {
+                await _projectRepository.CreateNewProject(project);
+
+                var createdDto = MappingProjectDTO.ConverterProjetoParaDTO(project);
+
+                return CreatedAtAction(nameof(GetById), new { id = createdDto.ProjectId }, createdDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao criar cliente: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> DeleteProject(int id)
+        {
+            try
+            {
+                var existingProject = await _projectRepository.GetById(id);
+                if (existingProject == null)
+                {
+                    return NotFound("Projeto não encontrado.");
+                }
+
+                await _projectRepository.DeleteProject(id);
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao deletar o projeto. Detalhes: " + ex.Message);
             }
         }
     }

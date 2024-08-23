@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebAthenPs.API.Entities;
 using WebAthenPs.API.Repositories.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebAthenPs.API.Data;
+using WebAthenPs.API.Entities.Clients;
 
 namespace WebAthenPs.API.Repositories
 {

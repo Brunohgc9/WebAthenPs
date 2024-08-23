@@ -1,4 +1,4 @@
-﻿using WebAthenPs.API.Entities;
+﻿using WebAthenPs.API.Entities.Clients;
 
 namespace WebAthenPs.API.Repositories.Interfaces
 {

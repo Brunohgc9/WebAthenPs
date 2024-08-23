@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using WebAthenPs.API.Data;
+using WebAthenPs.API.Entities.Project;
+using WebAthenPs.API.Entities.Clients;
 
-namespace WebAthenPs.API.Entities
+namespace WebAthenPs.API.Entities.Professional
 {
-    public class GenericProfessional 
+    public class GenericProfessional
     {
         [Key]
         public int Id { get; set; }

@@ -1,7 +1,8 @@
-﻿using WebAthenPs.API.Entities;
-using WebAthenPs.Models.DTOs;
+﻿using WebAthenPs.Models.DTOs;
 using System.Collections.Generic;
 using System.Linq;
+using WebAthenPs.API.Entities.Project;
+using WebAthenPs.Models.Models;
 
 namespace WebAthenPs.API.Mappings.MappingProjectDTO
 {
@@ -70,6 +71,26 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                     UserName = p.User?.UserName,
                     ProfessionalType = p.ProfessionalType
                 }).ToList() ?? new List<GenericProfessionalDTO>()
+            };
+        }
+
+        public static Projecty CriarProjetoEmDTO(this RegisterProjectModel registerProjectModel)
+        {
+            return new Projecty
+            {
+                ProjectId = registerProjectModel.ProjectId, // Usando o ID fornecido
+                ConstructionType = registerProjectModel.ConstructionType,
+                Status = registerProjectModel.Status,
+                Budget = registerProjectModel.Budget,
+                ClientId = registerProjectModel.ClientId, // Usando o ClientId fornecido
+                Address = registerProjectModel.Address,
+                Neighborhood = registerProjectModel.Neighborhood,
+                City = registerProjectModel.City,
+                State = registerProjectModel.State,
+                Country = registerProjectModel.Country,
+                Description = registerProjectModel.ClientDescription // Mapeia ClientDescription para Description
+                // Os seguintes campos não estão no RegisterProjectModel e devem ser definidos como padrão ou omitidos:
+                // ProjectName, PostalCode, TotalArea, NumberOfRooms, Step, NumberOfBathrooms, Professionals
             };
         }
     }

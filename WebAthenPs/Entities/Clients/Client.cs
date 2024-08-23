@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using WebAthenPs.API.Data;
+using WebAthenPs.API.Entities.Professional;
+using WebAthenPs.API.Entities.Project;
 
-namespace WebAthenPs.API.Entities
+namespace WebAthenPs.API.Entities.Clients
 {
     public class Client
     {

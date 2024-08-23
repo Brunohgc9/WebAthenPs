@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebAthenPs.API.Entities;
 using WebAthenPs.API.Mappings.MappingProjectDTO;
 using WebAthenPs.Models.DTOs;
 using WebAthenPs.Models.Models;
@@ -10,6 +9,7 @@ using WebAthenPs.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
 using WebAthenPs.API.Data;
+using WebAthenPs.API.Entities.Professional;
 
 namespace WebAthenPs.API.Controllers
 {
@@ -32,14 +32,7 @@ namespace WebAthenPs.API.Controllers
             if (model == null || !ModelState.IsValid)
                 return BadRequest("Dados inválidos.");
 
-            // Remover a verificação de autenticação
-            // var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            // if (string.IsNullOrEmpty(userId))
-            //     return Unauthorized("Usuário não autenticado.");
-
             var genericProfessional = GenericProfessionalMapping.CriarProfessionalEmDTO(model);
-            // Aqui você pode definir um UserId padrão ou deixar como nulo se não for necessário
-            // genericProfessional.UserId = userId;
 
             try
             {
