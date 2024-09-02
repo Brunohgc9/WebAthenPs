@@ -1,6 +1,5 @@
 ﻿using WebAthenPs.Models.DTOs;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using WebAthenPs.Models.Models;
 
 namespace WebAthenPs.Project.Services.Interfaces
 {
@@ -10,5 +9,7 @@ namespace WebAthenPs.Project.Services.Interfaces
         Task<ProjectsDTO> GetById(int id);
         Task<IEnumerable<ProjectsDTO>> GetByStatus(string status);
         Task<IEnumerable<ProjectsDTO>> GetByArea(decimal area);
+        Task<ProjectsDTO> CreateProject(RegisterProjectModel model);
+        Task DeleteProject(int id);
     }
 }
