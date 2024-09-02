@@ -193,5 +193,33 @@ namespace WebAthenPs.Project.Services.Imprementation
                 throw;
             }
         }
+
+        public async Task<IEnumerable<ProjectsDTO>> GetProjectsByLoggedInUser()
+        {
+            try
+            {
+                var httpClient = await CreateAuthorizedClientAsync();
+                var projectsDto = await httpClient.GetFromJsonAsync<IEnumerable<ProjectsDTO>>("api/Projects/clientProjects");
+
+                if (projectsDto == null)
+                {
+                    _logger.LogWarning("Nenhum projeto encontrado para o cliente logado.");
+                }
+                return projectsDto;
+            }
+            catch (HttpRequestException httpEx)
+            {
+                _logger.LogError(httpEx, "Erro ao acessar a API de projetos para o cliente logado.");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro inesperado ao acessar a API de projetos para o cliente logado.");
+                throw;
+            }
+        }
+
+
+
     }
 }

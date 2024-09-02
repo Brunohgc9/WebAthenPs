@@ -83,6 +83,11 @@ namespace WebAthenPs.API.Repositories.Implementations
                 await _context.SaveChangesAsync();
             }
         }
-
+        public async Task<IEnumerable<Projecty>> GetByClientId(int clientId)
+        {
+            return await _context.Projects
+                .Where(p => p.ClientId == clientId)
+                .ToListAsync();
+        }
     }
 }

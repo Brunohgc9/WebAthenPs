@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using WebAthenPs.API.Mappings.MappingProjectDTO;
 using WebAthenPs.API.Repositories.Interfaces;
 using WebAthenPs.Models.DTOs;
@@ -8,6 +10,8 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using WebAthenPs.Models.Models;
 using WebAthenPs.API.Repositories;
+using WebAthenPs.API.Data;
+using WebAthenPs.API.Entities.Clients;
 
 namespace WebAthenPs.API.Controllers
 {
@@ -17,10 +21,14 @@ namespace WebAthenPs.API.Controllers
     public class ProjectsController : ControllerBase
     {
         private readonly IProjectRepository _projectRepository;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ApplicationDbContext _context;
 
-        public ProjectsController(IProjectRepository projectRepository)
+        public ProjectsController(IProjectRepository projectRepository, UserManager<ApplicationUser> userManager, ApplicationDbContext context)
         {
             _projectRepository = projectRepository;
+            _userManager = userManager;
+            _context = context;
         }
 
         [HttpGet]
@@ -79,6 +87,45 @@ namespace WebAthenPs.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao acessar a base de dados. Detalhes: " + ex.Message);
             }
         }
+        [HttpGet("clientProjects")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<ActionResult<IEnumerable<ProjectsDTO>>> GetProjectsByLoggedInUser()
+        {
+            try
+            {
+                // Obtém o userId do usuário logado
+                var userId = _userManager.GetUserId(User);
+
+                // Usa LINQ para obter o ClientId associado ao userId
+                var clientId = await _context.Clients
+                                             .Where(c => c.UserId == userId)
+                                             .Select(c => c.ClientId)
+                                             .FirstOrDefaultAsync();
+
+                if (clientId == default)
+                {
+                    return NotFound("Cliente não encontrado para o usuário logado.");
+                }
+
+                // Busca os projetos relacionados ao ClientId usando LINQ
+                var projects = await _context.Projects
+                                             .Where(p => p.ClientId == clientId)
+                                             .ToListAsync();
+
+                if (!projects.Any())
+                {
+                    return NotFound("Nenhum projeto encontrado para o cliente logado.");
+                }
+
+                // Converte os projetos para DTO
+                var projectsDTO = projects.ConverterProjetosParaDTO();
+                return Ok(projectsDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao acessar a base de dados. Detalhes: " + ex.Message);
+            }
+        }
 
         [HttpGet("area/{area:decimal}")]
         public async Task<ActionResult<IEnumerable<ProjectsDTO>>> GetByArea(decimal area)
@@ -105,7 +152,18 @@ namespace WebAthenPs.API.Controllers
             if (model == null || !ModelState.IsValid)
                 return BadRequest("Dados inválidos.");
 
+            // Obtém o UserId do usuário autenticado
+            var userId = _userManager.GetUserId(User);
+
+            // Encontra o ClientId associado ao UserId
+            var client = await _context.Clients.FirstOrDefaultAsync(c => c.UserId == userId);
+            if (client == null)
+                return NotFound("Cliente não encontrado.");
+
             var project = MappingProjectDTO.CriarProjetoEmDTO(model);
+
+            // Define o ClientId do projeto
+            project.ClientId = client.ClientId;
 
             try
             {

@@ -11,5 +11,6 @@ namespace WebAthenPs.Project.Services.Interfaces
         Task<IEnumerable<ProjectsDTO>> GetByArea(decimal area);
         Task<ProjectsDTO> CreateProject(RegisterProjectModel model);
         Task DeleteProject(int id);
+        Task<IEnumerable<ProjectsDTO>> GetProjectsByLoggedInUser();
     }
 }

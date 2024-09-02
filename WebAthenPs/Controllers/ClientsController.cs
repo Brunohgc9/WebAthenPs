@@ -86,6 +86,7 @@ namespace WebAthenPs.API.Controllers
             }
         }
 
+
         [HttpPost]
         public async Task<ActionResult<ClientDTO>> Create([FromBody] RegisterClientModel model)
         {
