@@ -137,9 +137,9 @@ public class GenericProfessionalService : IGenericProfessionalService
             }
             return Enumerable.Empty<GenericProfessionalDTO>();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            throw;
+            throw new Exception($"Error fetching professionals by type: {ex.Message}", ex);
         }
     }
 

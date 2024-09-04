@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using WebAthenPs.API.Entities.Clients;
 using WebAthenPs.API.Entities.Professional;
+using WebAthenPs.API.Entities.Professional.ProfessionalTypes;
 using WebAthenPs.API.Entities.Project;
 
 namespace WebAthenPs.API.Data
@@ -11,6 +12,7 @@ namespace WebAthenPs.API.Data
         public DbSet<Projecty> Projects { get; set; }
         public DbSet<GenericProfessional> GenericProfessionals { get; set; }
         public DbSet<Client> Clients { get; set; }
+        public DbSet<Architect> Architects { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -21,6 +23,11 @@ namespace WebAthenPs.API.Data
                 .WithMany(gp => gp.Projects)
                 .UsingEntity(j => j.ToTable("ProjectProfessionals"));
 
+            modelBuilder.Entity<Architect>()
+                .HasOne(a => a.Professional)  
+                .WithOne()
+                .HasForeignKey<Architect>(a => a.genericId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<GenericProfessional>()
                 .HasOne(gp => gp.Client)
@@ -160,6 +167,13 @@ namespace WebAthenPs.API.Data
                 new GenericProfessional { Id = 14, UserId = "user29", ClientId = 14, ProfessionalType = "Pedreiro" },
                 new GenericProfessional { Id = 15, UserId = "user30", ClientId = 15, ProfessionalType = "Encanador" }
             );
+
+            modelBuilder.Entity<Architect>().HasData(
+                new Architect { ArchId = Guid.NewGuid(), genericId = 1, RegistroConselho = "123456", Especialidade = "Residencial" },
+                new Architect { ArchId = Guid.NewGuid(), genericId = 6, RegistroConselho = "654321", Especialidade = "Comercial" },
+                new Architect { ArchId = Guid.NewGuid(), genericId = 11, RegistroConselho = "112233", Especialidade = "Industrial" }
+            );
+
 
             modelBuilder.Entity<Projecty>().HasData(
                new Projecty { ProjectId = 1, ProjectName = "Project Alpha", ConstructionType = "Residential", Status = "In Progress", Budget = 500000, StartDate = new DateTime(2024, 1, 1), Description = "Residential building item", Address = "123 Main St", Neighborhood = "Downtown", City = "CityA", State = "StateA", PostalCode = "12345", Country = "CountryA", TotalArea = 250.5m, NumberOfRooms = 4, NumberOfBathrooms = 3, ClientId = 1, ActStep = "Phase 1" },

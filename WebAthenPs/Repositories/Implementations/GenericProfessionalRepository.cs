@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WebAthenPs.API.Data;
 using WebAthenPs.API.Entities.Professional;
+using WebAthenPs.API.Entities.Professional.ProfessionalTypes;
 using WebAthenPs.API.Repositories.Interfaces;
 
 namespace WebAthenPs.API.Repositories.Implementations
@@ -85,5 +86,14 @@ namespace WebAthenPs.API.Repositories.Implementations
             _context.GenericProfessionals.Update(genericProfessional);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<Architect>> GetAllArchitectsAsync()
+        {
+            return await _context.Architects
+                .Include(a => a.Professional)
+                .ThenInclude(p => p.User)
+                .ToListAsync();
+        }
+
     }
 }

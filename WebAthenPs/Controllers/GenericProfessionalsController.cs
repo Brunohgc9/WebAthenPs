@@ -138,5 +138,35 @@ namespace WebAthenPs.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Error accessing the database: {ex.Message}");
             }
         }
+
+        [HttpGet("architects")]
+        public async Task<IActionResult> GetAllArchitects()
+        {
+            try
+            {
+                var architects = await _repository.GetAllArchitectsAsync();
+
+                if (architects == null || !architects.Any())
+                    return NotFound("Nenhum arquiteto encontrado.");
+
+                var dtoList = architects.Select(architect => new GenericProfessionalDTO
+                {
+                    Id = architect.Professional.Id,
+                    UserId = architect.Professional.UserId,
+                    UserName = architect.Professional.User?.UserName,
+                    PhoneNumber = architect.Professional.User?.PhoneNumber,
+                    Email = architect.Professional.User?.Email,
+                    ClientId = architect.Professional.ClientId,
+                    ProfessionalType = architect.Professional.ProfessionalType
+                }).ToList();
+
+                return Ok(dtoList);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao acessar o banco de dados: {ex.Message}");
+            }
+        }
+
     }
 }
