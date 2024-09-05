@@ -1,8 +1,17 @@
 ﻿@page "/register"
 @using System.ComponentModel.DataAnnotations
-@using WebAthenPs.API.Services.Interfaces
-@using WebAthenPs.Models.Models
+@using WebAthenPs.Models.DTOs.Client
+@using WebAthenPs.Models.DTOs.User
+@using System.ComponentModel.DataAnnotations
+@using WebAthenPs.Project.Services
+@using WebAthenPs.Models
+@using WebAthenPs.Models.DTOs.Client
+@using WebAthenPs.Models.DTOs.Professional
+@using WebAthenPs.Models.DTOs.User
 @using WebAthenPs.Project.Services.Interfaces
+@using WebAthenPs.Project.Services.Interfaces.Client
+@using WebAthenPs.Project.Services.Interfaces.Professional
+@using WebAthenPs.Project.Services.Interfaces.User
 @inject IAuthService AuthService
 @inject IClientService ClientService
 @inject IGenericProfessionalService ProfessionalService

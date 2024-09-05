@@ -1,13 +1,17 @@
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Text.Json;
-using WebAthenPs.API.Services.Implementation;
-using WebAthenPs.API.Services.Interfaces;
 using WebAthenPs.Project.Client.Pages;
 using WebAthenPs.Project.Components;
 using WebAthenPs.Project.Services.Authentication;
-using WebAthenPs.Project.Services.Imprementation;
-using WebAthenPs.Project.Services.Interfaces;
+using WebAthenPs.Project.Services.Implementation.Client;
+using WebAthenPs.Project.Services.Implementation.Professional.ProfessionalTypes;
+using WebAthenPs.Project.Services.Implementation.Project;
+using WebAthenPs.Project.Services.Implementation.User;
+using WebAthenPs.Project.Services.Interfaces.Client;
+using WebAthenPs.Project.Services.Interfaces.Professional;
+using WebAthenPs.Project.Services.Interfaces.Project;
+using WebAthenPs.Project.Services.Interfaces.User;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +35,7 @@ builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, APIAuthenticationStateProvider>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<IArchitectService, ArchitectService>();
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IGenericProfessionalService, GenericProfessionalService>();
 builder.Services.AddSingleton(new JsonSerializerOptions

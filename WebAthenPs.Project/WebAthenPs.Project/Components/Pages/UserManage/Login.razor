@@ -1,7 +1,10 @@
 ﻿@page "/login"
+@using WebAthenPs.Models.DTOs.User
 @using Blazored.LocalStorage
-@using WebAthenPs.Models.Models
+@using WebAthenPs.Models.DTOs.User
+@using WebAthenPs.Models
 @using WebAthenPs.Project.Components.Layout
+@using WebAthenPs.Project.Services.Interfaces.User
 @inject IAuthService AuthService
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService LocalStorageService

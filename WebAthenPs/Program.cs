@@ -14,9 +14,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configuração dos serviços
 builder.Services.AddControllers();
-builder.Services.AddAutoMapper(typeof(DomainToDTOProfile));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<IArchitectRepository, ArchitectRepository>();
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IGenericProfessionlRepository, GenericProfessionalRepository>();
 builder.Services.AddSwaggerGen(c =>

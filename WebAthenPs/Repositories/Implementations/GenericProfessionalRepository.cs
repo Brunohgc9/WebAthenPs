@@ -23,7 +23,6 @@ namespace WebAthenPs.API.Repositories.Implementations
             if (genericProfessional == null)
                 throw new ArgumentNullException(nameof(genericProfessional));
 
-            // Adiciona o novo profissional ao contexto
             _context.GenericProfessionals.Add(genericProfessional);
             await _context.SaveChangesAsync();
         }
@@ -87,13 +86,6 @@ namespace WebAthenPs.API.Repositories.Implementations
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Architect>> GetAllArchitectsAsync()
-        {
-            return await _context.Architects
-                .Include(a => a.Professional)
-                .ThenInclude(p => p.User)
-                .ToListAsync();
-        }
 
     }
 }

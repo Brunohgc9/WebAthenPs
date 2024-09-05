@@ -1,0 +1,104 @@
+﻿@page "/professionals"
+@using WebAthenPs.Project.Services
+@using WebAthenPs.Models.DTOs.Professional
+@using WebAthenPs.Project.Services.Interfaces.Professional
+@inject IGenericProfessionalService ProfessionalService
+
+@code {
+    private IEnumerable<GenericProfessionalDTO> _professionals;
+    private bool _isLoading = true;
+    private string _professionalTypeFilter = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProfessionals();
+    }
+
+    private async Task LoadProfessionals()
+    {
+        try
+        {
+            _professionals = await ProfessionalService.GetAllAsync(_professionalTypeFilter);
+        }
+        catch (Exception ex)
+        {
+            // Tratar exceção
+            Console.WriteLine($"Error fetching professionals: {ex.Message}");
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task FilterProfessionals()
+    {
+        _isLoading = true;
+        await LoadProfessionals();
+    }
+}
+
+@if (_isLoading)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div>
+        <input type="text" @bind="_professionalTypeFilter" placeholder="Filter by type" />
+        <button @onclick="FilterProfessionals">Filter</button>
+    </div>
+
+    <div class="card-container">
+        @foreach (var professional in _professionals)
+        {
+            <div class="card">
+                <div class="card-header">
+                    <h3>@professional.UserName</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>Email:</strong> @professional.Email</p>
+                    <p><strong>Phone Number:</strong> @professional.PhoneNumber</p>
+                    <p><strong>Professional Type:</strong> @professional.ProfessionalType</p>
+                </div>
+                <div class="card-footer">
+                    <!-- Adicione ações aqui se necessário, como editar ou excluir -->
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<style>
+    .card-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .card {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+        padding: 16px;
+        width: 300px;
+    }
+
+    .card-header {
+        border-bottom: 1px solid #dee2e6;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+    }
+
+    .card-body p {
+        margin: 8px 0;
+    }
+
+    .card-footer {
+        border-top: 1px solid #dee2e6;
+        margin-top: 16px;
+        padding-top: 8px;
+        text-align: right;
+    }
+</style>

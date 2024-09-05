@@ -1,0 +1,91 @@
+﻿@page "/architects"
+@using WebAthenPs.Project.Services.Interfaces.Professional
+@using WebAthenPs.Models.DTOs.Professional.ProfessionalTypes.Architect
+@inject IArchitectService ArchitectService
+
+@code {
+    private IEnumerable<GeneralArchitectDTO> _architects;
+    private bool _isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadArchitects();
+    }
+
+    private async Task LoadArchitects()
+    {
+        try
+        {
+            _architects = await ArchitectService.GetAllAsync();
+        }
+        catch (Exception ex)
+        {
+            // Tratar exceção
+            Console.WriteLine($"Error fetching architects: {ex.Message}");
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+}
+
+@if (_isLoading)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="card-container">
+        @foreach (var architect in _architects)
+        {
+            <div class="card">
+                <div class="card-header">
+                    <h3>@architect.name</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>Email:</strong> @architect.email</p>
+                    <p><strong>Registro Conselho:</strong> @architect.RegistroConselho</p>
+                    <p><strong>Especialidade:</strong> @architect.Especialidade</p>
+                </div>
+                <div class="card-footer">
+                    <!-- Adicione ações aqui se necessário, como editar ou excluir -->
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<style>
+    .card-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .card {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+        padding: 16px;
+        width: 300px;
+    }
+
+    .card-header {
+        border-bottom: 1px solid #dee2e6;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+    }
+
+    .card-body p {
+        margin: 8px 0;
+    }
+
+    .card-footer {
+        border-top: 1px solid #dee2e6;
+        margin-top: 16px;
+        padding-top: 8px;
+        text-align: right;
+    }
+</style>

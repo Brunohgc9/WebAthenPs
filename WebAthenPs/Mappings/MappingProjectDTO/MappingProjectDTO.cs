@@ -1,8 +1,8 @@
-﻿using WebAthenPs.Models.DTOs;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using WebAthenPs.API.Entities.Project;
-using WebAthenPs.Models.Models;
+using WebAthenPs.Models.DTOs.Professional;
+using WebAthenPs.Models.DTOs.Project;
 
 namespace WebAthenPs.API.Mappings.MappingProjectDTO
 {

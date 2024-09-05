@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using WebAthenPs.API.Data;
 using WebAthenPs.API.Entities.Project;
 using WebAthenPs.API.Entities.Clients;
+using WebAthenPs.API.Entities.Professional.ProfessionalTypes;
 
 namespace WebAthenPs.API.Entities.Professional
 {
@@ -23,5 +24,7 @@ namespace WebAthenPs.API.Entities.Professional
         public Client? Client { get; set; }
 
         public ICollection<Projecty> Projects { get; set; } = new List<Projecty>();
+
+        public Architect? Architect { get; set; }
     }
 }
