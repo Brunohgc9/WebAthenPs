@@ -12,8 +12,8 @@ using WebAthenPs.API.Data;
 namespace WebAthenPs.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240822015056_First")]
-    partial class First
+    [Migration("20240906013124_seventh")]
+    partial class seventh
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -156,6 +156,29 @@ namespace WebAthenPs.API.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("ProjectProfessional", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProfessionalId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProfessionalId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("ProjectProfessional");
                 });
 
             modelBuilder.Entity("ProjectProfessionals", b =>
@@ -430,8 +453,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua A, 123",
                             CPF = "12345678901",
                             City = "São Paulo",
-                            ConcurrencyStamp = "fcda258d-26c7-43bd-9c63-ad100a7d7558",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3788),
+                            ConcurrencyStamp = "256c1bae-12a1-4fe3-a394-424ef8641b40",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(5900),
                             Email = "carlos.silva@example.com",
                             EmailConfirmed = false,
                             Gender = "M",
@@ -439,10 +462,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "01000-000",
                             RG = "1234567",
-                            SecurityStamp = "d42e8cbe-1a32-4765-b81a-94ee794a58ca",
+                            SecurityStamp = "38cffb04-899f-42cd-a2d1-4ab6a68e62af",
                             State = "SP",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3788),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(5902),
                             UserName = "Carlos Silva",
                             UserType = "Client"
                         },
@@ -453,8 +476,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua B, 456",
                             CPF = "23456789012",
                             City = "Rio de Janeiro",
-                            ConcurrencyStamp = "234d754e-d379-446d-b995-d12bd60bfa6c",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3874),
+                            ConcurrencyStamp = "0d63622e-0541-4814-89a6-87d086cffb22",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6021),
                             Email = "ana.souza@example.com",
                             EmailConfirmed = false,
                             Gender = "F",
@@ -462,10 +485,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "20000-000",
                             RG = "2345678",
-                            SecurityStamp = "76db39d5-19ff-41f2-873d-d38a94cefba4",
+                            SecurityStamp = "06579c18-91bb-4e52-aac6-d0b377c042d1",
                             State = "RJ",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3874),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6021),
                             UserName = "Ana Souza",
                             UserType = "Client"
                         },
@@ -476,8 +499,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua C, 789",
                             CPF = "34567890123",
                             City = "Belo Horizonte",
-                            ConcurrencyStamp = "de26146a-760d-4e99-83a4-e595fbac0140",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3889),
+                            ConcurrencyStamp = "d4f0df77-dc22-4ee2-b4d3-4767938344e8",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6034),
                             Email = "joao.oliveira@example.com",
                             EmailConfirmed = false,
                             Gender = "M",
@@ -485,10 +508,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "30000-000",
                             RG = "3456789",
-                            SecurityStamp = "372f8ad0-27c5-40b4-b49d-b0c2e27d9a00",
+                            SecurityStamp = "87b983f2-829f-465c-8c58-66d5db3a2723",
                             State = "MG",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3889),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6034),
                             UserName = "João Oliveira",
                             UserType = "Client"
                         },
@@ -499,8 +522,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua D, 101",
                             CPF = "45678901234",
                             City = "Salvador",
-                            ConcurrencyStamp = "97fb2734-9133-4737-ada5-f4927ad2883e",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3902),
+                            ConcurrencyStamp = "6b8b6ccb-b1ef-424e-a013-58e32395460c",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6047),
                             Email = "maria.santos@example.com",
                             EmailConfirmed = false,
                             Gender = "F",
@@ -508,10 +531,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "40000-000",
                             RG = "4567890",
-                            SecurityStamp = "310b14ab-dfa6-4615-bd63-5eba044dd77d",
+                            SecurityStamp = "16045a84-072a-472b-8306-cad40433c3af",
                             State = "BA",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3903),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6047),
                             UserName = "Maria Santos",
                             UserType = "Client"
                         },
@@ -522,8 +545,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua E, 202",
                             CPF = "56789012345",
                             City = "Fortaleza",
-                            ConcurrencyStamp = "54294449-57b8-4d31-a251-5c135ed83352",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3918),
+                            ConcurrencyStamp = "1f903e4a-c9d5-48e6-bbb3-3b91f59b2fae",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6058),
                             Email = "pedro.almeida@example.com",
                             EmailConfirmed = false,
                             Gender = "M",
@@ -531,10 +554,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "60000-000",
                             RG = "5678901",
-                            SecurityStamp = "a76c6b6d-05c0-480e-9d21-25ad17718604",
+                            SecurityStamp = "c9ddf8a0-3716-41e6-ad3b-8be9e405e913",
                             State = "CE",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3919),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6059),
                             UserName = "Pedro Almeida",
                             UserType = "Client"
                         },
@@ -545,8 +568,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua F, 303",
                             CPF = "67890123456",
                             City = "Curitiba",
-                            ConcurrencyStamp = "b0c5d792-34f4-4aa8-acd2-da54c40aa816",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3932),
+                            ConcurrencyStamp = "d53aa8a2-7463-4897-b26b-cfe901aa6436",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6070),
                             Email = "juliana.costa@example.com",
                             EmailConfirmed = false,
                             Gender = "F",
@@ -554,10 +577,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "80000-000",
                             RG = "6789012",
-                            SecurityStamp = "47abe447-3cf6-4b68-9788-7a0683360879",
+                            SecurityStamp = "842ec82b-913c-48ce-bcb9-4f7126bb4e9c",
                             State = "PR",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3932),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6070),
                             UserName = "Juliana Costa",
                             UserType = "Client"
                         },
@@ -568,8 +591,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua G, 404",
                             CPF = "78901234567",
                             City = "Porto Alegre",
-                            ConcurrencyStamp = "caa1b828-f98b-4b9e-b11f-e03e21b404b0",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3945),
+                            ConcurrencyStamp = "e70cc45a-e68b-4a40-92cb-0c6f4a9084e9",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6082),
                             Email = "roberto.lima@example.com",
                             EmailConfirmed = false,
                             Gender = "M",
@@ -577,10 +600,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "90000-000",
                             RG = "7890123",
-                            SecurityStamp = "57d421eb-2efd-474c-8d1b-04bd251d4259",
+                            SecurityStamp = "d83a7a48-6e4b-4a2c-86e3-59dc213bd504",
                             State = "RS",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3945),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6083),
                             UserName = "Roberto Lima",
                             UserType = "Client"
                         },
@@ -591,8 +614,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua H, 505",
                             CPF = "89012345678",
                             City = "Recife",
-                            ConcurrencyStamp = "8ad603ee-5be9-4f1c-bbd3-bd900719be18",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3960),
+                            ConcurrencyStamp = "b70db2d3-f653-4f2e-baf2-725c75e2cdcd",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6094),
                             Email = "patricia.martins@example.com",
                             EmailConfirmed = false,
                             Gender = "F",
@@ -600,10 +623,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "50000-000",
                             RG = "8901234",
-                            SecurityStamp = "a0f6a7dd-f15e-4c0b-b76f-bf96d2f6b92b",
+                            SecurityStamp = "c7b5c2a8-efcb-4d10-913a-9c17a8d1093b",
                             State = "PE",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3960),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6094),
                             UserName = "Patricia Martins",
                             UserType = "Client"
                         },
@@ -614,8 +637,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua I, 606",
                             CPF = "90123456789",
                             City = "Belém",
-                            ConcurrencyStamp = "f863446a-d085-411b-ba01-a240d59cf9c9",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3973),
+                            ConcurrencyStamp = "20b58e2f-fa09-49ae-b319-e72f6047d835",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6106),
                             Email = "ricardo.fernandes@example.com",
                             EmailConfirmed = false,
                             Gender = "M",
@@ -623,10 +646,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "66000-000",
                             RG = "9012345",
-                            SecurityStamp = "189323b2-c344-4244-a70d-346d3b95aa04",
+                            SecurityStamp = "0cade379-18d2-4d5b-9d42-5c4c46c4d598",
                             State = "PA",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3974),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6107),
                             UserName = "Ricardo Fernandes",
                             UserType = "Client"
                         },
@@ -637,8 +660,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua J, 707",
                             CPF = "01234567890",
                             City = "Manaus",
-                            ConcurrencyStamp = "eff2455b-94ca-4f2f-9b82-e2d8feb2e87d",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3988),
+                            ConcurrencyStamp = "84736f75-3a99-4d45-9fe5-b493268540e0",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6219),
                             Email = "claudia.rodrigues@example.com",
                             EmailConfirmed = false,
                             Gender = "F",
@@ -646,10 +669,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "69000-000",
                             RG = "0123456",
-                            SecurityStamp = "451ccd31-0eb2-49e0-a849-3789b25ab469",
+                            SecurityStamp = "4f5c6d10-19c4-4d26-8619-9621636aa862",
                             State = "AM",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(3988),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6219),
                             UserName = "Claudia Rodrigues",
                             UserType = "Client"
                         },
@@ -660,8 +683,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua K, 808",
                             CPF = "12345678901",
                             City = "São Luís",
-                            ConcurrencyStamp = "33116b12-789b-4497-bb2a-517e360ffcd2",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4002),
+                            ConcurrencyStamp = "0c25ecb6-7b56-43ba-866b-d64d7860e30d",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6234),
                             Email = "fernando.oliveira@example.com",
                             EmailConfirmed = false,
                             Gender = "M",
@@ -669,10 +692,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "65000-000",
                             RG = "1234567",
-                            SecurityStamp = "01c06d94-71f8-4a76-b24f-15cd14a46b3e",
+                            SecurityStamp = "cc97a8eb-4694-4e87-bb6e-b9d4e0f7cb2f",
                             State = "MA",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4002),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6235),
                             UserName = "Fernando Oliveira",
                             UserType = "Client"
                         },
@@ -683,8 +706,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua L, 909",
                             CPF = "23456789012",
                             City = "São José de Ribamar",
-                            ConcurrencyStamp = "e7d46dac-d144-4dc4-a23a-2e1708f37dd3",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4015),
+                            ConcurrencyStamp = "9fd4c540-d7ac-4172-a317-7b97036f1ad0",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6248),
                             Email = "luciana.pereira@example.com",
                             EmailConfirmed = false,
                             Gender = "F",
@@ -692,10 +715,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "65100-000",
                             RG = "2345678",
-                            SecurityStamp = "4db87ec0-16a0-4d05-a1a0-e916b789916e",
+                            SecurityStamp = "807aab30-1dc0-43be-9e68-7b1a19bd1231",
                             State = "MA",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4016),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6248),
                             UserName = "Luciana Pereira",
                             UserType = "Client"
                         },
@@ -706,8 +729,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua M, 1010",
                             CPF = "34567890123",
                             City = "Teresina",
-                            ConcurrencyStamp = "290ef670-a72f-4483-9d90-8ba72d941ee3",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4030),
+                            ConcurrencyStamp = "02ef8814-fb0c-4577-97d1-d6eaac458bd9",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6260),
                             Email = "eduardo.costa@example.com",
                             EmailConfirmed = false,
                             Gender = "M",
@@ -715,10 +738,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "64000-000",
                             RG = "3456789",
-                            SecurityStamp = "70297c42-4806-4736-87e7-90c0cba9a59b",
+                            SecurityStamp = "f4da2393-61e8-4d36-a08a-90da0b1af2c7",
                             State = "PI",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4031),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6260),
                             UserName = "Eduardo Costa",
                             UserType = "Client"
                         },
@@ -729,8 +752,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua N, 1111",
                             CPF = "45678901234",
                             City = "Maceió",
-                            ConcurrencyStamp = "20cb1cdf-5dbb-4e17-af32-7f9a406884f5",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4043),
+                            ConcurrencyStamp = "a89ee89b-71c3-4c37-bf0d-07613c84b5c8",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6271),
                             Email = "renata.almeida@example.com",
                             EmailConfirmed = false,
                             Gender = "F",
@@ -738,10 +761,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "57000-000",
                             RG = "4567890",
-                            SecurityStamp = "2b9891cf-a09c-4b09-a6cc-70308d92a9df",
+                            SecurityStamp = "10be005d-ee41-4485-9a11-9e26896f3028",
                             State = "AL",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4043),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6271),
                             UserName = "Renata Almeida",
                             UserType = "Client"
                         },
@@ -752,8 +775,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua O, 1212",
                             CPF = "56789012345",
                             City = "João Pessoa",
-                            ConcurrencyStamp = "f0bc900e-9139-4b63-bf2c-a28dd21974fc",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4056),
+                            ConcurrencyStamp = "f30f4ec7-0e30-4b9e-a022-381ccb912404",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6284),
                             Email = "carlos.eduardo@example.com",
                             EmailConfirmed = false,
                             Gender = "M",
@@ -761,10 +784,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "58000-000",
                             RG = "5678901",
-                            SecurityStamp = "5309f291-a5e5-4487-a940-58291d85d248",
+                            SecurityStamp = "e4da27a0-587f-474e-9822-026ef1ebf49d",
                             State = "PB",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4056),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6284),
                             UserName = "Carlos Eduardo",
                             UserType = "Client"
                         },
@@ -775,8 +798,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua P, 1313",
                             CPF = "67890123456",
                             City = "São Paulo",
-                            ConcurrencyStamp = "4aa0ba65-7a88-427b-a469-1d5635c7269c",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4071),
+                            ConcurrencyStamp = "8e2845a4-aa57-40ea-8c92-40c0bb3c51f1",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6295),
                             Email = "lucas.oliveira@example.com",
                             EmailConfirmed = false,
                             Gender = "M",
@@ -784,10 +807,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "01001-000",
                             RG = "6789012",
-                            SecurityStamp = "6561e1ed-26f4-432a-9fec-87fd4900eba3",
+                            SecurityStamp = "cf5b131b-09aa-448c-8d9c-c1e6861bbeea",
                             State = "SP",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4071),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6296),
                             UserName = "Lucas Oliveira",
                             UserType = "Professional"
                         },
@@ -798,8 +821,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua Q, 1414",
                             CPF = "78901234567",
                             City = "Rio de Janeiro",
-                            ConcurrencyStamp = "12206bd9-a92d-4709-abef-7f93c6cf1508",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4110),
+                            ConcurrencyStamp = "2cbc6eb4-789c-4ec4-9ab2-5f208e6cb1c1",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6307),
                             Email = "mariana.silva@example.com",
                             EmailConfirmed = false,
                             Gender = "F",
@@ -807,10 +830,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "20001-000",
                             RG = "7890123",
-                            SecurityStamp = "8b604f9a-3f26-4a41-8075-ff67cf66724a",
+                            SecurityStamp = "2495d7f3-e2b3-4fd5-9b18-fcfd78c3f4c6",
                             State = "RJ",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4110),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6307),
                             UserName = "Mariana Silva",
                             UserType = "Professional"
                         },
@@ -821,8 +844,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua R, 1515",
                             CPF = "89012345678",
                             City = "Belo Horizonte",
-                            ConcurrencyStamp = "5069b5a0-90e5-44dd-b672-ff02b6a0ccce",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4124),
+                            ConcurrencyStamp = "cf784f0d-edf8-4c3f-a729-253d05986a9d",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6320),
                             Email = "gabriel.santos@example.com",
                             EmailConfirmed = false,
                             Gender = "M",
@@ -830,10 +853,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "30001-000",
                             RG = "8901234",
-                            SecurityStamp = "01d06ccf-3265-4d2f-97d1-2dcd62091a11",
+                            SecurityStamp = "e43f2551-dbc3-4d09-ab3f-6445ca203195",
                             State = "MG",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4124),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6320),
                             UserName = "Gabriel Santos",
                             UserType = "Professional"
                         },
@@ -844,8 +867,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua S, 1616",
                             CPF = "90123456789",
                             City = "Salvador",
-                            ConcurrencyStamp = "49e4357c-e98d-4c95-8e83-4bdc391631e4",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4139),
+                            ConcurrencyStamp = "92c837e8-5adb-4bd4-958c-e8fbcc6dd687",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6331),
                             Email = "juliana.costa@example.com",
                             EmailConfirmed = false,
                             Gender = "F",
@@ -853,10 +876,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "40001-000",
                             RG = "9012345",
-                            SecurityStamp = "d622aa39-c523-47af-9308-159fcf7fdc12",
+                            SecurityStamp = "d891ab6b-ce64-413d-a1f8-ace0b72119ec",
                             State = "BA",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4139),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6331),
                             UserName = "Juliana Costa",
                             UserType = "Professional"
                         },
@@ -867,8 +890,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua T, 1717",
                             CPF = "01234567890",
                             City = "Fortaleza",
-                            ConcurrencyStamp = "cda0f4b7-a808-49bb-9abd-e7b9ecc86dec",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4150),
+                            ConcurrencyStamp = "ad9f0ca3-ee65-42e7-be4c-5089e069e2a2",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6344),
                             Email = "roberto.almeida@example.com",
                             EmailConfirmed = false,
                             Gender = "M",
@@ -876,10 +899,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "60001-000",
                             RG = "0123456",
-                            SecurityStamp = "4c7af87f-e430-407e-950f-cf44b094d6d2",
+                            SecurityStamp = "b5dfc773-2b8d-4d7b-9431-1011b315fe23",
                             State = "CE",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4150),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6344),
                             UserName = "Roberto Almeida",
                             UserType = "Professional"
                         },
@@ -890,8 +913,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua U, 1818",
                             CPF = "12345678901",
                             City = "Curitiba",
-                            ConcurrencyStamp = "3e5dc66e-a605-4dc3-bf89-a3c13086c6c5",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4162),
+                            ConcurrencyStamp = "3ab1eb7d-6abc-4dc1-a186-a9e0ffbece17",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6355),
                             Email = "patricia.martins@example.com",
                             EmailConfirmed = false,
                             Gender = "F",
@@ -899,10 +922,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "80001-000",
                             RG = "1234567",
-                            SecurityStamp = "5bf24aef-e28e-4b59-9601-f472c7831540",
+                            SecurityStamp = "28820731-7dac-436d-b2e1-0c03e1b002d8",
                             State = "PR",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4162),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6355),
                             UserName = "Patricia Martins",
                             UserType = "Professional"
                         },
@@ -913,8 +936,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua V, 1919",
                             CPF = "23456789012",
                             City = "Porto Alegre",
-                            ConcurrencyStamp = "1ef796ac-eb67-4800-8138-00f98f71488e",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4173),
+                            ConcurrencyStamp = "2b186fc3-4a79-4221-9515-e607e104fb35",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6366),
                             Email = "ricardo.lima@example.com",
                             EmailConfirmed = false,
                             Gender = "M",
@@ -922,10 +945,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "90001-000",
                             RG = "2345678",
-                            SecurityStamp = "f1dc65ad-843a-450e-80b1-953e3f9de8fa",
+                            SecurityStamp = "9dbed96f-432d-4933-a031-81dd650edf68",
                             State = "RS",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4173),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6367),
                             UserName = "Ricardo Lima",
                             UserType = "Professional"
                         },
@@ -936,8 +959,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua W, 2020",
                             CPF = "34567890123",
                             City = "São Luís",
-                            ConcurrencyStamp = "5aaf5e21-5765-40f9-837b-6afccec1a733",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4184),
+                            ConcurrencyStamp = "1c66b787-8bb8-49e3-bde1-d3c742cc83bb",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6379),
                             Email = "claudia.souza@example.com",
                             EmailConfirmed = false,
                             Gender = "F",
@@ -945,10 +968,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "65001-000",
                             RG = "3456789",
-                            SecurityStamp = "7181f68d-977f-4b79-bf18-352098e2c97d",
+                            SecurityStamp = "a276c3cb-9f49-4bcd-b231-a2331ae7c6da",
                             State = "MA",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4184),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6380),
                             UserName = "Claudia Souza",
                             UserType = "Professional"
                         },
@@ -959,8 +982,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua X, 2121",
                             CPF = "45678901234",
                             City = "Teresina",
-                            ConcurrencyStamp = "dfd82097-e1e4-4cc8-9efe-0d64e6663e08",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4196),
+                            ConcurrencyStamp = "88f6ef91-4e04-4cbf-aa12-1befd1d1cf11",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6391),
                             Email = "fernando.santos@example.com",
                             EmailConfirmed = false,
                             Gender = "M",
@@ -968,10 +991,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "64001-000",
                             RG = "4567890",
-                            SecurityStamp = "f3997ba6-1e81-4997-8049-986187a5ad96",
+                            SecurityStamp = "10d4d57b-36e7-4a02-a90d-5bb63a07ab08",
                             State = "PI",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4196),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6391),
                             UserName = "Fernando Santos",
                             UserType = "Professional"
                         },
@@ -982,8 +1005,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua Y, 2222",
                             CPF = "56789012345",
                             City = "Maceió",
-                            ConcurrencyStamp = "3d64bc6d-ec53-4dd1-a563-337120138d82",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4206),
+                            ConcurrencyStamp = "a35d092e-405c-4811-99ad-5b918a2d4b52",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6402),
                             Email = "juliana.lima@example.com",
                             EmailConfirmed = false,
                             Gender = "F",
@@ -991,10 +1014,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "57001-000",
                             RG = "5678901",
-                            SecurityStamp = "24e5d69b-1d7b-45f0-851f-610ec7087b08",
+                            SecurityStamp = "140d155d-12fb-4bd0-a251-81a1ad36a134",
                             State = "AL",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4207),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6402),
                             UserName = "Juliana Lima",
                             UserType = "Professional"
                         },
@@ -1005,8 +1028,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua Z, 2323",
                             CPF = "67890123456",
                             City = "João Pessoa",
-                            ConcurrencyStamp = "1d884b51-996c-441f-b862-365889811cb8",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4218),
+                            ConcurrencyStamp = "2225cdd6-db1b-47ab-9541-adf8d9152137",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6415),
                             Email = "ricardo.costa@example.com",
                             EmailConfirmed = false,
                             Gender = "M",
@@ -1014,10 +1037,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "58001-000",
                             RG = "6789012",
-                            SecurityStamp = "396c0220-af25-4f9f-a11a-8424c7aa4e17",
+                            SecurityStamp = "486e472d-6a41-411a-a37c-30fe088afc0d",
                             State = "PB",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4219),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6415),
                             UserName = "Ricardo Costa",
                             UserType = "Professional"
                         },
@@ -1028,8 +1051,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua AA, 2424",
                             CPF = "78901234567",
                             City = "São Paulo",
-                            ConcurrencyStamp = "beae7b21-3d35-4003-a976-f356b5a0d6f3",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4230),
+                            ConcurrencyStamp = "75bfe12f-9cac-4a92-9208-00afff63889b",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6452),
                             Email = "mariana.almeida@example.com",
                             EmailConfirmed = false,
                             Gender = "F",
@@ -1037,10 +1060,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "01002-000",
                             RG = "7890123",
-                            SecurityStamp = "a61a102e-3dc4-42ab-8e23-33f8ec2c9e09",
+                            SecurityStamp = "87a5afa1-4083-4804-a482-d7e18d86f9ef",
                             State = "SP",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4230),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6453),
                             UserName = "Mariana Almeida",
                             UserType = "Professional"
                         },
@@ -1051,8 +1074,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua BB, 2525",
                             CPF = "89012345678",
                             City = "Rio de Janeiro",
-                            ConcurrencyStamp = "9ea26f46-d7de-43d4-9dff-bedbfbb2e18e",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4241),
+                            ConcurrencyStamp = "435471fd-da32-4f76-807b-3319cfbff882",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6465),
                             Email = "gabriel.souza@example.com",
                             EmailConfirmed = false,
                             Gender = "M",
@@ -1060,10 +1083,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "20002-000",
                             RG = "8901234",
-                            SecurityStamp = "c3e7cbf9-68e9-4cc6-92b1-16810127d3f7",
+                            SecurityStamp = "ab111a57-a4c8-46f6-9eb2-b01a13bb33ec",
                             State = "RJ",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4241),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6466),
                             UserName = "Gabriel Souza",
                             UserType = "Professional"
                         },
@@ -1074,8 +1097,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua CC, 2626",
                             CPF = "90123456789",
                             City = "Belo Horizonte",
-                            ConcurrencyStamp = "e69dae3d-cd34-4103-8ce2-61bb495c6c88",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4253),
+                            ConcurrencyStamp = "3fa4d41a-ecb2-4306-88b7-9dc8facff94a",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6477),
                             Email = "juliana.rodrigues@example.com",
                             EmailConfirmed = false,
                             Gender = "F",
@@ -1083,10 +1106,10 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "30002-000",
                             RG = "9012345",
-                            SecurityStamp = "ab978af4-860d-4910-af92-db322107e2ef",
+                            SecurityStamp = "3ee24a83-9e03-412b-9f5d-4ff4184339af",
                             State = "MG",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4253),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6477),
                             UserName = "Juliana Rodrigues",
                             UserType = "Professional"
                         },
@@ -1097,8 +1120,8 @@ namespace WebAthenPs.API.Migrations
                             Address = "Rua DD, 2727",
                             CPF = "01234567890",
                             City = "Salvador",
-                            ConcurrencyStamp = "53a8368e-3603-48d3-9414-8e0f1d33c7e4",
-                            CreatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4264),
+                            ConcurrencyStamp = "aae2093e-9ad4-4432-9738-3dec95a41656",
+                            CreatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6489),
                             Email = "roberto.fernandes@example.com",
                             EmailConfirmed = false,
                             Gender = "M",
@@ -1106,16 +1129,16 @@ namespace WebAthenPs.API.Migrations
                             PhoneNumberConfirmed = false,
                             PostalCode = "40002-000",
                             RG = "0123456",
-                            SecurityStamp = "fc1ab42a-ace7-4467-b065-842038ebae1c",
+                            SecurityStamp = "0a762024-720a-419b-af6b-59862a53913e",
                             State = "BA",
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2024, 8, 22, 1, 50, 56, 193, DateTimeKind.Utc).AddTicks(4264),
+                            UpdatedDate = new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6490),
                             UserName = "Roberto Fernandes",
                             UserType = "Professional"
                         });
                 });
 
-            modelBuilder.Entity("WebAthenPs.API.Entities.Client", b =>
+            modelBuilder.Entity("WebAthenPs.API.Entities.Clients.Client", b =>
                 {
                     b.Property<int>("ClientId")
                         .ValueGeneratedOnAdd()
@@ -1211,7 +1234,7 @@ namespace WebAthenPs.API.Migrations
                         });
                 });
 
-            modelBuilder.Entity("WebAthenPs.API.Entities.GenericProfessional", b =>
+            modelBuilder.Entity("WebAthenPs.API.Entities.Professional.GenericProfessional", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1219,10 +1242,14 @@ namespace WebAthenPs.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<Guid?>("ArchitectArchId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int?>("ClientId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ProfessionalType")
+                    b.Property<string>("ProfessionalTypes")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
@@ -1230,6 +1257,8 @@ namespace WebAthenPs.API.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ArchitectArchId");
 
                     b.HasIndex("ClientId");
 
@@ -1242,110 +1271,156 @@ namespace WebAthenPs.API.Migrations
                         {
                             Id = 1,
                             ClientId = 1,
-                            ProfessionalType = "Arquiteto",
+                            ProfessionalTypes = "[\"Arquiteto\"]",
                             UserId = "user16"
                         },
                         new
                         {
                             Id = 2,
                             ClientId = 2,
-                            ProfessionalType = "Eletricista",
+                            ProfessionalTypes = "[\"Eletricista\"]",
                             UserId = "user17"
                         },
                         new
                         {
                             Id = 3,
                             ClientId = 3,
-                            ProfessionalType = "Engenheiro",
+                            ProfessionalTypes = "[\"Engenheiro\"]",
                             UserId = "user18"
                         },
                         new
                         {
                             Id = 4,
                             ClientId = 4,
-                            ProfessionalType = "Pedreiro",
+                            ProfessionalTypes = "[\"Pedreiro\"]",
                             UserId = "user19"
                         },
                         new
                         {
                             Id = 5,
                             ClientId = 5,
-                            ProfessionalType = "Encanador",
+                            ProfessionalTypes = "[\"Encanador\"]",
                             UserId = "user20"
                         },
                         new
                         {
                             Id = 6,
                             ClientId = 6,
-                            ProfessionalType = "Arquiteto",
+                            ProfessionalTypes = "[\"Arquiteto\"]",
                             UserId = "user21"
                         },
                         new
                         {
                             Id = 7,
                             ClientId = 7,
-                            ProfessionalType = "Eletricista",
+                            ProfessionalTypes = "[\"Eletricista\"]",
                             UserId = "user22"
                         },
                         new
                         {
                             Id = 8,
                             ClientId = 8,
-                            ProfessionalType = "Engenheiro",
+                            ProfessionalTypes = "[\"Engenheiro\"]",
                             UserId = "user23"
                         },
                         new
                         {
                             Id = 9,
                             ClientId = 9,
-                            ProfessionalType = "Pedreiro",
+                            ProfessionalTypes = "[\"Pedreiro\"]",
                             UserId = "user24"
                         },
                         new
                         {
                             Id = 10,
                             ClientId = 10,
-                            ProfessionalType = "Encanador",
+                            ProfessionalTypes = "[\"Encanador\"]",
                             UserId = "user25"
                         },
                         new
                         {
                             Id = 11,
                             ClientId = 11,
-                            ProfessionalType = "Arquiteto",
+                            ProfessionalTypes = "[\"Eletricista\"]",
                             UserId = "user26"
                         },
                         new
                         {
                             Id = 12,
                             ClientId = 12,
-                            ProfessionalType = "Eletricista",
+                            ProfessionalTypes = "[\"Arquiteto\"]",
                             UserId = "user27"
                         },
                         new
                         {
                             Id = 13,
                             ClientId = 13,
-                            ProfessionalType = "Engenheiro",
+                            ProfessionalTypes = "[\"Engenheiro\"]",
                             UserId = "user28"
                         },
                         new
                         {
                             Id = 14,
                             ClientId = 14,
-                            ProfessionalType = "Pedreiro",
+                            ProfessionalTypes = "[\"Pedreiro\"]",
                             UserId = "user29"
                         },
                         new
                         {
                             Id = 15,
                             ClientId = 15,
-                            ProfessionalType = "Encanador",
+                            ProfessionalTypes = "[\"Encanador\"]",
                             UserId = "user30"
                         });
                 });
 
-            modelBuilder.Entity("WebAthenPs.API.Entities.Projecty", b =>
+            modelBuilder.Entity("WebAthenPs.API.Entities.Professional.ProfessionalTypes.Architect", b =>
+                {
+                    b.Property<Guid>("ArchId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Especialidade")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegistroConselho")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("genericId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ArchId");
+
+                    b.HasIndex("genericId")
+                        .IsUnique();
+
+                    b.ToTable("Architects");
+
+                    b.HasData(
+                        new
+                        {
+                            ArchId = new Guid("99a71655-8ae6-428d-bfd9-5f09a3ebac30"),
+                            Especialidade = "Residencial",
+                            RegistroConselho = "123456",
+                            genericId = 1
+                        },
+                        new
+                        {
+                            ArchId = new Guid("9285f336-798a-415f-b2e7-3400ba6c1796"),
+                            Especialidade = "Comercial",
+                            RegistroConselho = "654321",
+                            genericId = 6
+                        },
+                        new
+                        {
+                            ArchId = new Guid("516b3960-9f9a-4ad7-85f7-09e94011eaa2"),
+                            Especialidade = "Industrial",
+                            RegistroConselho = "112233",
+                            genericId = 12
+                        });
+                });
+
+            modelBuilder.Entity("WebAthenPs.API.Entities.Project.Projecty", b =>
                 {
                     b.Property<int>("ProjectId")
                         .ValueGeneratedOnAdd()
@@ -1363,6 +1438,9 @@ namespace WebAthenPs.API.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClientDescription")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ClientId")
@@ -1790,22 +1868,41 @@ namespace WebAthenPs.API.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ProjectProfessional", b =>
+                {
+                    b.HasOne("WebAthenPs.API.Entities.Professional.GenericProfessional", "Professional")
+                        .WithMany("ProjectProfessionals")
+                        .HasForeignKey("ProfessionalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebAthenPs.API.Entities.Project.Projecty", "Project")
+                        .WithMany("ProjectProfessionals")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Professional");
+
+                    b.Navigation("Project");
+                });
+
             modelBuilder.Entity("ProjectProfessionals", b =>
                 {
-                    b.HasOne("WebAthenPs.API.Entities.GenericProfessional", null)
+                    b.HasOne("WebAthenPs.API.Entities.Professional.GenericProfessional", null)
                         .WithMany()
                         .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebAthenPs.API.Entities.Projecty", null)
+                    b.HasOne("WebAthenPs.API.Entities.Project.Projecty", null)
                         .WithMany()
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WebAthenPs.API.Entities.Client", b =>
+            modelBuilder.Entity("WebAthenPs.API.Entities.Clients.Client", b =>
                 {
                     b.HasOne("WebAthenPs.API.Data.ApplicationUser", "User")
                         .WithMany()
@@ -1816,9 +1913,13 @@ namespace WebAthenPs.API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WebAthenPs.API.Entities.GenericProfessional", b =>
+            modelBuilder.Entity("WebAthenPs.API.Entities.Professional.GenericProfessional", b =>
                 {
-                    b.HasOne("WebAthenPs.API.Entities.Client", "Client")
+                    b.HasOne("WebAthenPs.API.Entities.Professional.ProfessionalTypes.Architect", "Architect")
+                        .WithMany()
+                        .HasForeignKey("ArchitectArchId");
+
+                    b.HasOne("WebAthenPs.API.Entities.Clients.Client", "Client")
                         .WithMany("GenericProfessionals")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -1829,14 +1930,27 @@ namespace WebAthenPs.API.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.Navigation("Architect");
+
                     b.Navigation("Client");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WebAthenPs.API.Entities.Projecty", b =>
+            modelBuilder.Entity("WebAthenPs.API.Entities.Professional.ProfessionalTypes.Architect", b =>
                 {
-                    b.HasOne("WebAthenPs.API.Entities.Client", "Client")
+                    b.HasOne("WebAthenPs.API.Entities.Professional.GenericProfessional", "Professional")
+                        .WithOne()
+                        .HasForeignKey("WebAthenPs.API.Entities.Professional.ProfessionalTypes.Architect", "genericId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Professional");
+                });
+
+            modelBuilder.Entity("WebAthenPs.API.Entities.Project.Projecty", b =>
+                {
+                    b.HasOne("WebAthenPs.API.Entities.Clients.Client", "Client")
                         .WithMany("Houses")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1845,11 +1959,21 @@ namespace WebAthenPs.API.Migrations
                     b.Navigation("Client");
                 });
 
-            modelBuilder.Entity("WebAthenPs.API.Entities.Client", b =>
+            modelBuilder.Entity("WebAthenPs.API.Entities.Clients.Client", b =>
                 {
                     b.Navigation("GenericProfessionals");
 
                     b.Navigation("Houses");
+                });
+
+            modelBuilder.Entity("WebAthenPs.API.Entities.Professional.GenericProfessional", b =>
+                {
+                    b.Navigation("ProjectProfessionals");
+                });
+
+            modelBuilder.Entity("WebAthenPs.API.Entities.Project.Projecty", b =>
+                {
+                    b.Navigation("ProjectProfessionals");
                 });
 #pragma warning restore 612, 618
         }

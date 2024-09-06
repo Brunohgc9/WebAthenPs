@@ -93,6 +93,7 @@ namespace WebAthenPs.API.Data
                     });
 
 
+
             modelBuilder.Entity<ApplicationUser>().HasData(
                 // 15 Clients
                 new ApplicationUser { Id = "user1", UserName = "Carlos Silva", Email = "carlos.silva@example.com", UserType = "Client", CPF = "12345678901", RG = "1234567", Gender = "M", Address = "Rua A, 123", City = "São Paulo", State = "SP", PostalCode = "01000-000" },
@@ -161,8 +162,8 @@ namespace WebAthenPs.API.Data
                 new GenericProfessional { Id = 8, UserId = "user23", ClientId = 8, ProfessionalTypes = new List<string> { "Engenheiro" } },
                 new GenericProfessional { Id = 9, UserId = "user24", ClientId = 9, ProfessionalTypes = new List<string> { "Pedreiro" } },
                 new GenericProfessional { Id = 10, UserId = "user25", ClientId = 10, ProfessionalTypes = new List<string> { "Encanador" } },
-                new GenericProfessional { Id = 11, UserId = "user26", ClientId = 11, ProfessionalTypes = new List<string> { "Arquiteto" } },
-                new GenericProfessional { Id = 12, UserId = "user27", ClientId = 12, ProfessionalTypes = new List<string> { "Eletricista" } },
+                new GenericProfessional { Id = 11, UserId = "user26", ClientId = 11, ProfessionalTypes = new List<string> { "Eletricista" } },
+                new GenericProfessional { Id = 12, UserId = "user27", ClientId = 12, ProfessionalTypes = new List<string> { "Arquiteto" } },
                 new GenericProfessional { Id = 13, UserId = "user28", ClientId = 13, ProfessionalTypes = new List<string> { "Engenheiro" } },
                 new GenericProfessional { Id = 14, UserId = "user29", ClientId = 14, ProfessionalTypes = new List<string> { "Pedreiro" } },
                 new GenericProfessional { Id = 15, UserId = "user30", ClientId = 15, ProfessionalTypes = new List<string> { "Encanador" } }
@@ -171,7 +172,7 @@ namespace WebAthenPs.API.Data
             modelBuilder.Entity<Architect>().HasData(
                 new Architect { ArchId = Guid.NewGuid(), genericId = 1, RegistroConselho = "123456", Especialidade = "Residencial" },
                 new Architect { ArchId = Guid.NewGuid(), genericId = 6, RegistroConselho = "654321", Especialidade = "Comercial" },
-                new Architect { ArchId = Guid.NewGuid(), genericId = 11, RegistroConselho = "112233", Especialidade = "Industrial" }
+                new Architect { ArchId = Guid.NewGuid(), genericId = 12, RegistroConselho = "112233", Especialidade = "Industrial" }
             );
 
 
