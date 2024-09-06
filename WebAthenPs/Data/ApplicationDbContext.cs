@@ -14,14 +14,24 @@ namespace WebAthenPs.API.Data
         public DbSet<Client> Clients { get; set; }
         public DbSet<Architect> Architects { get; set; }
 
+        public DbSet<ProjectProfessional> ProjectProfessionals { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Projecty>()
-                .HasMany(p => p.Professionals)
-                .WithMany(gp => gp.Projects)
-                .UsingEntity(j => j.ToTable("ProjectProfessionals"));
+                .HasMany(p => p.ProjectProfessionals)
+                .WithOne(pp => pp.Project)
+                .HasForeignKey(pp => pp.ProjectId);
+
+            modelBuilder.Entity<GenericProfessional>()
+                .HasMany(gp => gp.ProjectProfessionals)
+                .WithOne(pp => pp.Professional)
+                .HasForeignKey(pp => pp.ProfessionalId);
+
+            modelBuilder.Entity<ProjectProfessional>()
+                .HasKey(pp => new { pp.ProjectId, pp.ProfessionalId });
 
             modelBuilder.Entity<Architect>()
                 .HasOne(a => a.Professional)
@@ -47,50 +57,7 @@ namespace WebAthenPs.API.Data
                 .HasForeignKey(p => p.ClientId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Projecty>()
-                .HasMany(p => p.Professionals)
-                .WithMany(gp => gp.Projects)
-                .UsingEntity<Dictionary<string, object>>(
-                    "ProjectProfessionals",
-                    r => r.HasOne<GenericProfessional>().WithMany().HasForeignKey("Id"),
-                    l => l.HasOne<Projecty>().WithMany().HasForeignKey("ProjectId"),
-                    je =>
-                    {
-                        je.HasKey("ProjectId", "Id");
-                        je.HasData(
-                            // Associações entre projetos e profissionais
-                            new { ProjectId = 1, Id = 1 },
-                            new { ProjectId = 1, Id = 2 },
-                            new { ProjectId = 2, Id = 3 },
-                            new { ProjectId = 2, Id = 4 },
-                            new { ProjectId = 3, Id = 5 },
-                            new { ProjectId = 3, Id = 6 },
-                            new { ProjectId = 4, Id = 7 },
-                            new { ProjectId = 4, Id = 8 },
-                            new { ProjectId = 5, Id = 9 },
-                            new { ProjectId = 5, Id = 10 },
-                            new { ProjectId = 6, Id = 11 },
-                            new { ProjectId = 6, Id = 12 },
-                            new { ProjectId = 7, Id = 13 },
-                            new { ProjectId = 7, Id = 14 },
-                            new { ProjectId = 8, Id = 15 },
-                            new { ProjectId = 8, Id = 1 },
-                            new { ProjectId = 9, Id = 2 },
-                            new { ProjectId = 9, Id = 3 },
-                            new { ProjectId = 10, Id = 4 },
-                            new { ProjectId = 10, Id = 5 },
-                            new { ProjectId = 11, Id = 6 },
-                            new { ProjectId = 11, Id = 7 },
-                            new { ProjectId = 12, Id = 8 },
-                            new { ProjectId = 12, Id = 9 },
-                            new { ProjectId = 13, Id = 10 },
-                            new { ProjectId = 13, Id = 11 },
-                            new { ProjectId = 14, Id = 12 },
-                            new { ProjectId = 14, Id = 13 },
-                            new { ProjectId = 15, Id = 14 },
-                            new { ProjectId = 15, Id = 15 }
-                        );
-                    });
+
 
 
 
