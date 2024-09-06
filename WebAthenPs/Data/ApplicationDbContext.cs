@@ -97,7 +97,10 @@ namespace WebAthenPs.API.Data
                  new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000029"), ProjectId = 15, ProfessionalId = 14, ClientId = 15 },
                  new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000030"), ProjectId = 15, ProfessionalId = 15, ClientId = 15 }
             );
+<<<<<<< HEAD
 
+=======
+>>>>>>> 32231608b2d37b768dc25548b7dd22e208ae1274
 
 
             modelBuilder.Entity<ApplicationUser>().HasData(

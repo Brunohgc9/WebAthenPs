@@ -27,8 +27,12 @@ namespace WebAthenPs.API.Entities.Professional
         public ICollection<Projecty> Projects { get; set; } = new List<Projecty>();
 
         public Architect? Architect { get; set; }
+<<<<<<< HEAD
 
         public ICollection<ProjectProfessional> ProjectProfessionals { get; set; } = new List<ProjectProfessional>();
+=======
+        public ICollection<ProjectConnection> ProjectConnections { get; set; }
+>>>>>>> 32231608b2d37b768dc25548b7dd22e208ae1274
 
     }
 }
