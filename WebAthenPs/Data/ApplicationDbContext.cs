@@ -24,7 +24,7 @@ namespace WebAthenPs.API.Data
                 .UsingEntity(j => j.ToTable("ProjectProfessionals"));
 
             modelBuilder.Entity<Architect>()
-                .HasOne(a => a.Professional)  
+                .HasOne(a => a.Professional)
                 .WithOne()
                 .HasForeignKey<Architect>(a => a.genericId)
                 .OnDelete(DeleteBehavior.Cascade);

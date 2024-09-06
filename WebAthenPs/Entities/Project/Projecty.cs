@@ -35,6 +35,7 @@ namespace WebAthenPs.API.Entities.Project
         public string? ClientDescription { get; set; }
 
         public ICollection<GenericProfessional>? Professionals { get; set; } = new List<GenericProfessional>();
-        public ProjectConnection? ProjectConnection { get; set; }
+        public ICollection<ProjectProfessional> ProjectProfessionals { get; set; } = new List<ProjectProfessional>();
+
     }
 }
