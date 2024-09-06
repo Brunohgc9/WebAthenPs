@@ -223,7 +223,7 @@ namespace WebAthenPs.API.Controllers.Projects
                 {
                     ProjectId = project.ProjectId,
                     ClientId = client.ClientId,
-                    ProfessionalId = professional?.Id  // Caso seja um profissional, registra o ProfessionalId
+                    ProfessionalId = professional?.Id  
                 };
 
                 // Registra a ProjectConnection no banco de dados
