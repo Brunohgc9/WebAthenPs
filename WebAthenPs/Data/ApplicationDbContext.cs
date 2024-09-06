@@ -13,15 +13,12 @@ namespace WebAthenPs.API.Data
         public DbSet<GenericProfessional> GenericProfessionals { get; set; }
         public DbSet<Client> Clients { get; set; }
         public DbSet<Architect> Architects { get; set; }
+        public DbSet<ProjectConnection> ProjectConnections { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<Projecty>()
-                .HasMany(p => p.Professionals)
-                .WithMany(gp => gp.Projects)
-                .UsingEntity(j => j.ToTable("ProjectProfessionals"));
 
             modelBuilder.Entity<Architect>()
                 .HasOne(a => a.Professional)  
@@ -41,56 +38,65 @@ namespace WebAthenPs.API.Data
                 .HasForeignKey(gp => gp.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+
             modelBuilder.Entity<Projecty>()
                 .HasOne(p => p.Client)
                 .WithMany(c => c.Houses)
                 .HasForeignKey(p => p.ClientId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Projecty>()
-                .HasMany(p => p.Professionals)
-                .WithMany(gp => gp.Projects)
-                .UsingEntity<Dictionary<string, object>>(
-                    "ProjectProfessionals",
-                    r => r.HasOne<GenericProfessional>().WithMany().HasForeignKey("Id"),
-                    l => l.HasOne<Projecty>().WithMany().HasForeignKey("ProjectId"),
-                    je =>
-                    {
-                        je.HasKey("ProjectId", "Id");
-                        je.HasData(
-                            // Associações entre projetos e profissionais
-                            new { ProjectId = 1, Id = 1 },
-                            new { ProjectId = 1, Id = 2 },
-                            new { ProjectId = 2, Id = 3 },
-                            new { ProjectId = 2, Id = 4 },
-                            new { ProjectId = 3, Id = 5 },
-                            new { ProjectId = 3, Id = 6 },
-                            new { ProjectId = 4, Id = 7 },
-                            new { ProjectId = 4, Id = 8 },
-                            new { ProjectId = 5, Id = 9 },
-                            new { ProjectId = 5, Id = 10 },
-                            new { ProjectId = 6, Id = 11 },
-                            new { ProjectId = 6, Id = 12 },
-                            new { ProjectId = 7, Id = 13 },
-                            new { ProjectId = 7, Id = 14 },
-                            new { ProjectId = 8, Id = 15 },
-                            new { ProjectId = 8, Id = 1 },
-                            new { ProjectId = 9, Id = 2 },
-                            new { ProjectId = 9, Id = 3 },
-                            new { ProjectId = 10, Id = 4 },
-                            new { ProjectId = 10, Id = 5 },
-                            new { ProjectId = 11, Id = 6 },
-                            new { ProjectId = 11, Id = 7 },
-                            new { ProjectId = 12, Id = 8 },
-                            new { ProjectId = 12, Id = 9 },
-                            new { ProjectId = 13, Id = 10 },
-                            new { ProjectId = 13, Id = 11 },
-                            new { ProjectId = 14, Id = 12 },
-                            new { ProjectId = 14, Id = 13 },
-                            new { ProjectId = 15, Id = 14 },
-                            new { ProjectId = 15, Id = 15 }
-                        );
-                    });
+             modelBuilder.Entity<ProjectConnection>()
+                .HasOne(pc => pc.Projecty)  // Configura a relação entre ProjectConnection e Projecty
+                .WithMany()  // Não há necessidade de especificar uma coleção em Projecty se não for necessário
+                .HasForeignKey(pc => pc.ProjectId)  // Define a chave estrangeira para ProjectId
+                .OnDelete(DeleteBehavior.Restrict);  // Define o comportamento de exclusão
+
+            modelBuilder.Entity<ProjectConnection>()
+                .HasOne(pc => pc.Professional)  // Configura a relação entre ProjectConnection e GenericProfessional
+                .WithMany()  // Não há necessidade de especificar uma coleção em GenericProfessional se não for necessário
+                .HasForeignKey(pc => pc.ProfessionalId)  // Define a chave estrangeira para ProfessionalId
+                .OnDelete(DeleteBehavior.Restrict);  // Define o comportamento de exclusão
+
+            modelBuilder.Entity<ProjectConnection>()
+                .HasOne(pc => pc.Client)  // Configura a relação entre ProjectConnection e Client
+                .WithMany(c => c.ProjectConnections)  // Presumindo que Client tem uma coleção de ProjectConnections
+                .HasForeignKey(pc => pc.ClientId)  // Define a chave estrangeira para ClientId
+                .OnDelete(DeleteBehavior.Restrict);  // Define o comportamento de exclusão
+
+
+
+            modelBuilder.Entity<ProjectConnection>().HasData(
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000001"), ProjectId = 1, ProfessionalId = 1, ClientId = 1 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000002"), ProjectId = 1, ProfessionalId = 2, ClientId = 1 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000003"), ProjectId = 2, ProfessionalId = 3, ClientId = 2 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000004"), ProjectId = 2, ProfessionalId = 4, ClientId = 2 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000005"), ProjectId = 3, ProfessionalId = 5, ClientId = 3 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000006"), ProjectId = 3, ProfessionalId = 6, ClientId = 3 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000007"), ProjectId = 4, ProfessionalId = 7, ClientId = 4 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000008"), ProjectId = 4, ProfessionalId = 8, ClientId = 4 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000009"), ProjectId = 5, ProfessionalId = 9, ClientId = 5 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000010"), ProjectId = 5, ProfessionalId = 10, ClientId = 5 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000011"), ProjectId = 6, ProfessionalId = 11, ClientId = 6 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000012"), ProjectId = 6, ProfessionalId = 12, ClientId = 6 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000013"), ProjectId = 7, ProfessionalId = 13, ClientId = 7 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000014"), ProjectId = 7, ProfessionalId = 14, ClientId = 7 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000015"), ProjectId = 8, ProfessionalId = 15, ClientId = 8 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000016"), ProjectId = 8, ProfessionalId = 1, ClientId = 8 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000017"), ProjectId = 9, ProfessionalId = 2, ClientId = 9 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000018"), ProjectId = 9, ProfessionalId = 3, ClientId = 9 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000019"), ProjectId = 10, ProfessionalId = 4, ClientId = 10 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000020"), ProjectId = 10, ProfessionalId = 5, ClientId = 10 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000021"), ProjectId = 11, ProfessionalId = 6, ClientId = 11 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000022"), ProjectId = 11, ProfessionalId = 7, ClientId = 11 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000023"), ProjectId = 12, ProfessionalId = 8, ClientId = 12 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000024"), ProjectId = 12, ProfessionalId = 9, ClientId = 12 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000025"), ProjectId = 13, ProfessionalId = 10, ClientId = 13 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000026"), ProjectId = 13, ProfessionalId = 11, ClientId = 13 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000027"), ProjectId = 14, ProfessionalId = 12, ClientId = 14 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000028"), ProjectId = 14, ProfessionalId = 13, ClientId = 14 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000029"), ProjectId = 15, ProfessionalId = 14, ClientId = 15 },
+                 new ProjectConnection { ConnectionId = Guid.Parse("00000000-0000-0000-0000-000000000030"), ProjectId = 15, ProfessionalId = 15, ClientId = 15 }
+            );
 
 
             modelBuilder.Entity<ApplicationUser>().HasData(

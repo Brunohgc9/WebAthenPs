@@ -205,14 +205,30 @@ namespace WebAthenPs.API.Controllers.Projects
             if (client == null)
                 return NotFound("Cliente não encontrado.");
 
-            var project = model.CriarProjetoEmDTO();
+            // Encontra o ProfessionalId do usuário, caso ele seja um profissional
+            var professional = await _context.GenericProfessionals
+                .FirstOrDefaultAsync(p => p.UserId == userId);
 
-            // Define o ClientId do projeto
-            project.ClientId = client.ClientId;
+            // Cria o objeto Projecty a partir do modelo
+            var project = model.CriarProjetoEmDTO();
+            project.ClientId = client.ClientId;  // Define o ClientId do projeto
 
             try
             {
+                // Cria o projeto no banco de dados
                 await _projectRepository.CreateNewProject(project);
+
+                // Registra automaticamente a ProjectConnection após o projeto ter sido criado
+                var projectConnection = new ProjectConnection
+                {
+                    ProjectId = project.ProjectId,
+                    ClientId = client.ClientId,
+                    ProfessionalId = professional?.Id  // Caso seja um profissional, registra o ProfessionalId
+                };
+
+                // Registra a ProjectConnection no banco de dados
+                _context.ProjectConnections.Add(projectConnection);
+                await _context.SaveChangesAsync();
 
                 var createdDto = project.ConverterProjetoParaDTO();
 
@@ -223,6 +239,8 @@ namespace WebAthenPs.API.Controllers.Projects
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao criar projeto: {ex.Message}");
             }
         }
+
+
 
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> DeleteProject(int id)

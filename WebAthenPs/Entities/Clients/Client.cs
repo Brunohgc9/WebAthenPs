@@ -22,5 +22,8 @@ namespace WebAthenPs.API.Entities.Clients
         public ICollection<Projecty> Houses { get; set; } = new List<Projecty>();
         public ICollection<GenericProfessional> GenericProfessionals { get; set; }
 
+        public ICollection<ProjectConnection> ProjectConnections { get; set; }
+
+
     }
 }
