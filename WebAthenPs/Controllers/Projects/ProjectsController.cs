@@ -237,7 +237,7 @@ namespace WebAthenPs.API.Controllers.Projects
 
                 await _projectRepository.DeleteProject(id);
 
-                return NoContent();
+                return NoContent();//
             }
             catch (Exception ex)
             {
