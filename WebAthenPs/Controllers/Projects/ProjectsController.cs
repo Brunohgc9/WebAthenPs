@@ -214,7 +214,7 @@ namespace WebAthenPs.API.Controllers.Projects
             {
                 await _projectRepository.CreateNewProject(project);
 
-                var createdDto = project.ConverterProjetoParaDTO();
+                var createdDto = project.ConverterProjetoParaDTO();//
 
                 return CreatedAtAction(nameof(GetById), new { id = createdDto.ProjectId }, createdDto);
             }
