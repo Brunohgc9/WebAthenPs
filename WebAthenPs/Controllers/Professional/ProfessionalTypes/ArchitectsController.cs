@@ -127,7 +127,7 @@ public class ArchitectsController : ControllerBase
 
             await _architectRepository.DeleteAsync(id);
             return NoContent();
-        }//
+        }
         catch (Exception ex)
         {
             return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao excluir o arquiteto. Detalhes: " + ex.Message);
