@@ -221,7 +221,7 @@ namespace WebAthenPs.API.Controllers.Projects
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao criar projeto: {ex.Message}");
-            }
+            }//
         }
 
         [HttpDelete("{id:int}")]
