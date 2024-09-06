@@ -7,16 +7,18 @@ using WebAthenPs.API.Mappings.MappingProjectDTO;
 using WebAthenPs.API.Repositories.Interfaces;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using WebAthenPs.API.Repositories;
+using System;
+using System.Linq;
 using WebAthenPs.API.Data;
 using WebAthenPs.API.Entities.Clients;
 using WebAthenPs.Models.DTOs.Project;
 using WebAthenPs.API.Entities.Project;
+using WebAthenPs.API.Entities.Professional;
 
 namespace WebAthenPs.API.Controllers.Projects
 {
     [Route("api/[controller]")]
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    //[Authorize(AuthenticationSchemes = "Bearer")]
     [ApiController]
     public class ProjectsController : ControllerBase
     {
@@ -30,6 +32,8 @@ namespace WebAthenPs.API.Controllers.Projects
             _userManager = userManager;
             _context = context;
         }
+
+        // Atualizar um projeto, incluindo profissionais
         [HttpPut("{id:int}")]
         public async Task<ActionResult<ProjectsDTO>> UpdateProject(int id, [FromBody] ProjectsDTO dto)
         {
@@ -38,34 +42,36 @@ namespace WebAthenPs.API.Controllers.Projects
 
             try
             {
-                var project = await _projectRepository.GetById(id);
-                if (project == null)
+                var existingProject = await _projectRepository.GetById(id);
+                if (existingProject == null)
                     return NotFound("Projeto não encontrado.");
 
-                // Atualiza o projeto com os dados fornecidos
-                project.ProjectName = dto.ProjectName;
-                project.ConstructionType = dto.ConstructionType;
-                project.Status = dto.Status;
-                project.Budget = dto.Budget;
-                project.StartDate = dto.StartDate;
-                project.EndDate = dto.EndDate;
-                project.Description = dto.Description;
-                project.Address = dto.Address;
-                project.Neighborhood = dto.Neighborhood;
-                project.City = dto.City;
-                project.State = dto.State;
-                project.PostalCode = dto.PostalCode;
-                project.Country = dto.Country;
-                project.ActStep = dto.Step;
-                project.TotalArea = dto.TotalArea;
-                project.NumberOfRooms = dto.NumberOfRooms;
-                project.NumberOfBathrooms = dto.NumberOfBathrooms;
+                existingProject.ProjectName = dto.ProjectName;
 
-                // Atualiza o projeto no repositório
-                await _projectRepository.UpdateProject(project);
+                if (dto.ProjectProfessionals != null && dto.ProjectProfessionals.Any())
+                {
+                    existingProject.ProjectProfessionals.Clear();
+                    foreach (var projectProfessionalDto in dto.ProjectProfessionals)
+                    {
+                        var professional = await _context.GenericProfessionals.FindAsync(projectProfessionalDto.ProfessionalId);
+                        if (professional != null)
+                        {
+                            existingProject.ProjectProfessionals.Add(new ProjectProfessional
+                            {
+                                ProjectId = existingProject.ProjectId,
+                                ProfessionalId = professional.Id
+                            });
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Profissional não encontrado com ID: {projectProfessionalDto.ProfessionalId}");
+                        }
+                    }
+                }
 
-                // Converte o projeto atualizado para DTO e retorna a resposta
-                var updatedDto = project.ConverterProjetoParaDTO();
+                await _projectRepository.UpdateProject(existingProject);
+
+                var updatedDto = existingProject.ConverterProjetoParaDTO();
                 return Ok(updatedDto);
             }
             catch (Exception ex)
@@ -76,6 +82,10 @@ namespace WebAthenPs.API.Controllers.Projects
 
 
 
+
+
+
+        // Obter todos os projetos
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProjectsDTO>>> GetAll()
         {
@@ -95,6 +105,7 @@ namespace WebAthenPs.API.Controllers.Projects
             }
         }
 
+        // Obter projeto por ID
         [HttpGet("id/{id:int}")]
         public async Task<ActionResult<ProjectsDTO>> GetById(int id)
         {
@@ -114,6 +125,7 @@ namespace WebAthenPs.API.Controllers.Projects
             }
         }
 
+        // Obter projetos por status
         [HttpGet("status/{status}")]
         public async Task<ActionResult<IEnumerable<ProjectsDTO>>> GetByStatus(string status)
         {
@@ -132,6 +144,8 @@ namespace WebAthenPs.API.Controllers.Projects
                 return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao acessar a base de dados. Detalhes: " + ex.Message);
             }
         }
+
+        // Obter projetos de um cliente logado
         [HttpGet("clientProjects")]
         [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<ActionResult<IEnumerable<ProjectsDTO>>> GetProjectsByLoggedInUser()
@@ -172,6 +186,7 @@ namespace WebAthenPs.API.Controllers.Projects
             }
         }
 
+        // Obter projetos por área
         [HttpGet("area/{area:decimal}")]
         public async Task<ActionResult<IEnumerable<ProjectsDTO>>> GetByArea(decimal area)
         {
@@ -191,6 +206,7 @@ namespace WebAthenPs.API.Controllers.Projects
             }
         }
 
+        // Criar um novo projeto
         [HttpPost]
         public async Task<ActionResult<ProjectsDTO>> CreateProject([FromBody] RegisterProjectModel model)
         {
@@ -206,8 +222,6 @@ namespace WebAthenPs.API.Controllers.Projects
                 return NotFound("Cliente não encontrado.");
 
             var project = model.CriarProjetoEmDTO();
-
-            // Define o ClientId do projeto
             project.ClientId = client.ClientId;
 
             try
@@ -224,6 +238,8 @@ namespace WebAthenPs.API.Controllers.Projects
             }
         }
 
+
+        // Deletar projeto
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> DeleteProject(int id)
         {

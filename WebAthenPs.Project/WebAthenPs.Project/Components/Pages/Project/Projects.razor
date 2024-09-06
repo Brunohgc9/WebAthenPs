@@ -1,6 +1,6 @@
 ﻿@page "/projects"
 @using WebAthenPs.Models.DTOs.Project
-@using WebAthenPs.Models.DTOs.Project
+@using WebAthenPs.Models.DTOs.Professional
 @using WebAthenPs.Project.Services.Interfaces.Project
 @inject IProjectService ProjectService
 
@@ -41,6 +41,7 @@
 </div>
 
 <!-- Exibição de projetos -->
+<!-- Exibição de projetos -->
 @if (projects != null)
 {
     if (projects.Any())
@@ -57,20 +58,24 @@
                         <p><strong>Budget:</strong> @project.Budget</p>
                         <p><strong>Start Date:</strong> @project.StartDate.ToString("dd/MM/yyyy")</p>
                         <p><strong>Description:</strong> @project.Description</p>
-                        @if (project.TotalArea != 0)
+                        @if (project.TotalArea.HasValue)
                         {
-                            <p><strong>Total Area:</strong> @project.TotalArea m²</p>
+                            <p><strong>Total Area:</strong> @project.TotalArea.Value m²</p>
                         }
 
                         <!-- Exibição dos profissionais relacionados -->
+                        <!-- Exibição dos profissionais relacionados -->
                         <div class="mt-3">
                             <h5>Professionals</h5>
-                            @if (project.Professionals != null && project.Professionals.Any())
+                            @if (project.ProjectProfessionals != null && project.ProjectProfessionals.Any())
                             {
                                 <ul>
-                                    @foreach (var professional in project.Professionals)
+                                    @foreach (var projProfessional in project.ProjectProfessionals)
                                     {
-                                        <li>@professional.UserName - @professional.ProfessionalTypes</li>
+                                        if (projProfessional?.Professional != null)
+                                        {
+                                            <li>@projProfessional.Professional.UserName - @string.Join(", ", projProfessional.Professional.ProfessionalTypes)</li>
+                                        }
                                     }
                                 </ul>
                             }
@@ -79,6 +84,7 @@
                                 <p>No professionals associated with this project.</p>
                             }
                         </div>
+
                     </div>
                 </div>
             }
@@ -93,6 +99,7 @@ else if (loading)
 {
     <h3>Loading...</h3>
 }
+
 
 @code {
     private IEnumerable<ProjectsDTO> projects;
@@ -139,30 +146,3 @@ else if (loading)
         }
     }
 }
-
-<style>
-    .card-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 16px;
-    }
-
-    .card {
-        background-color: #f8f9fa;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
-        padding: 16px;
-        width: 300px;
-    }
-
-    .card-header {
-        border-bottom: 1px solid #dee2e6;
-        margin-bottom: 16px;
-        padding-bottom: 8px;
-    }
-
-    .card-body p {
-        margin: 8px 0;
-    }
-</style>

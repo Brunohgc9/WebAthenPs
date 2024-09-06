@@ -1,147 +1,147 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using WebAthenPs.Models.DTOs;
-using WebAthenPs.API.Repositories.Interfaces;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Http;
-using WebAthenPs.API.Data;
-using WebAthenPs.API.Entities.Professional;
-using WebAthenPs.Models.DTOs.Professional;
-using WebAthenPs.API.Mappings.MappingProfessionalsDTO;
+﻿    using Microsoft.AspNetCore.Mvc;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using WebAthenPs.Models.DTOs;
+    using WebAthenPs.API.Repositories.Interfaces;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Http;
+    using WebAthenPs.API.Data;
+    using WebAthenPs.API.Entities.Professional;
+    using WebAthenPs.Models.DTOs.Professional;
+    using WebAthenPs.API.Mappings.MappingProfessionalsDTO;
 
-namespace WebAthenPs.API.Controllers.Professional
-{
-    [Route("api/[controller]")]
-    [ApiController]
-    public class GenericProfessionalController : ControllerBase
+    namespace WebAthenPs.API.Controllers.Professional
     {
-        private readonly IGenericProfessionlRepository _repository;
-        private readonly UserManager<ApplicationUser> _userManager;
-
-        public GenericProfessionalController(IGenericProfessionlRepository repository, UserManager<ApplicationUser> userManager)
+        [Route("api/[controller]")]
+        [ApiController]
+        public class GenericProfessionalController : ControllerBase
         {
-            _repository = repository;
-            _userManager = userManager;
-        }
+            private readonly IGenericProfessionlRepository _repository;
+            private readonly UserManager<ApplicationUser> _userManager;
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] RegisterProfessionalModel model)
-        {
-            if (model == null || !ModelState.IsValid)
-                return BadRequest("Dados inválidos.");
-
-            var genericProfessional = model.CriarProfessionalEmDTO();
-
-            try
+            public GenericProfessionalController(IGenericProfessionlRepository repository, UserManager<ApplicationUser> userManager)
             {
-                await _repository.CreateAsync(genericProfessional);
-
-                var createdDto = genericProfessional.ConverterProfessionalParaDTO();
-
-                return CreatedAtAction(nameof(GetById), new { id = createdDto.Id }, createdDto);
+                _repository = repository;
+                _userManager = userManager;
             }
-            catch (Exception ex)
+
+            [HttpPost]
+            public async Task<IActionResult> Create([FromBody] RegisterProfessionalModel model)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao criar profissional: {ex.Message}");
-            }
-        }
+                if (model == null || !ModelState.IsValid)
+                    return BadRequest("Dados inválidos.");
 
+                var genericProfessional = model.CriarProfessionalEmDTO();
 
-
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            try
-            {
-                var professional = await _repository.GetByIdAsync(id);
-
-                if (professional == null)
-                    return NotFound("Professional not found.");
-
-                var dto = professional.ConverterProfessionalParaDTO();
-                return Ok(dto);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Error accessing the database: {ex.Message}");
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] string professionalType = null)
-        {
-            try
-            {
-                IEnumerable<GenericProfessional> professionals;
-
-                if (string.IsNullOrEmpty(professionalType))
+                try
                 {
-                    professionals = await _repository.GetAllAsync(); // Método para obter todos
+                    await _repository.CreateAsync(genericProfessional);
+
+                    var createdDto = genericProfessional.ConverterProfessionalParaDTO();
+
+                    return CreatedAtAction(nameof(GetById), new { id = createdDto.Id }, createdDto);
                 }
-                else
+                catch (Exception ex)
                 {
-                    professionals = await _repository.GetByProfessionalTypeAsync(professionalType);
+                    return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao criar profissional: {ex.Message}");
                 }
+            }
 
-                var dtoList = professionals.ConverterProfessionalsParaDTO();
-                return Ok(dtoList);
-            }
-            catch (Exception ex)
+
+
+            [HttpGet("{id:int}")]
+            public async Task<IActionResult> GetById(int id)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Error accessing the database: {ex.Message}");
+                try
+                {
+                    var professional = await _repository.GetByIdAsync(id);
+
+                    if (professional == null)
+                        return NotFound("Professional not found.");
+
+                    var dto = professional.ConverterProfessionalParaDTO();
+                    return Ok(dto);
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, $"Error accessing the database: {ex.Message}");
+                }
             }
+
+            [HttpGet]
+            public async Task<IActionResult> GetAll([FromQuery] string professionalType = null)
+            {
+                try
+                {
+                    IEnumerable<GenericProfessional> professionals;
+
+                    if (string.IsNullOrEmpty(professionalType))
+                    {
+                        professionals = await _repository.GetAllAsync(); // Método para obter todos
+                    }
+                    else
+                    {
+                        professionals = await _repository.GetByProfessionalTypeAsync(professionalType);
+                    }
+
+                    var dtoList = professionals.ConverterProfessionalsParaDTO();
+                    return Ok(dtoList);
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, $"Error accessing the database: {ex.Message}");
+                }
+            }
+
+            [HttpPut("{id:int}")]
+            public async Task<IActionResult> Update(int id, [FromBody] RegisterProfessionalModel model)
+            {
+                if (model == null || !ModelState.IsValid)
+                    return BadRequest("Dados inválidos.");
+
+                try
+                {
+                    var existingProfessional = await _repository.GetByIdAsync(id);
+
+                    if (existingProfessional == null)
+                        return NotFound("Profissional não encontrado.");
+
+                    existingProfessional.ProfessionalTypes = model.ProfessionalTypes ?? new List<string>();
+
+
+                    await _repository.UpdateAsync(existingProfessional);
+
+                    var updatedDto = existingProfessional.ConverterProfessionalParaDTO();
+                    return Ok(updatedDto);
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao acessar o banco de dados: {ex.Message}");
+                }
+            }
+
+
+            [HttpDelete("{id:int}")]
+            public async Task<IActionResult> Delete(int id)
+            {
+                try
+                {
+                    var professional = await _repository.GetByIdAsync(id);
+
+                    if (professional == null)
+                        return NotFound("Professional not found.");
+
+                    await _repository.DeleteAsync(id);
+                    return NoContent();
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, $"Error accessing the database: {ex.Message}");
+                }
+            }
+
+
+
         }
-
-        [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update(int id, [FromBody] RegisterProfessionalModel model)
-        {
-            if (model == null || !ModelState.IsValid)
-                return BadRequest("Dados inválidos.");
-
-            try
-            {
-                var existingProfessional = await _repository.GetByIdAsync(id);
-
-                if (existingProfessional == null)
-                    return NotFound("Profissional não encontrado.");
-
-                existingProfessional.ProfessionalTypes = model.ProfessionalTypes ?? new List<string>();
-
-
-                await _repository.UpdateAsync(existingProfessional);
-
-                var updatedDto = existingProfessional.ConverterProfessionalParaDTO();
-                return Ok(updatedDto);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao acessar o banco de dados: {ex.Message}");
-            }
-        }
-
-
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                var professional = await _repository.GetByIdAsync(id);
-
-                if (professional == null)
-                    return NotFound("Professional not found.");
-
-                await _repository.DeleteAsync(id);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Error accessing the database: {ex.Message}");
-            }
-        }
-
-
-
     }
-}

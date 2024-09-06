@@ -32,6 +32,8 @@ namespace WebAthenPs.Models.DTOs.Project
         public int? NumberOfRooms { get; set; }  // Número de quartos
         public int? NumberOfBathrooms { get; set; }  // Número de banheiros
 
-        public ICollection<GenericProfessionalDTO>? Professionals { get; set; } = new List<GenericProfessionalDTO>();
+        public ICollection<GenericProfessionalDTO>? LProfessionals { get; set; } = new List<GenericProfessionalDTO>();
+        public ICollection<ProjectProfessionalDTO>? ProjectProfessionals { get; set; } = new List<ProjectProfessionalDTO>();
+
     }
 }

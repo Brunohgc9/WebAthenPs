@@ -13,15 +13,36 @@ namespace WebAthenPs.API.Data
         public DbSet<GenericProfessional> GenericProfessionals { get; set; }
         public DbSet<Client> Clients { get; set; }
         public DbSet<Architect> Architects { get; set; }
+        public DbSet<ProjectProfessional> ProjectProfessionals { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Projecty>()
-                .HasMany(p => p.Professionals)
-                .WithMany(gp => gp.Projects)
-                .UsingEntity(j => j.ToTable("ProjectProfessionals"));
+           .HasMany(p => p.ProjectProfessionals)
+           .WithOne(pp => pp.Project)
+           .HasForeignKey(pp => pp.ProjectId);
+
+            modelBuilder.Entity<GenericProfessional>()
+                .HasMany(gp => gp.ProjectProfessionals)
+                .WithOne(pp => pp.Professional)
+                .HasForeignKey(pp => pp.ProfessionalId);
+
+            modelBuilder.Entity<ProjectProfessional>()
+                .HasKey(pp => new { pp.ProfessionalId, pp.ProjectId });
+
+            modelBuilder.Entity<ProjectProfessional>()
+                .HasOne(pp => pp.Professional)
+                .WithMany(p => p.ProjectProfessionals)
+                .HasForeignKey(pp => pp.ProfessionalId);
+
+            modelBuilder.Entity<ProjectProfessional>()
+                .HasOne(pp => pp.Project)
+                .WithMany(p => p.ProjectProfessionals)
+                .HasForeignKey(pp => pp.ProjectId);
+
 
             modelBuilder.Entity<Architect>()
                 .HasOne(a => a.Professional)
@@ -46,52 +67,6 @@ namespace WebAthenPs.API.Data
                 .WithMany(c => c.Houses)
                 .HasForeignKey(p => p.ClientId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Projecty>()
-                .HasMany(p => p.Professionals)
-                .WithMany(gp => gp.Projects)
-                .UsingEntity<Dictionary<string, object>>(
-                    "ProjectProfessionals",
-                    r => r.HasOne<GenericProfessional>().WithMany().HasForeignKey("Id"),
-                    l => l.HasOne<Projecty>().WithMany().HasForeignKey("ProjectId"),
-                    je =>
-                    {
-                        je.HasKey("ProjectId", "Id");
-                        je.HasData(
-                            // Associações entre projetos e profissionais
-                            new { ProjectId = 1, Id = 1 },
-                            new { ProjectId = 1, Id = 2 },
-                            new { ProjectId = 2, Id = 3 },
-                            new { ProjectId = 2, Id = 4 },
-                            new { ProjectId = 3, Id = 5 },
-                            new { ProjectId = 3, Id = 6 },
-                            new { ProjectId = 4, Id = 7 },
-                            new { ProjectId = 4, Id = 8 },
-                            new { ProjectId = 5, Id = 9 },
-                            new { ProjectId = 5, Id = 10 },
-                            new { ProjectId = 6, Id = 11 },
-                            new { ProjectId = 6, Id = 12 },
-                            new { ProjectId = 7, Id = 13 },
-                            new { ProjectId = 7, Id = 14 },
-                            new { ProjectId = 8, Id = 15 },
-                            new { ProjectId = 8, Id = 1 },
-                            new { ProjectId = 9, Id = 2 },
-                            new { ProjectId = 9, Id = 3 },
-                            new { ProjectId = 10, Id = 4 },
-                            new { ProjectId = 10, Id = 5 },
-                            new { ProjectId = 11, Id = 6 },
-                            new { ProjectId = 11, Id = 7 },
-                            new { ProjectId = 12, Id = 8 },
-                            new { ProjectId = 12, Id = 9 },
-                            new { ProjectId = 13, Id = 10 },
-                            new { ProjectId = 13, Id = 11 },
-                            new { ProjectId = 14, Id = 12 },
-                            new { ProjectId = 14, Id = 13 },
-                            new { ProjectId = 15, Id = 14 },
-                            new { ProjectId = 15, Id = 15 }
-                        );
-                    });
-
 
 
             modelBuilder.Entity<ApplicationUser>().HasData(
@@ -194,7 +169,39 @@ namespace WebAthenPs.API.Data
                new Projecty { ProjectId = 15, ProjectName = "Project Omicron", ConstructionType = "Residential", Status = "Planning", Budget = 550000, StartDate = new DateTime(2025, 1, 1), Description = "Eco-friendly home", Address = "1212 Birch St", Neighborhood = "Green Valley", City = "CityO", State = "StateO", PostalCode = "56790", Country = "CountryO", TotalArea = 275.0m, NumberOfRooms = 4, NumberOfBathrooms = 3, ClientId = 15, ActStep = "Design Approval" }
            );
 
-
+            modelBuilder.Entity<ProjectProfessional>().HasData(
+               new ProjectProfessional { Id = 1, ProjectId = 1, ProfessionalId = 1 },
+               new ProjectProfessional { Id = 2, ProjectId = 1, ProfessionalId = 6 },
+               new ProjectProfessional { Id = 3, ProjectId = 2, ProfessionalId = 2 },
+               new ProjectProfessional { Id = 4, ProjectId = 2, ProfessionalId = 7 },
+               new ProjectProfessional { Id = 5, ProjectId = 3, ProfessionalId = 3 },
+               new ProjectProfessional { Id = 6, ProjectId = 3, ProfessionalId = 8 },
+               new ProjectProfessional { Id = 7, ProjectId = 4, ProfessionalId = 4 },
+               new ProjectProfessional { Id = 8, ProjectId = 4, ProfessionalId = 9 },
+               new ProjectProfessional { Id = 9, ProjectId = 5, ProfessionalId = 5 },
+               new ProjectProfessional { Id = 10, ProjectId = 5, ProfessionalId = 10 },
+               new ProjectProfessional { Id = 11, ProjectId = 6, ProfessionalId = 11 },
+               new ProjectProfessional { Id = 12, ProjectId = 6, ProfessionalId = 12 },
+               new ProjectProfessional { Id = 13, ProjectId = 7, ProfessionalId = 13 },
+               new ProjectProfessional { Id = 14, ProjectId = 7, ProfessionalId = 14 },
+               new ProjectProfessional { Id = 15, ProjectId = 8, ProfessionalId = 15 },
+               new ProjectProfessional { Id = 1, ProjectId = 8, ProfessionalId = 1 },
+               new ProjectProfessional { Id = 2, ProjectId = 9, ProfessionalId = 6 },
+               new ProjectProfessional { Id = 3, ProjectId = 9, ProfessionalId = 2 },
+               new ProjectProfessional { Id = 4, ProjectId = 10, ProfessionalId = 7 },
+               new ProjectProfessional { Id = 5, ProjectId = 10, ProfessionalId = 3 },
+               new ProjectProfessional { Id = 6, ProjectId = 11, ProfessionalId = 8 },
+               new ProjectProfessional { Id = 7, ProjectId = 11, ProfessionalId = 4 },
+               new ProjectProfessional { Id = 8, ProjectId = 12, ProfessionalId = 9 },
+               new ProjectProfessional { Id = 9, ProjectId = 12, ProfessionalId = 5 },
+               new ProjectProfessional { Id = 10, ProjectId = 13, ProfessionalId = 10 },
+               new ProjectProfessional { Id = 11, ProjectId = 13, ProfessionalId = 11 },
+               new ProjectProfessional { Id = 12, ProjectId = 14, ProfessionalId = 12 },
+               new ProjectProfessional { Id = 13, ProjectId = 14, ProfessionalId = 13 },
+               new ProjectProfessional { Id = 14, ProjectId = 15, ProfessionalId = 14 },
+               new ProjectProfessional { Id = 15, ProjectId = 15, ProfessionalId = 15 }
+           // Adicione mais associações conforme necessário
+           );
 
         }
     }

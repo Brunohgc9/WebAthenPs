@@ -8,6 +8,7 @@ using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Components.Authorization;
 using WebAthenPs.Models.DTOs.Project;
 using WebAthenPs.Project.Services.Interfaces.Project;
+using WebAthenPs.Models.DTOs.Professional;
 
 namespace WebAthenPs.Project.Services.Implementation.Project
 {
@@ -220,6 +221,24 @@ namespace WebAthenPs.Project.Services.Implementation.Project
 
         public async Task<ProjectsDTO> UpdateProject(int id, ProjectsDTO dto)
         {
+            // Valide o DTO antes de enviar para a API
+            if (dto == null)
+            {
+                throw new ArgumentNullException(nameof(dto), "O DTO do projeto não pode ser nulo.");
+            }
+
+            if (dto.ProjectProfessionals != null)
+            {
+                foreach (var projectProfessional in dto.ProjectProfessionals)
+                {
+                    // Verifique se o campo Professional está nulo e se foi corretamente preenchido
+                    if (projectProfessional.Professional == null)
+                    {
+                        throw new ArgumentException("O campo Professional não pode ser nulo.");
+                    }
+                }
+            }
+
             try
             {
                 var httpClient = await CreateAuthorizedClientAsync();
@@ -247,6 +266,10 @@ namespace WebAthenPs.Project.Services.Implementation.Project
                 throw;
             }
         }
+
+
+
+
 
     }
 }
