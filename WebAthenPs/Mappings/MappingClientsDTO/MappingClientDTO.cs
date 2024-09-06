@@ -30,7 +30,7 @@ namespace WebAthenPs.API.Mappings.MappingClientsDTO
                 GenericProfessionals = c.GenericProfessionals != null
                     ? c.GenericProfessionals.Select(gp => new GenericProfessionalDTO
                     {
-                        ProfessionalType = gp.ProfessionalType,  // Incluindo ProfessionalType
+                        ProfessionalTypes = gp.ProfessionalTypes,  // Incluindo ProfessionalType
                         Id = gp.Id,
                         UserName = gp.User != null ? gp.User.UserName : null
                     }).ToList()
@@ -54,7 +54,7 @@ namespace WebAthenPs.API.Mappings.MappingClientsDTO
                 }).ToList() ?? new List<ProjectsDTO>(),
                 GenericProfessionals = client.GenericProfessionals?.Select(gp => new GenericProfessionalDTO
                 {
-                    ProfessionalType = gp.ProfessionalType,
+                    ProfessionalTypes = gp.ProfessionalTypes,
                     Id = gp.Id,
                     UserName = gp.User?.UserName
                 }).ToList() ?? new List<GenericProfessionalDTO>()

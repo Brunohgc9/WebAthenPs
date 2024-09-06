@@ -151,21 +151,21 @@ namespace WebAthenPs.API.Data
             );
 
             modelBuilder.Entity<GenericProfessional>().HasData(
-                new GenericProfessional { Id = 1, UserId = "user16", ClientId = 1, ProfessionalType = "Arquiteto" },
-                new GenericProfessional { Id = 2, UserId = "user17", ClientId = 2, ProfessionalType = "Eletricista" },
-                new GenericProfessional { Id = 3, UserId = "user18", ClientId = 3, ProfessionalType = "Engenheiro" },
-                new GenericProfessional { Id = 4, UserId = "user19", ClientId = 4, ProfessionalType = "Pedreiro" },
-                new GenericProfessional { Id = 5, UserId = "user20", ClientId = 5, ProfessionalType = "Encanador" },
-                new GenericProfessional { Id = 6, UserId = "user21", ClientId = 6, ProfessionalType = "Arquiteto" },
-                new GenericProfessional { Id = 7, UserId = "user22", ClientId = 7, ProfessionalType = "Eletricista" },
-                new GenericProfessional { Id = 8, UserId = "user23", ClientId = 8, ProfessionalType = "Engenheiro" },
-                new GenericProfessional { Id = 9, UserId = "user24", ClientId = 9, ProfessionalType = "Pedreiro" },
-                new GenericProfessional { Id = 10, UserId = "user25", ClientId = 10, ProfessionalType = "Encanador" },
-                new GenericProfessional { Id = 11, UserId = "user26", ClientId = 11, ProfessionalType = "Arquiteto" },
-                new GenericProfessional { Id = 12, UserId = "user27", ClientId = 12, ProfessionalType = "Eletricista" },
-                new GenericProfessional { Id = 13, UserId = "user28", ClientId = 13, ProfessionalType = "Engenheiro" },
-                new GenericProfessional { Id = 14, UserId = "user29", ClientId = 14, ProfessionalType = "Pedreiro" },
-                new GenericProfessional { Id = 15, UserId = "user30", ClientId = 15, ProfessionalType = "Encanador" }
+                new GenericProfessional { Id = 1, UserId = "user16", ClientId = 1, ProfessionalTypes = new List<string> { "Arquiteto" } },
+                new GenericProfessional { Id = 2, UserId = "user17", ClientId = 2, ProfessionalTypes = new List<string> { "Eletricista" } },
+                new GenericProfessional { Id = 3, UserId = "user18", ClientId = 3, ProfessionalTypes = new List<string> { "Engenheiro" } },
+                new GenericProfessional { Id = 4, UserId = "user19", ClientId = 4, ProfessionalTypes = new List<string> { "Pedreiro" } },
+                new GenericProfessional { Id = 5, UserId = "user20", ClientId = 5, ProfessionalTypes = new List<string> { "Encanador" } },
+                new GenericProfessional { Id = 6, UserId = "user21", ClientId = 6, ProfessionalTypes = new List<string> { "Arquiteto" } },
+                new GenericProfessional { Id = 7, UserId = "user22", ClientId = 7, ProfessionalTypes = new List<string> { "Eletricista" } },
+                new GenericProfessional { Id = 8, UserId = "user23", ClientId = 8, ProfessionalTypes = new List<string> { "Engenheiro" } },
+                new GenericProfessional { Id = 9, UserId = "user24", ClientId = 9, ProfessionalTypes = new List<string> { "Pedreiro" } },
+                new GenericProfessional { Id = 10, UserId = "user25", ClientId = 10, ProfessionalTypes = new List<string> { "Encanador" } },
+                new GenericProfessional { Id = 11, UserId = "user26", ClientId = 11, ProfessionalTypes = new List<string> { "Arquiteto" } },
+                new GenericProfessional { Id = 12, UserId = "user27", ClientId = 12, ProfessionalTypes = new List<string> { "Eletricista" } },
+                new GenericProfessional { Id = 13, UserId = "user28", ClientId = 13, ProfessionalTypes = new List<string> { "Engenheiro" } },
+                new GenericProfessional { Id = 14, UserId = "user29", ClientId = 14, ProfessionalTypes = new List<string> { "Pedreiro" } },
+                new GenericProfessional { Id = 15, UserId = "user30", ClientId = 15, ProfessionalTypes = new List<string> { "Encanador" } }
             );
 
             modelBuilder.Entity<Architect>().HasData(

@@ -1,0 +1,166 @@
+﻿@page "/update-project/{ProjectId:int}"
+@using WebAthenPs.Models.DTOs.Project
+@using WebAthenPs.Models.DTOs.Professional
+@using WebAthenPs.Project.Services.Interfaces.Project
+@using WebAthenPs.Project.Services.Interfaces.Professional
+@inject IProjectService ProjectService
+@inject IGenericProfessionalService ProfessionalService
+@inject NavigationManager Navigation
+
+@code {
+    [Parameter]
+    public int ProjectId { get; set; }
+
+    private ProjectsDTO _project;
+    private IEnumerable<GenericProfessionalDTO> _professionals;
+    private GenericProfessionalDTO _selectedProfessional;
+    private bool _isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProject();
+        await LoadProfessionals();
+    }
+
+    private async Task LoadProject()
+    {
+        try
+        {
+            _project = await ProjectService.GetById(ProjectId);
+        }
+        catch (Exception ex)
+        {
+            // Tratar exceção
+            Console.WriteLine($"Erro ao carregar o projeto: {ex.Message}");
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task LoadProfessionals()
+    {
+        try
+        {
+            _professionals = await ProfessionalService.GetAllAsync(string.Empty);
+        }
+        catch (Exception ex)
+        {
+            // Tratar exceção
+            Console.WriteLine($"Erro ao carregar profissionais: {ex.Message}");
+        }
+    }
+
+    private async Task UpdateProject()
+    {
+        _isLoading = true;
+        try
+        {
+            await ProjectService.UpdateProject(ProjectId, _project);
+            Navigation.NavigateTo("/projects"); // Redireciona para a página de projetos
+        }
+        catch (Exception ex)
+        {
+            // Tratar exceção
+            Console.WriteLine($"Erro ao atualizar o projeto: {ex.Message}");
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task AddProfessionalToProject()
+    {
+        if (_selectedProfessional != null && !_project.Professionals.Any(p => p.Id == _selectedProfessional.Id))
+        {
+            _project.Professionals.Add(_selectedProfessional);
+            _selectedProfessional = null; // Limpa a seleção após adicionar
+            await UpdateProject(); // Atualiza o projeto após adicionar o profissional
+        }
+    }
+}
+
+@if (_isLoading)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div>
+        <h3>Project Details</h3>
+        <input type="text" @bind="_project.ProjectName" placeholder="Project Name" />
+        <input type="text" @bind="_project.ConstructionType" placeholder="Construction Type" />
+        <input type="text" @bind="_project.Status" placeholder="Status" />
+        <input type="number" @bind="_project.Budget" placeholder="Budget" />
+        <input type="date" @bind="_project.StartDate" placeholder="Start Date" />
+        <input type="date" @bind="_project.EndDate" placeholder="End Date" />
+        <textarea @bind="_project.Description" placeholder="Project Description"></textarea>
+        <input type="text" @bind="_project.TotalArea" placeholder="Total Area" />
+        <input type="text" @bind="_project.NumberOfRooms" placeholder="Number of Rooms" />
+        <input type="text" @bind="_project.NumberOfBathrooms" placeholder="Number of Bathrooms" />
+
+        <h4>Contract Professionals</h4>
+        <div class="professionals-container">
+            @foreach (var professional in _professionals)
+            {
+                <div class="professional-card">
+                    <h5>@professional.UserName</h5>
+                    <p><strong>Email:</strong> @professional.Email</p>
+                    <p><strong>Phone:</strong> @professional.PhoneNumber</p>
+                    <button @onclick="() => _selectedProfessional = professional">Add to Project</button>
+                </div>
+            }
+        </div>
+
+        @if (_project.Professionals.Any())
+        {
+            <div>
+                <h4>Associated Professionals</h4>
+                <ul>
+                    @foreach (var professional in _project.Professionals)
+                    {
+                        <li>@professional.UserName</li>
+                    }
+                </ul>
+            </div>
+        }
+        else
+        {
+            <p>No professionals associated with this project.</p>
+        }
+
+        @if (_selectedProfessional != null)
+        {
+            <div>
+                <h4>Selected Professional</h4>
+                <p><strong>Name:</strong> @_selectedProfessional.UserName</p>
+                <button @onclick="AddProfessionalToProject">Confirm Add</button>
+            </div>
+        }
+
+        <button @onclick="UpdateProject">Save Project</button>
+    </div>
+}
+
+<style>
+    .professionals-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .professional-card {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+        padding: 16px;
+        width: 300px;
+    }
+
+        .professional-card h5 {
+            margin-top: 0;
+        }
+</style>

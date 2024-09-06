@@ -73,9 +73,10 @@ namespace WebAthenPs.API.Repositories.Implementations
                 .Include(gp => gp.User)
                 .Include(gp => gp.Client)
                 .Include(gp => gp.Projects)
-                .Where(gp => gp.ProfessionalType == professionalType)
+                .Where(gp => gp.ProfessionalTypes.Contains(professionalType)) // Verifica se a lista contém o tipo
                 .ToListAsync();
         }
+
 
         public async Task UpdateAsync(GenericProfessional genericProfessional)
         {

@@ -4,7 +4,6 @@
 @using WebAthenPs.Project.Services
 @using WebAthenPs.Models;
 @using WebAthenPs.Models.DTOs;
-@using WebAthenPs.Models.DTOs.Professional
 @using WebAthenPs.Project.Services.Interfaces.Professional
 @inject IGenericProfessionalService GenericProfessionalService
 @inject ILocalStorageService LocalStorageService
@@ -22,9 +21,14 @@
     <ValidationSummary />
 
     <div class="form-group mt-2">
-        <label for="professionalType">Tipo de Profissional</label>
-        <InputText Id="professionalType" Class="form-control" @bind-Value="newProfessional.ProfessionalType" />
-        <ValidationMessage For="@(() => newProfessional.ProfessionalType)" />
+        <label for="professionalTypes">Tipos de Profissional</label>
+        <InputSelect Id="professionalTypes" Class="form-control" @bind-Value="selectedProfessionalTypes" multiple>
+            @foreach (var type in allProfessionalTypes)
+            {
+                <option value="@type">@type</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => newProfessional.ProfessionalTypes)" />
     </div>
 
     <!-- Adicione outros campos necessários aqui -->
@@ -37,7 +41,7 @@
     <h4>Profissional Criado</h4>
     <p>ID: @createdProfessional.Id</p>
     <p>UserId: @createdProfessional.UserId</p>
-    <p>Tipo de Profissional: @createdProfessional.ProfessionalType</p>
+    <p>Tipos de Profissional: @string.Join(", ", createdProfessional.ProfessionalTypes)</p>
     <!-- Exiba outros campos conforme necessário -->
 }
 
@@ -46,6 +50,9 @@
     private GenericProfessionalDTO createdProfessional;
     private bool ShowErrors;
     private string Error = string.Empty;
+
+    private List<string> allProfessionalTypes = new List<string> { "Tipo1", "Tipo2", "Tipo3" }; // Substitua com os tipos reais
+    private List<string> selectedProfessionalTypes = new List<string>();
 
     private async Task HandleValidSubmit()
     {
@@ -60,6 +67,9 @@
                 ShowErrors = true;
                 return;
             }
+
+            // Atribuir os tipos selecionados ao modelo
+            newProfessional.ProfessionalTypes = selectedProfessionalTypes;
 
             createdProfessional = await GenericProfessionalService.CreateAsync(newProfessional, userId);
             if (createdProfessional == null)

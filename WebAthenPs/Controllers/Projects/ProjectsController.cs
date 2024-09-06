@@ -11,6 +11,7 @@ using WebAthenPs.API.Repositories;
 using WebAthenPs.API.Data;
 using WebAthenPs.API.Entities.Clients;
 using WebAthenPs.Models.DTOs.Project;
+using WebAthenPs.API.Entities.Project;
 
 namespace WebAthenPs.API.Controllers.Projects
 {
@@ -29,6 +30,51 @@ namespace WebAthenPs.API.Controllers.Projects
             _userManager = userManager;
             _context = context;
         }
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<ProjectsDTO>> UpdateProject(int id, [FromBody] ProjectsDTO dto)
+        {
+            if (dto == null || !ModelState.IsValid)
+                return BadRequest("Dados inválidos.");
+
+            try
+            {
+                var project = await _projectRepository.GetById(id);
+                if (project == null)
+                    return NotFound("Projeto não encontrado.");
+
+                // Atualiza o projeto com os dados fornecidos
+                project.ProjectName = dto.ProjectName;
+                project.ConstructionType = dto.ConstructionType;
+                project.Status = dto.Status;
+                project.Budget = dto.Budget;
+                project.StartDate = dto.StartDate;
+                project.EndDate = dto.EndDate;
+                project.Description = dto.Description;
+                project.Address = dto.Address;
+                project.Neighborhood = dto.Neighborhood;
+                project.City = dto.City;
+                project.State = dto.State;
+                project.PostalCode = dto.PostalCode;
+                project.Country = dto.Country;
+                project.ActStep = dto.Step;
+                project.TotalArea = dto.TotalArea;
+                project.NumberOfRooms = dto.NumberOfRooms;
+                project.NumberOfBathrooms = dto.NumberOfBathrooms;
+
+                // Atualiza o projeto no repositório
+                await _projectRepository.UpdateProject(project);
+
+                // Converte o projeto atualizado para DTO e retorna a resposta
+                var updatedDto = project.ConverterProjetoParaDTO();
+                return Ok(updatedDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao atualizar o projeto: {ex.Message}");
+            }
+        }
+
+
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProjectsDTO>>> GetAll()

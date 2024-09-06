@@ -1,20 +1,18 @@
 ﻿@page "/register"
 @using System.ComponentModel.DataAnnotations
 @using WebAthenPs.Models.DTOs.Client
+@using WebAthenPs.Models.DTOs.Professional.ProfessionalTypes.Architect
 @using WebAthenPs.Models.DTOs.User
-@using System.ComponentModel.DataAnnotations
 @using WebAthenPs.Project.Services
 @using WebAthenPs.Models
-@using WebAthenPs.Models.DTOs.Client
 @using WebAthenPs.Models.DTOs.Professional
-@using WebAthenPs.Models.DTOs.User
-@using WebAthenPs.Project.Services.Interfaces
-@using WebAthenPs.Project.Services.Interfaces.Client
 @using WebAthenPs.Project.Services.Interfaces.Professional
+@using WebAthenPs.Project.Services.Interfaces.Client
 @using WebAthenPs.Project.Services.Interfaces.User
 @inject IAuthService AuthService
 @inject IClientService ClientService
 @inject IGenericProfessionalService ProfessionalService
+@inject IArchitectService ArchitectService
 @inject NavigationManager NavigationManager
 @using BlazorInputMask
 
@@ -109,8 +107,14 @@
                 @if (additionalInfo.UserType == "Profissional" || additionalInfo.UserType == "Ambos")
                 {
                     <div class="form-group mt-2">
-                        <label for="professionalType">Professional Type</label>
-                        <InputText Id="professionalType" Class="form-control" @bind-Value="additionalInfo.ProfessionalType" />
+                        <label>Professional Types</label>
+                        @foreach (var type in professionalTypeOptions)
+                            {
+                            <div class="form-check">
+                                <InputCheckbox @bind-Value="additionalInfo.ProfessionalTypes[type]" class="form-check-input" />
+                                <label class="form-check-label">@type</label>
+                            </div>
+                        }
                     </div>
                 }
 
@@ -127,6 +131,16 @@
     private AdditionalInfoModel additionalInfo = new AdditionalInfoModel();
     private bool ShowErrors;
     private string Error = string.Empty;
+
+    private List<string> professionalTypeOptions = new List<string> { "Arquiteto", "Pedreiro", "Engenheiro" };
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        // Inicialize o dicionário com as chaves padrão e valores falsos
+        professionalTypeOptions.ForEach(type =>
+            additionalInfo.ProfessionalTypes[type] = false);
+    }
 
     private void GoToStepTwo()
     {
@@ -145,11 +159,6 @@
     private void GoToStepOne()
     {
         currentStep = 1;
-    }
-
-    private void OnUserTypeChanged(ChangeEventArgs e)
-    {
-        additionalInfo.UserType = e.Value.ToString();
     }
 
     private async Task HandleSubmit()
@@ -173,12 +182,10 @@
                     PostalCode = additionalInfo.PostalCode
                 };
 
-            // Registre o usuário e obtenha o UserId
             var userId = await AuthService.Register(registerModel);
 
             if (userId != null)
             {
-                // Registre o cliente se necessário
                 if (additionalInfo.UserType == "Cliente" || additionalInfo.UserType == "Ambos")
                 {
                     var clientDto = new RegisterClientModel
@@ -195,13 +202,12 @@
                     }
                 }
 
-                // Registre o profissional se necessário
                 if (additionalInfo.UserType == "Profissional" || additionalInfo.UserType == "Ambos")
                 {
                     var professionalModel = new RegisterProfessionalModel
                         {
                             UserId = userId,
-                            ProfessionalType = additionalInfo.ProfessionalType
+                            ProfessionalTypes = additionalInfo.ProfessionalTypes.Where(p => p.Value).Select(p => p.Key).ToList()
                         };
 
                     var professionalCreationResult = await ProfessionalService.CreateAsync(professionalModel, userId);
@@ -210,6 +216,32 @@
                         Error = "Failed to register professional.";
                         ShowErrors = true;
                         return;
+                    }
+
+                    if (additionalInfo.ProfessionalTypes.ContainsKey("Arquiteto") && additionalInfo.ProfessionalTypes["Arquiteto"])
+                    {
+                        var architectModel = new RegisterArchitectModel
+                            {
+                                genericId = professionalCreationResult.Id
+                            };
+
+                        try
+                        {
+                            var architectCreationResult = await ArchitectService.CreateAsync(architectModel);
+                            if (architectCreationResult == null)
+                            {
+                                Error = "Failed to register architect.";
+                                ShowErrors = true;
+                                return;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            var innerExceptionMessage = ex.InnerException?.Message ?? ex.Message;
+                            Error = $"Erro ao registrar o arquiteto: {innerExceptionMessage}";
+                            ShowErrors = true;
+                            return;
+                        }
                     }
                 }
 
@@ -223,39 +255,34 @@
         }
         catch (Exception ex)
         {
-            Error = "An error occurred: " + ex.Message;
+            Error = $"Error: {ex.Message}";
             ShowErrors = true;
         }
     }
 
-
-
-    private class BasicInfoModel
+    public class BasicInfoModel
     {
+        [Required, EmailAddress]
+        public string Email { get; set; }
         [Required]
-        [EmailAddress]
-        public string Email { get; set; } = string.Empty;
-
+        public string Password { get; set; }
         [Required]
-        public string Password { get; set; } = string.Empty;
-
-        [Required]
-        [Compare(nameof(Password))]
-        public string ConfirmPassword { get; set; } = string.Empty;
+        public string ConfirmPassword { get; set; }
     }
 
-    private class AdditionalInfoModel
+    public class AdditionalInfoModel
     {
-        public string? Role { get; set; }
-        public string? UserType { get; set; }
-        public string? CPF { get; set; }
-        public string? RG { get; set; }
-        public string? Gender { get; set; }
-        public string? Address { get; set; }
-        public string? City { get; set; }
-        public string? State { get; set; }
-        public string? PostalCode { get; set; }
-        public string? ProfessionalType { get; set; } // Adicione esta propriedade
+        public string Role { get; set; }
+        public string UserType { get; set; }
+        [Required]
+        public string CPF { get; set; }
+        [Required]
+        public string RG { get; set; }
+        public string Gender { get; set; }
+        public string Address { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string PostalCode { get; set; }
+        public Dictionary<string, bool> ProfessionalTypes { get; set; } = new Dictionary<string, bool>();
     }
-
 }

@@ -131,7 +131,7 @@ namespace WebAthenPs.API.Controllers.Clients
                     UserId = clientDTO.UserId,
                     GenericProfessionals = clientDTO.GenericProfessionals?.Select(gp => new GenericProfessional
                     {
-                        ProfessionalType = gp.ProfessionalType,
+                        ProfessionalTypes = gp.ProfessionalTypes,
                         Id = gp.Id,
                         // Mapeie outros campos conforme necessário
                     }).ToList(),

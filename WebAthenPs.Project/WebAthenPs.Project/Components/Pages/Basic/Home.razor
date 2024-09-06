@@ -2,10 +2,10 @@
 @using WebAthenPs.Models.DTOs.Project
 @rendermode InteractiveServer
 @using Blazored.LocalStorage
-@using WebAthenPs.Models.DTOs.Project
 @using WebAthenPs.Project.Services.Interfaces.Project
 @inject ILocalStorageService LocalStorageService
 @inject IProjectService ProjectService
+@inject NavigationManager NavigationManager
 
 <PageTitle>Home</PageTitle>
 
@@ -23,6 +23,7 @@
                     <h3>@project.ProjectName</h3>
                     <p>Status: @project.Status</p>
                     <p>Orçamento: @project.Budget.ToString()</p>
+                    <button @onclick="() => EditProject(project.ProjectId)">Editar</button>
                 </div>
             }
         </div>
@@ -62,5 +63,10 @@ else
                 projects = new List<ProjectsDTO>();
             }
         }
+    }
+
+    private void EditProject(int projectId)
+    {
+        NavigationManager.NavigateTo($"/update-project/{projectId}");
     }
 }

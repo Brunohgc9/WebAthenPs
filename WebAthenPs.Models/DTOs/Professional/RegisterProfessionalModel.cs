@@ -8,7 +8,7 @@ namespace WebAthenPs.Models.DTOs.Professional
 {
     public class RegisterProfessionalModel
     {
-        public string? ProfessionalType { get; set; }  // Corrigido para 'ProfessionalType'
+        public List<string> ProfessionalTypes { get; set; } = new List<string>(); // Alterado para uma lista
         public string? UserId { get; set; }
     }
 }

@@ -1,7 +1,7 @@
-﻿using WebAthenPs.API.Entities.Clients;
-using WebAthenPs.API.Entities.Professional.ProfessionalTypes;
-using WebAthenPs.Models.DTOs.Client;
+﻿using WebAthenPs.API.Entities.Professional.ProfessionalTypes;
 using WebAthenPs.Models.DTOs.Professional.ProfessionalTypes.Architect;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace WebAthenPs.API.Mappings.MappingProfessionalsDTO.MappingProfessionalTypes
 {
@@ -20,34 +20,41 @@ namespace WebAthenPs.API.Mappings.MappingProfessionalsDTO.MappingProfessionalTyp
                 genericId = a.genericId,
                 RegistroConselho = a.RegistroConselho,
                 Especialidade = a.Especialidade,
-                name = a.Professional.User?.UserName ?? "Nome não disponível",
-                email = a.Professional.User?.Email ?? "Email não disponível"
+                name = a.Professional?.User?.UserName ?? "Nome não disponível",
+                email = a.Professional?.User?.Email ?? "Email não disponível"
             }).ToList();
         }
 
-
-
-        public static GeneralArchitectDTO ConverterArquitetoParaDTO(this Architect architects)
+        public static GeneralArchitectDTO ConverterArquitetoParaDTO(this Architect architect)
         {
+            if (architect == null)
+            {
+                return null;
+            }
+
             return new GeneralArchitectDTO
             {
-                ArchId = architects.ArchId,
-                genericId = architects.genericId,
-                RegistroConselho = architects.RegistroConselho,
-                Especialidade = architects.Especialidade,
-                name = architects.Professional.User?.UserName,
-                email = architects.Professional.User?.Email
+                ArchId = architect.ArchId,
+                genericId = architect.genericId,
+                RegistroConselho = architect.RegistroConselho,
+                Especialidade = architect.Especialidade,
+                name = architect.Professional?.User?.UserName ?? "Nome não disponível",
+                email = architect.Professional?.User?.Email ?? "Email não disponível"
             };
         }
 
         public static Architect CriarArquitetoEmDTO(this RegisterArchitectModel model)
         {
+            if (model == null)
+            {
+                return null;
+            }
+
             return new Architect
             {
                 genericId = model.genericId
+                // Outros campos podem ser adicionados aqui, se necessário
             };
         }
-
-
     }
 }

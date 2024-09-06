@@ -15,7 +15,7 @@ namespace WebAthenPs.API.Entities.Professional.ProfessionalTypes
 
         public int genericId { get; set; }
 
-        public string RegistroConselho { get; set; } 
+        public string? RegistroConselho { get; set; } 
 
         public string? Especialidade { get; set; }
 

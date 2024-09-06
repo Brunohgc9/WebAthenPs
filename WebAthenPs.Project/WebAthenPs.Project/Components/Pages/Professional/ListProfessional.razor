@@ -59,7 +59,7 @@ else
                 <div class="card-body">
                     <p><strong>Email:</strong> @professional.Email</p>
                     <p><strong>Phone Number:</strong> @professional.PhoneNumber</p>
-                    <p><strong>Professional Type:</strong> @professional.ProfessionalType</p>
+                    <p><strong>Professional Type:</strong> @string.Join(", ", professional.ProfessionalTypes)</p>
                 </div>
                 <div class="card-footer">
                     <!-- Adicione ações aqui se necessário, como editar ou excluir -->
@@ -68,6 +68,7 @@ else
         }
     </div>
 }
+
 
 <style>
     .card-container {

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using WebAthenPs.API.Data;
 using WebAthenPs.API.Entities.Project;
@@ -18,7 +19,7 @@ namespace WebAthenPs.API.Entities.Professional
 
         public int? ClientId { get; set; }
 
-        public string? ProfessionalType { get; set; }  // Corrigido para 'ProfessionalType'
+        public List<string> ProfessionalTypes { get; set; } = new List<string>(); // Alterado para uma lista
 
         [ForeignKey("ClientId")]
         public Client? Client { get; set; }

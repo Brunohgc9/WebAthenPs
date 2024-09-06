@@ -36,7 +36,7 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                 {
                     Id = p.Id,
                     UserName = p.User?.UserName,
-                    ProfessionalType = p.ProfessionalType
+                    ProfessionalTypes = p.ProfessionalTypes
                 }).ToList() ?? new List<GenericProfessionalDTO>()
             }) ?? Enumerable.Empty<ProjectsDTO>();
         }
@@ -69,7 +69,7 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                 {
                     Id = p.Id,
                     UserName = p.User?.UserName,
-                    ProfessionalType = p.ProfessionalType
+                    ProfessionalTypes = p.ProfessionalTypes
                 }).ToList() ?? new List<GenericProfessionalDTO>()
             };
         }
@@ -93,5 +93,7 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                 // ProjectName, PostalCode, TotalArea, NumberOfRooms, Step, NumberOfBathrooms, Professionals
             };
         }
+
+
     }
 }

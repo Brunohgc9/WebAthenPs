@@ -49,6 +49,7 @@ namespace WebAthenPs.API.Controllers.Professional
         }
 
 
+
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -97,17 +98,17 @@ namespace WebAthenPs.API.Controllers.Professional
         public async Task<IActionResult> Update(int id, [FromBody] RegisterProfessionalModel model)
         {
             if (model == null || !ModelState.IsValid)
-                return BadRequest("Invalid data.");
+                return BadRequest("Dados inválidos.");
 
             try
             {
                 var existingProfessional = await _repository.GetByIdAsync(id);
 
                 if (existingProfessional == null)
-                    return NotFound("Professional not found.");
+                    return NotFound("Profissional não encontrado.");
 
-                existingProfessional.ProfessionalType = model.ProfessionalType;
-                // Atualizar outros campos conforme necessário
+                existingProfessional.ProfessionalTypes = model.ProfessionalTypes ?? new List<string>();
+
 
                 await _repository.UpdateAsync(existingProfessional);
 
@@ -116,9 +117,10 @@ namespace WebAthenPs.API.Controllers.Professional
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Error accessing the database: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao acessar o banco de dados: {ex.Message}");
             }
         }
+
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)

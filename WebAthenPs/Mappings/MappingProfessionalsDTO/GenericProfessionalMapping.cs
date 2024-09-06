@@ -15,11 +15,11 @@ namespace WebAthenPs.API.Mappings.MappingProfessionalsDTO
                     {
                         Id = professional.Id,
                         UserId = professional.UserId,
-                        UserName = professional.User?.UserName, // Inclui o nome do usuário, se disponível
+                        UserName = professional.User?.UserName,
                         PhoneNumber = professional.User?.PhoneNumber,
                         Email = professional.User?.Email,
                         ClientId = professional.ClientId,
-                        ProfessionalType = professional.ProfessionalType // Inclui o nome do cliente, se disponível
+                        ProfessionalTypes = professional.ProfessionalTypes, // Mapeamento atualizado para lista
                     }).ToList();
         }
 
@@ -29,11 +29,11 @@ namespace WebAthenPs.API.Mappings.MappingProfessionalsDTO
             {
                 Id = professional.Id,
                 UserId = professional.UserId,
-                UserName = professional.User?.UserName, // Inclui o nome do usuário, se disponível
+                UserName = professional.User?.UserName,
                 PhoneNumber = professional.User?.PhoneNumber,
                 Email = professional.User?.Email,
                 ClientId = professional.ClientId,
-                ProfessionalType = professional.ProfessionalType,
+                ProfessionalTypes = professional.ProfessionalTypes, // Mapeamento atualizado para lista
             };
         }
 
@@ -44,8 +44,7 @@ namespace WebAthenPs.API.Mappings.MappingProfessionalsDTO
                     select new GenericProfessional
                     {
                         UserId = dto.UserId,
-                        ProfessionalType = dto.ProfessionalType
-                        // Não mapeando User e Client aqui, você pode precisar configurar esses valores separadamente
+                        ProfessionalTypes = dto.ProfessionalTypes // Mapeamento atualizado para lista
                     }).ToList();
         }
 
@@ -54,8 +53,7 @@ namespace WebAthenPs.API.Mappings.MappingProfessionalsDTO
             return new GenericProfessional
             {
                 UserId = dto.UserId,
-                ProfessionalType = dto.ProfessionalType
-                // Não mapeando User e Client aqui, você pode precisar configurar esses valores separadamente
+                ProfessionalTypes = dto.ProfessionalTypes // Mapeamento atualizado para lista
             };
         }
     }

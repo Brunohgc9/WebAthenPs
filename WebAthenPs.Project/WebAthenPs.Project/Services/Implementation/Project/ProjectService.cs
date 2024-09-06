@@ -218,7 +218,35 @@ namespace WebAthenPs.Project.Services.Implementation.Project
             }
         }
 
+        public async Task<ProjectsDTO> UpdateProject(int id, ProjectsDTO dto)
+        {
+            try
+            {
+                var httpClient = await CreateAuthorizedClientAsync();
+                var response = await httpClient.PutAsJsonAsync($"api/Projects/{id}", dto);
 
+                if (response.IsSuccessStatusCode)
+                {
+                    var updatedProject = await response.Content.ReadFromJsonAsync<ProjectsDTO>();
+                    _logger.LogInformation("Projeto atualizado com sucesso.");
+                    return updatedProject;
+                }
+
+                var errorContent = await response.Content.ReadAsStringAsync();
+                _logger.LogError($"Erro ao atualizar o projeto. StatusCode: {response.StatusCode}, Conteúdo: {errorContent}");
+                return null;
+            }
+            catch (HttpRequestException httpEx)
+            {
+                _logger.LogError(httpEx, "Erro ao acessar a API para atualizar um projeto.");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro inesperado ao atualizar um projeto.");
+                throw;
+            }
+        }
 
     }
 }

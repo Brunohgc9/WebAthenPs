@@ -11,5 +11,6 @@ namespace WebAthenPs.Project.Services.Interfaces.Project
         Task<ProjectsDTO> CreateProject(RegisterProjectModel model);
         Task DeleteProject(int id);
         Task<IEnumerable<ProjectsDTO>> GetProjectsByLoggedInUser();
+        Task<ProjectsDTO> UpdateProject(int id, ProjectsDTO dto);
     }
 }
