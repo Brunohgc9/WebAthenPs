@@ -21,7 +21,7 @@ builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IGenericProfessionlRepository, GenericProfessionalRepository>();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo {Title = "APIWebAthenPs", Version = "v1"});
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "APIWebAthenPs", Version = "v1" });
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -34,7 +34,7 @@ builder.Services.AddSwaggerGen(c =>
                         Example: \'Bearer 12345abcdeF\'",
     });
 
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement 
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
 
         {
@@ -48,7 +48,7 @@ builder.Services.AddSwaggerGen(c =>
             },
             new string[]{}
         }
-    
+
     });
 });
 builder.Services.AddCors(options =>
@@ -61,8 +61,11 @@ builder.Services.AddCors(options =>
                    .AllowAnyHeader();
         });
 });
+
 var connectionString = builder.Configuration.GetConnectionString("APIDefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString)); // Conexão com SQL Azure
 
 // Configuração do Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -99,22 +102,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(
-
         policy =>
         {
             policy.AllowAnyHeader()
-            .AllowAnyOrigin()
-            .AllowAnyMethod();
-        }
-
-        );
+                  .AllowAnyOrigin()
+                  .AllowAnyMethod();
+        });
 });
-
-
 
 var app = builder.Build();
 
@@ -123,6 +120,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
