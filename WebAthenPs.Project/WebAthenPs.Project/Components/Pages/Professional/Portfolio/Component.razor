@@ -1,6 +1,108 @@
-﻿@page "/  teste"
-<h3>Component</h3>
+﻿@page "/professionals/{id:Guid}"
+@using WebAthenPs.Models.DTOs.Professional
+@using WebAthenPs.Models.DTOs.Professional.ProfessionalTypes.Architect
+@using WebAthenPs.Project.Services.Interfaces.Professional
+@inject IGenericProfessionalService ProfessionalService
+@inject IArchitectService ArchitectService
 
 @code {
+    [Parameter] public string id { get; set; } // Recebe o id como string para conversão
 
+    private GenericProfessionalDTO _professional;
+    private GeneralArchitectDTO _architectDetails;
+    private bool _isLoading = true;
+    private Guid _guidId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Guid.TryParse(id, out _guidId))
+        {
+            await LoadProfessionalDetails();
+        }
+        else
+        {
+            // Lidar com o erro de conversão do Guid
+            Console.WriteLine("ID fornecido não é um Guid válido.");
+            _isLoading = false;
+        }
+    }
+
+    private async Task LoadProfessionalDetails()
+    {
+        try
+        {
+            // Carregar os detalhes do arquiteto usando o ID fornecido
+            _architectDetails = await ArchitectService.GetByIdAsync(_guidId);
+
+            if (_architectDetails != null)
+            {
+                // Carregar os detalhes do profissional genérico usando o genericId do arquiteto
+                _professional = await ProfessionalService.GetByIdAsync(_architectDetails.genericId);
+            }
+        }
+        catch (Exception ex)
+        {
+            // Tratar exceção
+            Console.WriteLine($"Erro ao buscar detalhes do profissional: {ex.Message}");
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
 }
+
+@if (_isLoading)
+{
+    <p>Carregando...</p>
+}
+else if (_professional == null)
+{
+    <p>Profissional não encontrado.</p>
+}
+else
+{
+    <div class="professional-details">
+        <h2>Detalhes do Profissional: @(_professional.UserName ?? "Nome não disponível")</h2>
+        <p><strong>Email:</strong> @(_professional.Email ?? "Email não disponível")</p>
+        <p><strong>Telefone:</strong> @(_professional.PhoneNumber ?? "Telefone não disponível")</p>
+        <p><strong>Tipos de Profissional:</strong> @string.Join(", ", _professional.ProfessionalTypes)</p>
+
+        @if (_professional.ProfessionalTypes.Contains("Arquiteto") && _architectDetails != null)
+        {
+            <div class="architect-details">
+                <h3>Informações de Arquiteto</h3>
+                <p><strong>Nome:</strong> @(_architectDetails.name ?? "Nome não disponível")</p>
+                <p><strong>Email:</strong> @(_architectDetails.email ?? "Email não disponível")</p>
+                <p><strong>Registro no Conselho:</strong> @(_architectDetails.RegistroConselho ?? "Registro não disponível")</p>
+                <p><strong>Especialidade:</strong> @(_architectDetails.Especialidade ?? "Especialidade não disponível")</p>
+            </div>
+        }
+    </div>
+}
+
+<style>
+    .professional-details {
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        max-width: 600px;
+        margin: 20px auto;
+    }
+
+    .architect-details {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #e9ecef;
+        border-radius: 8px;
+    }
+
+    h2, h3 {
+        color: #343a40;
+    }
+
+    p {
+        margin: 5px 0;
+    }
+</style>
