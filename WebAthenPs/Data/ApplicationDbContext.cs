@@ -30,6 +30,12 @@ namespace WebAthenPs.API.Data
                 .WithOne(pp => pp.Professional)
                 .HasForeignKey(pp => pp.ProfessionalId);
 
+            modelBuilder.Entity<GenericProfessional>()
+                .HasOne(gp => gp.Architect)               // Um GenericProfessional tem um Architect
+                .WithOne(a => a.Professional)              // O Architect tem um GenericProfessional
+                .HasForeignKey<Architect>(a => a.genericId); // A chave estrangeira está no Architect e refere-se ao Id do GenericProfessional
+
+
             modelBuilder.Entity<ProjectProfessional>()
                 .HasKey(pp => new { pp.ProfessionalId, pp.ProjectId });
 
@@ -127,28 +133,29 @@ namespace WebAthenPs.API.Data
             );
 
             modelBuilder.Entity<GenericProfessional>().HasData(
-                new GenericProfessional { Id = 1, UserId = "user16", ClientId = 1, ProfessionalTypes = new List<string> { "Arquiteto" } },
+                new GenericProfessional { Id = 1, UserId = "user16", ClientId = 1, ProfessionalTypes = new List<string> { "Arquiteto" }, ArchId = Guid.Parse("9876b54c-7952-4f52-a170-ed3036394792") },
                 new GenericProfessional { Id = 2, UserId = "user17", ClientId = 2, ProfessionalTypes = new List<string> { "Eletricista" } },
                 new GenericProfessional { Id = 3, UserId = "user18", ClientId = 3, ProfessionalTypes = new List<string> { "Engenheiro" } },
                 new GenericProfessional { Id = 4, UserId = "user19", ClientId = 4, ProfessionalTypes = new List<string> { "Pedreiro" } },
                 new GenericProfessional { Id = 5, UserId = "user20", ClientId = 5, ProfessionalTypes = new List<string> { "Encanador" } },
-                new GenericProfessional { Id = 6, UserId = "user21", ClientId = 6, ProfessionalTypes = new List<string> { "Arquiteto" } },
+                new GenericProfessional { Id = 6, UserId = "user21", ClientId = 6, ProfessionalTypes = new List<string> { "Arquiteto" }, ArchId = Guid.Parse("a05cf0e7-d957-44ba-9e2a-313def7408ba") },
                 new GenericProfessional { Id = 7, UserId = "user22", ClientId = 7, ProfessionalTypes = new List<string> { "Eletricista" } },
                 new GenericProfessional { Id = 8, UserId = "user23", ClientId = 8, ProfessionalTypes = new List<string> { "Engenheiro" } },
                 new GenericProfessional { Id = 9, UserId = "user24", ClientId = 9, ProfessionalTypes = new List<string> { "Pedreiro" } },
                 new GenericProfessional { Id = 10, UserId = "user25", ClientId = 10, ProfessionalTypes = new List<string> { "Encanador" } },
                 new GenericProfessional { Id = 11, UserId = "user26", ClientId = 11, ProfessionalTypes = new List<string> { "Eletricista" } },
-                new GenericProfessional { Id = 12, UserId = "user27", ClientId = 12, ProfessionalTypes = new List<string> { "Arquiteto" } },
+                new GenericProfessional { Id = 12, UserId = "user27", ClientId = 12, ProfessionalTypes = new List<string> { "Arquiteto" }, ArchId = Guid.Parse("c151318e-3c52-4120-a0c1-b47b35ce07d1") },
                 new GenericProfessional { Id = 13, UserId = "user28", ClientId = 13, ProfessionalTypes = new List<string> { "Engenheiro" } },
                 new GenericProfessional { Id = 14, UserId = "user29", ClientId = 14, ProfessionalTypes = new List<string> { "Pedreiro" } },
                 new GenericProfessional { Id = 15, UserId = "user30", ClientId = 15, ProfessionalTypes = new List<string> { "Encanador" } }
             );
 
             modelBuilder.Entity<Architect>().HasData(
-                new Architect { ArchId = Guid.NewGuid(), genericId = 1, RegistroConselho = "123456", Especialidade = "Residencial" },
-                new Architect { ArchId = Guid.NewGuid(), genericId = 6, RegistroConselho = "654321", Especialidade = "Comercial" },
-                new Architect { ArchId = Guid.NewGuid(), genericId = 12, RegistroConselho = "112233", Especialidade = "Industrial" }
+                new Architect { ArchId = Guid.Parse("9876b54c-7952-4f52-a170-ed3036394792"), genericId = 1, RegistroConselho = "123456", Especialidade = "Residencial" },
+                new Architect { ArchId = Guid.Parse("a05cf0e7-d957-44ba-9e2a-313def7408ba"), genericId = 6, RegistroConselho = "654321", Especialidade = "Comercial" },
+                new Architect { ArchId = Guid.Parse("c151318e-3c52-4120-a0c1-b47b35ce07d1"), genericId = 12, RegistroConselho = "112233", Especialidade = "Industrial" }
             );
+
 
 
             modelBuilder.Entity<Projecty>().HasData(

@@ -2,6 +2,7 @@
 using System.Linq;
 using WebAthenPs.API.Entities.Professional;
 using WebAthenPs.Models.DTOs.Professional;
+using WebAthenPs.Models.DTOs.Professional.ProfessionalTypes.Architect;
 
 namespace WebAthenPs.API.Mappings.MappingProfessionalsDTO
 {
@@ -45,9 +46,22 @@ namespace WebAthenPs.API.Mappings.MappingProfessionalsDTO
                     {
                         ProfessionalId = pp.ProfessionalId,
                         ProjectId = pp.ProjectId,
-                    }).ToList()
+                    }).ToList(),
+
+                // Mapeamento do GeneralArchitect se existir
+                GeneralArchitect = professional.Architect != null ? new GeneralArchitectDTO
+                {
+                    ArchId = professional.Architect.ArchId,
+                    RegistroConselho = professional.Architect.RegistroConselho,
+                    Especialidade = professional.Architect.Especialidade,
+                    genericId = professional.Architect.genericId,
+                    name = professional.User?.UserName, // Usando o nome do usuário como nome do arquiteto
+                    email = professional.User?.Email    // Usando o email do usuário como email do arquiteto
+                } : null
             };
         }
+
+
 
         public static IEnumerable<GenericProfessional> CriarProfessionalsEmDTO(
             this IEnumerable<RegisterProfessionalModel> dtos)

@@ -26,6 +26,9 @@ namespace WebAthenPs.API.Entities.Professional
 
         public ICollection<Projecty> Projects { get; set; } = new List<Projecty>();
 
+        public Guid? ArchId { get; set; }
+
+        [ForeignKey("ArchId")]
         public Architect? Architect { get; set; }
 
         public ICollection<ProjectProfessional> ProjectProfessionals { get; set; } = new List<ProjectProfessional>();

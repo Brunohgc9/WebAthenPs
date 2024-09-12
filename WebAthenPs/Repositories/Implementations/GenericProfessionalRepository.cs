@@ -52,10 +52,13 @@ namespace WebAthenPs.API.Repositories.Implementations
             return await _context.GenericProfessionals
                 .Include(gp => gp.User)
                 .Include(gp => gp.Client)
-                .Include(gp => gp.ProjectProfessionals) // Inclui ProjectProfessionals
-                    .ThenInclude(pp => pp.Project) // Inclui projetos associados
+                .Include(gp => gp.ProjectProfessionals)
+                    .ThenInclude(pp => pp.Project)
+                .Include(gp => gp.Architect) // Inclui o arquiteto
                 .FirstOrDefaultAsync(gp => gp.Id == id);
         }
+
+
 
         public async Task<GenericProfessional> GetByNameAsync(string name)
         {

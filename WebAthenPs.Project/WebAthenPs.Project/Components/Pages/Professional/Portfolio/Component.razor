@@ -1,48 +1,34 @@
-﻿@page "/professionals/{id:Guid}"
+﻿@page "/professionals/{id:int}"
 @using WebAthenPs.Models.DTOs.Professional
 @using WebAthenPs.Models.DTOs.Professional.ProfessionalTypes.Architect
 @using WebAthenPs.Project.Services.Interfaces.Professional
 @inject IGenericProfessionalService ProfessionalService
-@inject IArchitectService ArchitectService
 
 @code {
-    [Parameter] public string id { get; set; } // Recebe o id como string para conversão
+    [Parameter] public int id { get; set; }
 
     private GenericProfessionalDTO _professional;
-    private GeneralArchitectDTO _architectDetails;
     private bool _isLoading = true;
-    private Guid _guidId;
 
     protected override async Task OnInitializedAsync()
     {
-        if (Guid.TryParse(id, out _guidId))
-        {
-            await LoadProfessionalDetails();
-        }
-        else
-        {
-            // Lidar com o erro de conversão do Guid
-            Console.WriteLine("ID fornecido não é um Guid válido.");
-            _isLoading = false;
-        }
+        await LoadProfessionalDetails();
     }
 
     private async Task LoadProfessionalDetails()
     {
         try
         {
-            // Carregar os detalhes do arquiteto usando o ID fornecido
-            _architectDetails = await ArchitectService.GetByIdAsync(_guidId);
+            _professional = await ProfessionalService.GetByIdAsync(id);
 
-            if (_architectDetails != null)
+            // Certifique-se de que o DTO está sendo carregado corretamente
+            if (_professional == null)
             {
-                // Carregar os detalhes do profissional genérico usando o genericId do arquiteto
-                _professional = await ProfessionalService.GetByIdAsync(_architectDetails.genericId);
+                throw new Exception("Profissional não encontrado.");
             }
         }
         catch (Exception ex)
         {
-            // Tratar exceção
             Console.WriteLine($"Erro ao buscar detalhes do profissional: {ex.Message}");
         }
         finally
@@ -68,16 +54,17 @@ else
         <p><strong>Telefone:</strong> @(_professional.PhoneNumber ?? "Telefone não disponível")</p>
         <p><strong>Tipos de Profissional:</strong> @string.Join(", ", _professional.ProfessionalTypes)</p>
 
-        @if (_professional.ProfessionalTypes.Contains("Arquiteto") && _architectDetails != null)
+        @if (_professional.ProfessionalTypes.Contains("Arquiteto") && _professional.GeneralArchitect != null)
         {
             <div class="architect-details">
                 <h3>Informações de Arquiteto</h3>
-                <p><strong>Nome:</strong> @(_architectDetails.name ?? "Nome não disponível")</p>
-                <p><strong>Email:</strong> @(_architectDetails.email ?? "Email não disponível")</p>
-                <p><strong>Registro no Conselho:</strong> @(_architectDetails.RegistroConselho ?? "Registro não disponível")</p>
-                <p><strong>Especialidade:</strong> @(_architectDetails.Especialidade ?? "Especialidade não disponível")</p>
+                <p><strong>Nome:</strong> @(_professional.GeneralArchitect.name ?? "Nome não disponível")</p>
+                <p><strong>Email:</strong> @(_professional.GeneralArchitect.email ?? "Email não disponível")</p>
+                <p><strong>Registro no Conselho:</strong> @(_professional.GeneralArchitect.RegistroConselho ?? "Registro não disponível")</p>
+                <p><strong>Especialidade:</strong> @(_professional.GeneralArchitect.Especialidade ?? "Especialidade não disponível")</p>
             </div>
         }
+
     </div>
 }
 
