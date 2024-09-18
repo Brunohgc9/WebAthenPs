@@ -1,0 +1,80 @@
+﻿@page "/create-post"
+@using System.ComponentModel.DataAnnotations
+@using WebAthenPs.Models.DTOs.Components
+@using Blazored.LocalStorage
+@using WebAthenPs.Project.Services.Interfaces.Components
+@inject IPostService PostService
+@inject ILocalStorageService LocalStorage
+@inject NavigationManager NavigationManager
+
+<h1>Create Post</h1>
+
+@if (ShowErrors)
+{
+    <p class="alert alert-danger">@Error</p>
+}
+
+<div class="card">
+    <div class="card-body">
+        <EditForm Model="newPost" OnValidSubmit="HandleSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group mt-2">
+                <label for="content">Content</label>
+                <InputTextArea Id="content" Class="form-control" @bind-Value="newPost.Content" />
+                <ValidationMessage For="@(() => newPost.Content)" />
+            </div>
+
+            <div class="form-group mt-2">
+                <label for="imageUrl">Image URL (optional)</label>
+                <InputText Id="imageUrl" Class="form-control" @bind-Value="newPost.ImageUrl" />
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-2">Create Post</button>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private PostCreateDTO newPost = new PostCreateDTO();
+    private bool ShowErrors;
+    private string Error = string.Empty;
+
+    private async Task HandleSubmit()
+    {
+        ShowErrors = false;
+        try
+        {
+            // Obtém o userId diretamente do LocalStorage
+            var userId = await LocalStorage.GetItemAsync<string>("userId");
+            if (string.IsNullOrEmpty(userId))
+            {
+                Error = "You must be logged in to create a post.";
+                ShowErrors = true;
+                return;
+            }
+
+            // Define o UserId no PostCreateDTO
+            newPost.UserId = userId;
+
+            // Envia o post para o serviço PostService para ser salvo
+            var result = await PostService.CreatePostAsync(newPost);
+            if (result != null)
+            {
+                // Navega para a página de visualização de posts ou outra página de sucesso
+                NavigationManager.NavigateTo("/posts");
+            }
+            else
+            {
+                Error = "Failed to create post.";
+                ShowErrors = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            Error = $"Error: {ex.Message}";
+            ShowErrors = true;
+        }
+    }
+}

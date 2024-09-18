@@ -5,13 +5,16 @@ using WebAthenPs.Project.Client.Pages;
 using WebAthenPs.Project.Components;
 using WebAthenPs.Project.Services.Authentication;
 using WebAthenPs.Project.Services.Implementation.Client;
+using WebAthenPs.Project.Services.Implementation.Components;
 using WebAthenPs.Project.Services.Implementation.Professional.ProfessionalTypes;
 using WebAthenPs.Project.Services.Implementation.Project;
 using WebAthenPs.Project.Services.Implementation.User;
 using WebAthenPs.Project.Services.Interfaces.Client;
+using WebAthenPs.Project.Services.Interfaces.Components;
 using WebAthenPs.Project.Services.Interfaces.Professional;
 using WebAthenPs.Project.Services.Interfaces.Project;
 using WebAthenPs.Project.Services.Interfaces.User;
+using WebAthenPs.Services.Implementation.Comments;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +41,8 @@ builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IArchitectService, ArchitectService>();
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IGenericProfessionalService, GenericProfessionalService>();
+builder.Services.AddScoped<IPostService, PostService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddSingleton(new JsonSerializerOptions
 {
     PropertyNameCaseInsensitive = true,

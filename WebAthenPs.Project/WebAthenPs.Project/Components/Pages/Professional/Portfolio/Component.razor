@@ -1,22 +1,45 @@
 ﻿@page "/portfolio/{id:int}"
 @using WebAthenPs.Models.DTOs.Professional
 @using WebAthenPs.Models.DTOs.Project
+@using WebAthenPs.Models.DTOs.Components
 @using WebAthenPs.Project.Services.Interfaces.Professional
 @using WebAthenPs.Project.Services.Interfaces.Project
+@using WebAthenPs.Project.Services.Interfaces.Components
+@using Blazored.LocalStorage
 @inject IGenericProfessionalService ProfessionalService
 @inject IProjectService ProjectService
+@inject IPostService PostService
+@inject ICommentService CommentService
+@inject ILocalStorageService LocalStorage
 
 @code {
     [Parameter] public int id { get; set; }
 
     private GenericProfessionalDTO _professional;
     private List<ProjectsDTO> _projects = new List<ProjectsDTO>();
+    private List<PostDTO> _posts = new List<PostDTO>();
+    private List<CommentDTO> _comments = new List<CommentDTO>();
     private bool _isLoading = true;
+    private string _newCommentContent;
+    private int _selectedPostId;
+    private string _currentUserId;
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadUserIdFromLocalStorage();
         await LoadProfessionalDetails();
         await LoadProjects();
+        await LoadPosts();
+    }
+
+    private async Task LoadUserIdFromLocalStorage()
+    {
+        _currentUserId = await LocalStorage.GetItemAsync<string>("userId");
+
+        if (string.IsNullOrEmpty(_currentUserId))
+        {
+            Console.WriteLine("Usuário não está logado.");
+        }
     }
 
     private async Task LoadProfessionalDetails()
@@ -66,6 +89,59 @@
             Console.WriteLine($"Erro ao buscar projetos: {ex.Message}");
         }
     }
+
+    private async Task LoadPosts()
+    {
+        try
+        {
+            var userId = _professional?.UserId;
+            if (!string.IsNullOrEmpty(userId))
+            {
+                _posts = (await PostService.GetPostsByUserIdAsync(userId)).ToList();
+                foreach (var post in _posts)
+                {
+                    var postComments = await CommentService.GetAll(); // Assume que você terá um método para buscar comentários de um post específico
+                    _comments.AddRange(postComments.Where(c => c.PostId == post.Id));
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao buscar posts: {ex.Message}");
+        }
+    }
+
+    private async Task AddCommentAsync()
+    {
+        try
+        {
+            if (!string.IsNullOrWhiteSpace(_newCommentContent) && _selectedPostId > 0 && !string.IsNullOrEmpty(_currentUserId))
+            {
+                var commentDto = new CommentCreateDTO
+                    {
+                        Content = _newCommentContent,
+                        UserId = _currentUserId, // Utiliza o userId obtido do LocalStorage
+                        PostId = _selectedPostId
+                    };
+
+                var createdComment = await CommentService.CreateComment(commentDto);
+
+                if (createdComment != null)
+                {
+                    _comments.Add(createdComment);
+                    _newCommentContent = string.Empty;
+                }
+            }
+            else
+            {
+                Console.WriteLine("Conteúdo do comentário ou ID do post inválido.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao adicionar comentário: {ex.Message}");
+        }
+    }
 }
 
 @if (_isLoading)
@@ -79,6 +155,7 @@ else if (_professional == null)
 else
 {
     <div class="portfolio">
+        <!-- Dados do Profissional -->
         <div class="header">
             <img src="images/profile-placeholder.png" alt="Foto do Profissional" class="profile-pic" />
             <h1>@(_professional.UserName ?? "Nome não disponível")</h1>
@@ -90,7 +167,7 @@ else
 
         <div class="about">
             <h2>Sobre</h2>
-            <p>@(@* _professional.Bio ??  *@"Informações adicionais não disponíveis.")</p>
+            <p>@(@* _professional.Bio ?? *@ "Informações adicionais não disponíveis.")</p>
         </div>
 
         <div class="skills">
@@ -135,6 +212,42 @@ else
                 </div>
             </div>
         }
+
+        @if (_posts.Any())
+        {
+            <div class="posts">
+                <h2>Posts do Profissional</h2>
+                <div class="post-list">
+                    @foreach (var post in _posts)
+                    {
+                        <div class="post-card">
+                            <p>@post.Content</p>
+                            <p><strong>Data de Criação:</strong> @post.CreatedAt.ToShortDateString()</p>
+                            <button @onclick="() => _selectedPostId = post.Id">Adicionar Comentário</button>
+                            @if (_selectedPostId == post.Id)
+                            {
+                                <div class="comment-section">
+                                    <textarea @bind="_newCommentContent" placeholder="Digite seu comentário..."></textarea>
+                                    <button @onclick="AddCommentAsync">Enviar</button>
+                                </div>
+                            }
+                            @if (_comments.Any(c => c.PostId == post.Id))
+                            {
+                                <div class="comments">
+                                    @foreach (var comment in _comments.Where(c => c.PostId == post.Id))
+                                    {
+                                        <div class="comment-card">
+                                            <p>@comment.Content</p>
+                                            <p><strong>Comentado em:</strong> @comment.CreatedAt.ToShortDateString()</p>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        }
     </div>
 }
 
@@ -168,7 +281,7 @@ else
         color: #555;
     }
 
-    .about, .skills, .projects {
+    .about, .skills, .projects, .posts {
         margin-top: 40px;
     }
 
@@ -190,25 +303,25 @@ else
             border-radius: 15px;
         }
 
-        .projects .project-list {
+        .projects .project-list, .posts .post-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 20px;
         }
 
-    .project-card {
+    .project-card, .post-card {
         background-color: #fff;
         border-radius: 10px;
         padding: 20px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
 
-        .project-card h3 {
+        .project-card h3, .post-card h3 {
             margin-top: 0;
             font-size: 1.5em;
         }
 
-        .project-card p {
+        .project-card p, .post-card p {
             font-size: 1em;
             margin: 0.5em 0;
         }

@@ -20,6 +20,7 @@ namespace WebAthenPs.API.Entities.Components
 
         // Data de criação do comentário
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         // ID da postagem à qual o comentário pertence
         public int PostId { get; set; }
