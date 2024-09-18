@@ -18,7 +18,7 @@ namespace WebAthenPs.Models.DTOs.Professional
         public List<string> ProfessionalTypes { get; set; } = new List<string>(); // Alterado para uma lista
         public string? ClientName { get; set; }
 
-        public GeneralArchitectDTO GeneralArchitect { get; set; }
+        public GeneralArchitectDTO? GeneralArchitect { get; set; }
 
         public List<ProjectProfessionalDTO> ProjectProfessionals { get; set; } = new List<ProjectProfessionalDTO>();
 

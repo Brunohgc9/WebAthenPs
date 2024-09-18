@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WebAthenPs.API.Entities.Clients;
+using WebAthenPs.API.Entities.Components;
 using WebAthenPs.API.Entities.Professional;
 using WebAthenPs.API.Entities.Professional.ProfessionalTypes;
 using WebAthenPs.API.Entities.Project;
@@ -14,7 +15,8 @@ namespace WebAthenPs.API.Data
         public DbSet<Client> Clients { get; set; }
         public DbSet<Architect> Architects { get; set; }
         public DbSet<ProjectProfessional> ProjectProfessionals { get; set; }
-
+        public DbSet<Post> Posts { get; set; }
+        public DbSet<Comment> Comments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -79,6 +81,34 @@ namespace WebAthenPs.API.Data
                 .WithMany(c => c.Houses)
                 .HasForeignKey(p => p.ClientId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+
+            modelBuilder.Entity<Post>()
+    .HasOne(p => p.User)               // Um Post tem um ApplicationUser
+    .WithMany()                        // ApplicationUser pode ter muitos Posts
+    .HasForeignKey(p => p.UserId)      // A chave estrangeira está no Post
+    .OnDelete(DeleteBehavior.Restrict); // Restringir exclusão se houver posts associados
+
+            // Relacionamento entre Comment e ApplicationUser
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.User)               // Um Comment tem um ApplicationUser
+                .WithMany()                        // ApplicationUser pode ter muitos Comments
+                .HasForeignKey(c => c.UserId)      // A chave estrangeira está no Comment
+                .OnDelete(DeleteBehavior.Restrict); // Restringir exclusão se houver comentários associados
+
+            // Relacionamento entre Comment e Post
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.Post)               // Um Comment tem um Post
+                .WithMany(p => p.Comments)         // Post pode ter muitos Comments
+                .HasForeignKey(c => c.PostId)      // A chave estrangeira está no Comment
+                .OnDelete(DeleteBehavior.Cascade); // Excluir os comentários quando o post é excluído
+
+            // Configuração da chave primária composta em ProjectProfessional
+            modelBuilder.Entity<Post>()
+                .HasKey(p => p.Id); // Chave primária única para Post
+
+            modelBuilder.Entity<Comment>()
+                .HasKey(c => c.Id); // Chave primária única para Comment
 
 
             modelBuilder.Entity<ApplicationUser>().HasData(

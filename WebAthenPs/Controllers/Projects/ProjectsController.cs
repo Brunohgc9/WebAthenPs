@@ -18,7 +18,7 @@ using WebAthenPs.API.Entities.Professional;
 namespace WebAthenPs.API.Controllers.Projects
 {
     [Route("api/[controller]")]
-    //[Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [ApiController]
     public class ProjectsController : ControllerBase
     {

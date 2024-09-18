@@ -44,11 +44,11 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                     ProfessionalTypes = p.ProfessionalTypes,
                     GeneralArchitect = p.Architect != null ? new GeneralArchitectDTO
                     {
-                        genericId = p.Id, // Corrigido de 'Id' para 'ArchId'
+                        genericId = p.Id, // Corrigido para corresponder à propriedade correta
                         ArchId = p.Architect.ArchId,
                         RegistroConselho = p.Architect.RegistroConselho,
                         Especialidade = p.Architect.Especialidade
-                    } : null
+                    } : null // Permite que GeneralArchitect seja nulo
                 }).ToList() ?? new List<GenericProfessionalDTO>(),
                 ProjectProfessionals = item.ProjectProfessionals?.Select(pp => new ProjectProfessionalDTO
                 {
@@ -64,11 +64,11 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                         ProfessionalTypes = pp.Professional.ProfessionalTypes,
                         GeneralArchitect = pp.Professional.Architect != null ? new GeneralArchitectDTO
                         {
-                            genericId = pp.Professional.Id, // Corrigido de 'Id' para 'ArchId'
+                            genericId = pp.Professional.Id, // Corrigido para corresponder à propriedade correta
                             ArchId = pp.Professional.Architect.ArchId,
                             RegistroConselho = pp.Professional.Architect.RegistroConselho,
                             Especialidade = pp.Professional.Architect.Especialidade
-                        } : null
+                        } : null // Permite que GeneralArchitect seja nulo
                     } : null
                 }).ToList() ?? new List<ProjectProfessionalDTO>()
             }) ?? Enumerable.Empty<ProjectsDTO>();
@@ -110,11 +110,11 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                     ProfessionalTypes = p.ProfessionalTypes ?? new List<string>(),
                     GeneralArchitect = p.Architect != null ? new GeneralArchitectDTO
                     {
-                        genericId = p.Id, // Corrigido de 'ArchitectId' para 'ArchId'
+                        genericId = p.Id, // Corrigido para corresponder à propriedade correta
                         ArchId = p.Architect.ArchId,
                         RegistroConselho = p.Architect.RegistroConselho,
                         Especialidade = p.Architect.Especialidade
-                    } : null
+                    } : null // Permite que GeneralArchitect seja nulo
                 }).ToList() ?? new List<GenericProfessionalDTO>(),
 
                 // Mapeando ProjectProfessionals
@@ -132,11 +132,11 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                         ProfessionalTypes = pp.Professional.ProfessionalTypes ?? new List<string>(),
                         GeneralArchitect = pp.Professional.Architect != null ? new GeneralArchitectDTO
                         {
-                            genericId = pp.Professional.Id, // Corrigido de 'ArchitectId' para 'ArchId'
+                            genericId = pp.Professional.Id, // Corrigido para corresponder à propriedade correta
                             ArchId = pp.Professional.Architect.ArchId,
                             RegistroConselho = pp.Professional.Architect.RegistroConselho,
                             Especialidade = pp.Professional.Architect.Especialidade
-                        } : null
+                        } : null // Permite que GeneralArchitect seja nulo
                     } : null
                 }).ToList() ?? new List<ProjectProfessionalDTO>()
             };
