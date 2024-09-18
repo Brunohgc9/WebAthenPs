@@ -10,5 +10,6 @@ namespace WebAthenPs.Models.DTOs.Professional
     {
         public List<string> ProfessionalTypes { get; set; } = new List<string>(); // Alterado para uma lista
         public string? UserId { get; set; }
+        public Guid? ArchitectId { get; set; }
     }
 }

@@ -221,17 +221,18 @@ namespace WebAthenPs.Project.Services.Implementation.Project
 
         public async Task<ProjectsDTO> UpdateProject(int id, ProjectsDTO dto)
         {
-            // Valide o DTO antes de enviar para a API
+            // Validação do DTO
             if (dto == null)
             {
                 throw new ArgumentNullException(nameof(dto), "O DTO do projeto não pode ser nulo.");
             }
 
+            // Verificar e manipular a lista de profissionais do projeto
             if (dto.ProjectProfessionals != null)
             {
                 foreach (var projectProfessional in dto.ProjectProfessionals)
                 {
-                    // Verifique se o campo Professional está nulo e se foi corretamente preenchido
+                    // Verificar se o campo Professional está preenchido
                     if (projectProfessional.Professional == null)
                     {
                         throw new ArgumentException("O campo Professional não pode ser nulo.");
@@ -266,6 +267,7 @@ namespace WebAthenPs.Project.Services.Implementation.Project
                 throw;
             }
         }
+
 
 
 

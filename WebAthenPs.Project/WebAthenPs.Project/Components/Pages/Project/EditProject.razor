@@ -51,14 +51,17 @@
 
             foreach (var professionalId in selectedProfessionalIds)
             {
+                // Encontrar o profissional pelo ID
                 var professional = allProfessionals.FirstOrDefault(p => p.Id == professionalId);
+
                 if (professional != null)
                 {
+                    // Certifique-se de que o ProfessionalId está sendo corretamente preenchido com o ID do GenericProfessional
                     projectProfessionals.Add(new ProjectProfessionalDTO
                         {
-                            ProfessionalId = professionalId,
+                            ProfessionalId = professional.Id, // Aqui garantimos que o ID está sendo passado corretamente
                             ProjectId = project.ProjectId,
-                            Professional = professional // Preenchendo o campo Professional com o DTO do profissional
+                            Professional = professional // Passando o DTO do profissional completo
                         });
                 }
                 else
@@ -67,16 +70,20 @@
                 }
             }
 
+            // Associando os profissionais ao projeto
             project.ProjectProfessionals = projectProfessionals;
 
+            // Atualizando o projeto
             var updatedProject = await ProjectService.UpdateProject(ProjectId, project);
 
+            // Navegação para os detalhes do projeto se a atualização foi bem-sucedida
             if (updatedProject != null)
             {
                 NavigationManager.NavigateTo($"/project-details/{ProjectId}");
             }
         }
     }
+
 
 }
 

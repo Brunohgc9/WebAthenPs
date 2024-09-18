@@ -24,9 +24,18 @@ namespace WebAthenPs.API.Mappings.MappingProfessionalsDTO
                         ProjectProfessionals = professional.ProjectProfessionals
                             .Select(pp => new ProjectProfessionalDTO
                             {
-                                ProfessionalId = pp.ProfessionalId, // Inclua o ID do profissional
-                                ProjectId = pp.ProjectId, // Inclua o ID do projeto
-                            }).ToList()
+                                ProfessionalId = pp.ProfessionalId,
+                                ProjectId = pp.ProjectId,
+                            }).ToList(),
+                        GeneralArchitect = professional.Architect != null ? new GeneralArchitectDTO
+                        {
+                            ArchId = professional.Architect.ArchId,
+                            RegistroConselho = professional.Architect.RegistroConselho,
+                            Especialidade = professional.Architect.Especialidade,
+                            genericId = professional.Architect.genericId,
+                            name = professional.User?.UserName,
+                            email = professional.User?.Email
+                        } : null
                     }).ToList();
         }
 
@@ -47,21 +56,17 @@ namespace WebAthenPs.API.Mappings.MappingProfessionalsDTO
                         ProfessionalId = pp.ProfessionalId,
                         ProjectId = pp.ProjectId,
                     }).ToList(),
-
-                // Mapeamento do GeneralArchitect se existir
                 GeneralArchitect = professional.Architect != null ? new GeneralArchitectDTO
                 {
                     ArchId = professional.Architect.ArchId,
                     RegistroConselho = professional.Architect.RegistroConselho,
                     Especialidade = professional.Architect.Especialidade,
                     genericId = professional.Architect.genericId,
-                    name = professional.User?.UserName, // Usando o nome do usuário como nome do arquiteto
-                    email = professional.User?.Email    // Usando o email do usuário como email do arquiteto
+                    name = professional.User?.UserName,
+                    email = professional.User?.Email
                 } : null
             };
         }
-
-
 
         public static IEnumerable<GenericProfessional> CriarProfessionalsEmDTO(
             this IEnumerable<RegisterProfessionalModel> dtos)
@@ -70,7 +75,8 @@ namespace WebAthenPs.API.Mappings.MappingProfessionalsDTO
                     select new GenericProfessional
                     {
                         UserId = dto.UserId,
-                        ProfessionalTypes = dto.ProfessionalTypes
+                        ProfessionalTypes = dto.ProfessionalTypes,
+                        // Inclua ArchitectId se necessário
                     }).ToList();
         }
 
@@ -79,8 +85,10 @@ namespace WebAthenPs.API.Mappings.MappingProfessionalsDTO
             return new GenericProfessional
             {
                 UserId = dto.UserId,
-                ProfessionalTypes = dto.ProfessionalTypes
+                ProfessionalTypes = dto.ProfessionalTypes,
+                // Inclua ArchitectId se necessário
             };
         }
     }
+
 }

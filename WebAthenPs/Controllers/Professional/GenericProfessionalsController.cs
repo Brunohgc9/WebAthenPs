@@ -10,6 +10,7 @@
     using WebAthenPs.API.Entities.Professional;
     using WebAthenPs.Models.DTOs.Professional;
     using WebAthenPs.API.Mappings.MappingProfessionalsDTO;
+using WebAthenPs.API.Entities.Professional.ProfessionalTypes;
 
     namespace WebAthenPs.API.Controllers.Professional
     {
@@ -17,40 +18,79 @@
         [ApiController]
         public class GenericProfessionalController : ControllerBase
         {
-            private readonly IGenericProfessionlRepository _repository;
-            private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IGenericProfessionlRepository _repository;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IArchitectRepository _architectRepository; // Adicione esta linha para acessar o repositório de arquitetos
 
-            public GenericProfessionalController(IGenericProfessionlRepository repository, UserManager<ApplicationUser> userManager)
+        public GenericProfessionalController(
+            IGenericProfessionlRepository repository,
+            UserManager<ApplicationUser> userManager,
+            IArchitectRepository architectRepository) // Adicione esta linha no construtor
+        {
+            _repository = repository;
+            _userManager = userManager;
+            _architectRepository = architectRepository; // Inicialize o repositório de arquitetos
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] RegisterProfessionalModel model)
+        {
+            if (model == null || !ModelState.IsValid)
+                return BadRequest("Dados inválidos.");
+
+            var genericProfessional = model.CriarProfessionalEmDTO();
+
+            try
             {
-                _repository = repository;
-                _userManager = userManager;
-            }
+                // Cria o profissional genérico
+                await _repository.CreateAsync(genericProfessional);
 
-            [HttpPost]
-            public async Task<IActionResult> Create([FromBody] RegisterProfessionalModel model)
+                // Verifica se o tipo de profissional inclui "Arquiteto"
+                if (genericProfessional.ProfessionalTypes.Contains("Arquiteto"))
+                {
+                    // Verifica se o Arquiteto já foi criado e atribui o ArchId
+                    if (model.ArchitectId.HasValue)
+                    {
+                        var architect = await _architectRepository.GetByIdAsync(model.ArchitectId.Value);
+
+                        if (architect == null)
+                            return NotFound("Arquiteto não encontrado.");
+
+                        genericProfessional.ArchId = architect.ArchId; // Atribui o ArchId do arquiteto
+                    }
+                    else
+                    {
+                        // Caso não exista um ArchitectId, cria um novo arquiteto
+                        var architect = new Architect
+                        {
+                            genericId = genericProfessional.Id, // Relaciona o arquiteto ao profissional genérico
+                        };
+
+                        await _architectRepository.CreateAsync(architect);
+
+                        // Atribui o ArchId do novo arquiteto ao profissional genérico
+                        genericProfessional.ArchId = architect.ArchId;
+
+                        // Atualiza o GenericProfessional com o novo ArchId
+                        await _repository.UpdateAsync(genericProfessional);
+                    }
+                }
+
+                var createdDto = genericProfessional.ConverterProfessionalParaDTO();
+                return CreatedAtAction(nameof(GetById), new { id = createdDto.Id }, createdDto);
+            }
+            catch (Exception ex)
             {
-                if (model == null || !ModelState.IsValid)
-                    return BadRequest("Dados inválidos.");
-
-                var genericProfessional = model.CriarProfessionalEmDTO();
-
-                try
-                {
-                    await _repository.CreateAsync(genericProfessional);
-
-                    var createdDto = genericProfessional.ConverterProfessionalParaDTO();
-
-                    return CreatedAtAction(nameof(GetById), new { id = createdDto.Id }, createdDto);
-                }
-                catch (Exception ex)
-                {
-                    return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao criar profissional: {ex.Message}");
-                }
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao criar profissional: {ex.Message}");
             }
+        }
 
 
 
-            [HttpGet("{id:int}")]
+
+
+        [HttpGet("{id:int}")]
             public async Task<IActionResult> GetById(int id)
             {
                 try

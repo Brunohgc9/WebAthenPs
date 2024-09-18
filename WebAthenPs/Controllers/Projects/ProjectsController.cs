@@ -46,11 +46,13 @@ namespace WebAthenPs.API.Controllers.Projects
                 if (existingProject == null)
                     return NotFound("Projeto não encontrado.");
 
+                // Atualize os campos do projeto
                 existingProject.ProjectName = dto.ProjectName;
 
+                // Atualize os profissionais do projeto
                 if (dto.ProjectProfessionals != null && dto.ProjectProfessionals.Any())
                 {
-                    existingProject.ProjectProfessionals.Clear();
+                    existingProject.ProjectProfessionals.Clear(); // Remove os profissionais atuais
                     foreach (var projectProfessionalDto in dto.ProjectProfessionals)
                     {
                         var professional = await _context.GenericProfessionals.FindAsync(projectProfessionalDto.ProfessionalId);
@@ -69,6 +71,7 @@ namespace WebAthenPs.API.Controllers.Projects
                     }
                 }
 
+                // Salvar alterações no repositório
                 await _projectRepository.UpdateProject(existingProject);
 
                 var updatedDto = existingProject.ConverterProjetoParaDTO();
@@ -79,6 +82,7 @@ namespace WebAthenPs.API.Controllers.Projects
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao atualizar o projeto: {ex.Message}");
             }
         }
+
 
 
 

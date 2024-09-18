@@ -63,6 +63,12 @@ namespace WebAthenPs.API.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<GenericProfessional>()
+                .HasOne(gp => gp.Architect)       // Um GenericProfessional tem um Architect
+                .WithOne(a => a.Professional)  
+                .HasForeignKey<GenericProfessional>(gp => gp.ArchId) 
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<GenericProfessional>()
                 .HasOne(gp => gp.User)
                 .WithMany()
                 .HasForeignKey(gp => gp.UserId)
