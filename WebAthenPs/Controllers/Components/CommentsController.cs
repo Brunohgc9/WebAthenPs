@@ -57,6 +57,25 @@ namespace WebAthenPs.API.Controllers.Components
             }
         }
 
+        // **NOVO**: Obter todos os comentários por ID do post
+        [HttpGet("post/{postId:int}")]
+        public async Task<ActionResult<IEnumerable<CommentDTO>>> GetByPostId(int postId)
+        {
+            try
+            {
+                var comments = await _commentRepository.GetByPostId(postId);
+                if (!comments.Any())
+                    return NotFound("Nenhum comentário encontrado para este post.");
+
+                var commentDTOs = comments.Select(c => c.ConverterCommentParaDTO()).ToList();
+                return Ok(commentDTOs);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao acessar a base de dados. Detalhes: {ex.Message}");
+            }
+        }
+
         // Atualizar um comentário
         [HttpPut("{id:int}")]
         public async Task<ActionResult<CommentDTO>> UpdateComment(int id, [FromBody] CommentUpdateDTO dto)

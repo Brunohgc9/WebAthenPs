@@ -22,7 +22,6 @@ namespace WebAthenPs.Services.Implementation.Comments
         private async Task<HttpClient> CreateAuthorizedClientAsync()
         {
             var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
-            // Aqui você pode adicionar qualquer lógica adicional para configurar o HttpClient, como autenticação.
             return httpClient;
         }
 
@@ -72,6 +71,32 @@ namespace WebAthenPs.Services.Implementation.Comments
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Erro inesperado ao acessar a API de comentários para ID {id}.");
+                throw;
+            }
+        }
+
+        // **NOVO**: Obter comentários pelo ID do post
+        public async Task<IEnumerable<CommentDTO>> GetByPostId(int postId)
+        {
+            try
+            {
+                var httpClient = await CreateAuthorizedClientAsync();
+                var commentsDto = await httpClient.GetFromJsonAsync<IEnumerable<CommentDTO>>($"api/Comments/post/{postId}");
+
+                if (commentsDto == null || !commentsDto.Any())
+                {
+                    _logger.LogWarning($"Nenhum comentário encontrado para o post com ID {postId}.");
+                }
+                return commentsDto;
+            }
+            catch (HttpRequestException httpEx)
+            {
+                _logger.LogError(httpEx, $"Erro ao acessar a API de comentários para o post com ID {postId}.");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Erro inesperado ao acessar a API de comentários para o post com ID {postId}.");
                 throw;
             }
         }

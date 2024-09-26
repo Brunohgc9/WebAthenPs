@@ -9,5 +9,6 @@ namespace WebAthenPs.Project.Services.Interfaces.Components
         Task<CommentDTO> CreateComment(CommentCreateDTO dto);
         Task<CommentDTO> UpdateComment(int id, CommentUpdateDTO dto);
         Task DeleteComment(int id);
+        Task<IEnumerable<CommentDTO>> GetByPostId(int postId);
     }
 }

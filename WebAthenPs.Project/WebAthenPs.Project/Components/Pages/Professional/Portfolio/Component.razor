@@ -23,7 +23,10 @@
     private string _newCommentContent;
     private int _selectedPostId;
     private string _currentUserId;
+    private Dictionary<int, List<CommentDTO>> _commentsByPost = new Dictionary<int, List<CommentDTO>>();
 
+
+    // Ao inicializar, carrega as informações do profissional, projetos e posts.
     protected override async Task OnInitializedAsync()
     {
         await LoadUserIdFromLocalStorage();
@@ -32,6 +35,7 @@
         await LoadPosts();
     }
 
+    // Carrega o ID do usuário a partir do LocalStorage
     private async Task LoadUserIdFromLocalStorage()
     {
         _currentUserId = await LocalStorage.GetItemAsync<string>("userId");
@@ -42,6 +46,7 @@
         }
     }
 
+    // Carrega os detalhes do profissional pelo ID passado na URL
     private async Task LoadProfessionalDetails()
     {
         try
@@ -63,6 +68,7 @@
         }
     }
 
+    // Carrega os projetos associados ao profissional
     private async Task LoadProjects()
     {
         try
@@ -90,6 +96,8 @@
         }
     }
 
+    // Carrega os posts do profissional e os comentários associados
+    // Carrega os posts do profissional e os comentários associados
     private async Task LoadPosts()
     {
         try
@@ -98,19 +106,22 @@
             if (!string.IsNullOrEmpty(userId))
             {
                 _posts = (await PostService.GetPostsByUserIdAsync(userId)).ToList();
+
+                // Para cada post, obtenha os comentários relacionados ao post específico
                 foreach (var post in _posts)
                 {
-                    var postComments = await CommentService.GetAll(); // Assume que você terá um método para buscar comentários de um post específico
-                    _comments.AddRange(postComments.Where(c => c.PostId == post.Id));
+                    var postComments = await CommentService.GetByPostId(post.Id);
+                    _commentsByPost[post.Id] = postComments.ToList(); // Populando o dicionário
                 }
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Erro ao buscar posts: {ex.Message}");
+            Console.WriteLine($"Erro ao buscar posts e comentários: {ex.Message}");
         }
     }
 
+    // Adiciona um novo comentário a um post específico
     private async Task AddCommentAsync()
     {
         try
@@ -165,11 +176,13 @@ else
             </p>
         </div>
 
+        <!-- Sobre o Profissional -->
         <div class="about">
             <h2>Sobre</h2>
             <p>@(@* _professional.Bio ?? *@ "Informações adicionais não disponíveis.")</p>
         </div>
 
+        <!-- Áreas de Atuação -->
         <div class="skills">
             <h2>Áreas de Atuação</h2>
             <ul>
@@ -180,6 +193,7 @@ else
             </ul>
         </div>
 
+        <!-- Detalhes Específicos de Arquitetos -->
         @if (_professional.ProfessionalTypes.Contains("Arquiteto") && _professional.GeneralArchitect != null)
         {
             <div class="architect-info">
@@ -191,6 +205,7 @@ else
             </div>
         }
 
+        <!-- Listagem de Projetos -->
         @if (_projects.Any())
         {
             <div class="projects">
@@ -213,6 +228,8 @@ else
             </div>
         }
 
+        <!-- Listagem de Posts -->
+        <!-- Listagem de Posts -->
         @if (_posts.Any())
         {
             <div class="posts">
@@ -231,10 +248,10 @@ else
                                     <button @onclick="AddCommentAsync">Enviar</button>
                                 </div>
                             }
-                            @if (_comments.Any(c => c.PostId == post.Id))
+                            @if (_commentsByPost.TryGetValue(post.Id, out var comments) && comments.Any())
                             {
                                 <div class="comments">
-                                    @foreach (var comment in _comments.Where(c => c.PostId == post.Id))
+                                    @foreach (var comment in comments)
                                     {
                                         <div class="comment-card">
                                             <p>@comment.Content</p>
@@ -248,8 +265,11 @@ else
                 </div>
             </div>
         }
+
+
     </div>
 }
+
 
 <style>
     .portfolio {
@@ -325,4 +345,23 @@ else
             font-size: 1em;
             margin: 0.5em 0;
         }
-</style>
+
+    .comments {
+        margin-top: 10px;
+        padding: 10px;
+        border-top: 1px solid #e0e0e0;
+    }
+
+    .comment-card {
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 10px;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+    }
+
+        .comment-card p {
+            margin: 0;
+        }
+
+</style> 
