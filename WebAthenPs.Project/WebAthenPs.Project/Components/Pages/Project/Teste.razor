@@ -1,0 +1,94 @@
+﻿@page "/sendproposal"
+@using Microsoft.AspNetCore.SignalR.Client
+@using WebAthenPs.Models.DTOs.Components
+@using WebAthenPs.Models.DTOs.Client
+@using WebAthenPs.Models.DTOs.Professional
+@inject NavigationManager Navigation
+@implements IDisposable
+
+<h3>Enviar Proposta</h3>
+
+<div>
+    <label>Mensagem:</label>
+    <input type="text" @bind="proposalMessage" />
+
+    <label>Valor:</label>
+    <input type="number" @bind="proposalValue" />
+
+    <button @onclick="SendProposal">Enviar Proposta</button>
+</div>
+
+@code {
+    private HubConnection hubConnection;
+    private string proposalMessage;
+    private decimal proposalValue;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await InitializeConnection();
+    }
+
+    private async Task InitializeConnection()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri("https://localhost:7171/proposalHub"))  // Certifique-se de que esta URL está correta
+            .Build();
+
+        try
+        {
+            await hubConnection.StartAsync();
+            Console.WriteLine("Conexão ao hub estabelecida com sucesso.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao conectar ao hub: {ex.Message}");
+        }
+
+        hubConnection.Closed += async (error) =>
+        {
+            Console.WriteLine("Conexão fechada. Tentando reconectar...");
+            await Task.Delay(new Random().Next(0, 5000));
+            await InitializeConnection();
+        };
+    }
+
+    private async Task SendProposal()
+    {
+        try
+        {
+            if (hubConnection.State == HubConnectionState.Disconnected)
+            {
+                Console.WriteLine("Reconnecting...");
+                await hubConnection.StartAsync();
+            }
+
+            var proposalDto = new ProposalDTO
+                {
+                    ProposalId = Guid.NewGuid(),
+                    ProposalMessage = proposalMessage,
+                    ProposalValue = proposalValue,
+                    ProposalType = "Serviço",
+                    IsAccepted = false,
+                    Client = new ClientDTO { ClientId = 1 },
+                    Professional = new GenericProfessionalDTO { Id = 2, UserId = "profissional_user_id" }
+                };
+
+            await hubConnection.InvokeAsync("SendProposal", proposalDto);
+            Console.WriteLine("Proposal sent successfully.");
+        }
+        catch (HttpRequestException httpEx)
+        {
+            Console.WriteLine($"HTTP request failed: {httpEx.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error sending proposal: {ex.Message}");
+        }
+    }
+
+
+    public void Dispose()
+    {
+        _ = hubConnection?.DisposeAsync();
+    }
+}

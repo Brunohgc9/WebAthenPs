@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using WebAthenPs.API.Data;
+using WebAthenPs.API.Entities.Components;
 using WebAthenPs.API.Entities.Professional;
 using WebAthenPs.API.Entities.Project;
 
@@ -21,6 +22,8 @@ namespace WebAthenPs.API.Entities.Clients
         //Properties 1-N
         public ICollection<Projecty> Houses { get; set; } = new List<Projecty>();
         public ICollection<GenericProfessional> GenericProfessionals { get; set; }
+        public ICollection<Proposal>? Proposals { get; set; } = new List<Proposal>(); // Nova coleção de propostas
+
 
     }
 }

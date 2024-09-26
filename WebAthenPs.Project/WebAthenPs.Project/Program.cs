@@ -37,6 +37,7 @@ builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, APIAuthenticationStateProvider>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IProposalService, ProposalService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IArchitectService, ArchitectService>();
 builder.Services.AddScoped<IClientService, ClientService>();
@@ -48,7 +49,7 @@ builder.Services.AddSingleton(new JsonSerializerOptions
     PropertyNameCaseInsensitive = true,
     PropertyNamingPolicy = JsonNamingPolicy.CamelCase
 });
-
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 

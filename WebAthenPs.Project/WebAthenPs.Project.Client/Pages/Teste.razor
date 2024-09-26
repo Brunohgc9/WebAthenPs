@@ -1,0 +1,56 @@
+﻿@page "/sendaproposal"
+@using Microsoft.AspNetCore.SignalR.Client
+@using WebAthenPs.Models.DTOs.Components
+@using WebAthenPs.Models.DTOs.Client
+@using WebAthenPs.Models.DTOs.Professional
+@inject NavigationManager Navigation
+@implements IDisposable
+
+<h3>Enviar Proposta</h3>
+
+<div>
+    <label>Mensagem:</label>
+    <input type="text" @bind="proposalMessage" />
+
+    <label>Valor:</label>
+    <input type="number" @bind="proposalValue" />
+
+    <button @onclick="SendProposal">Enviar Proposta</button>
+</div>
+
+@code {
+    private HubConnection hubConnection;
+    private string proposalMessage;
+    private decimal proposalValue;
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri("/proposalHub"))  // URL do Hub da API
+            .Build();
+
+        await hubConnection.StartAsync();
+    }
+
+    private async Task SendProposal()
+    {
+        var proposalDto = new ProposalDTO
+            {
+                ProposalId = Guid.NewGuid(),
+                ProposalMessage = proposalMessage,
+                ProposalValue = proposalValue,
+                ProposalType = "Serviço",
+                IsAccepted = false,
+                Client = new ClientDTO { ClientId = 1 },  // Exemplo de ClientID
+                Professional = new GenericProfessionalDTO { Id = 2, UserId = "profissional_user_id" }  // Exemplo de ProfessionalID
+            };
+
+        // Envia a proposta para o Hub SignalR
+        await hubConnection.InvokeAsync("SendProposal", proposalDto);
+    }
+
+    public void Dispose()
+    {
+        _ = hubConnection?.DisposeAsync();
+    }
+}

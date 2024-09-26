@@ -5,6 +5,7 @@ using WebAthenPs.API.Data;
 using WebAthenPs.API.Entities.Project;
 using WebAthenPs.API.Entities.Clients;
 using WebAthenPs.API.Entities.Professional.ProfessionalTypes;
+using WebAthenPs.API.Entities.Components;
 
 namespace WebAthenPs.API.Entities.Professional
 {
@@ -32,6 +33,9 @@ namespace WebAthenPs.API.Entities.Professional
         public Architect? Architect { get; set; }
 
         public ICollection<ProjectProfessional> ProjectProfessionals { get; set; } = new List<ProjectProfessional>();
+
+        public ICollection<Proposal>? Proposals { get; set; } = new List<Proposal>(); // Nova coleção de propostas
+
 
     }
 }

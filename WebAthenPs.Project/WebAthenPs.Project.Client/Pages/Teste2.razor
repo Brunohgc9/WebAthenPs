@@ -1,0 +1,50 @@
+﻿@page "/receive-proposal"
+@using Microsoft.AspNetCore.SignalR.Client
+@using WebAthenPs.Models.DTOs.Components
+@inject NavigationManager Navigation
+@implements IDisposable
+
+<h3>Propostas Recebidas</h3>
+
+@if (receivedProposals.Count == 0)
+{
+    <p>Nenhuma proposta recebida ainda.</p>
+}
+else
+{
+    <ul>
+        @foreach (var proposal in receivedProposals)
+        {
+            <li>
+                <strong>Mensagem:</strong> @proposal.ProposalMessage<br />
+                <strong>Valor:</strong> R$ @proposal.ProposalValue
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private HubConnection hubConnection;
+    private List<ProposalDTO> receivedProposals = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri("/proposalHub"))  // URL do Hub da API
+            .Build();
+
+        hubConnection.On<ProposalDTO>("ReceiveProposal", (proposalDto) =>
+        {
+            // Adiciona a proposta recebida à lista
+            receivedProposals.Add(proposalDto);
+            InvokeAsync(StateHasChanged);  // Atualiza a UI
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+    public void Dispose()
+    {
+        _ = hubConnection?.DisposeAsync();
+    }
+}

@@ -17,6 +17,8 @@ namespace WebAthenPs.API.Data
         public DbSet<ProjectProfessional> ProjectProfessionals { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<Proposal> Proposals { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -84,10 +86,10 @@ namespace WebAthenPs.API.Data
 
 
             modelBuilder.Entity<Post>()
-    .HasOne(p => p.User)               // Um Post tem um ApplicationUser
-    .WithMany()                        // ApplicationUser pode ter muitos Posts
-    .HasForeignKey(p => p.UserId)      // A chave estrangeira está no Post
-    .OnDelete(DeleteBehavior.Restrict); // Restringir exclusão se houver posts associados
+                .HasOne(p => p.User)               // Um Post tem um ApplicationUser
+                .WithMany()                        // ApplicationUser pode ter muitos Posts
+                .HasForeignKey(p => p.UserId)      // A chave estrangeira está no Post
+                .OnDelete(DeleteBehavior.Restrict); // Restringir exclusão se houver posts associados
 
             // Relacionamento entre Comment e ApplicationUser
             modelBuilder.Entity<Comment>()
@@ -109,6 +111,21 @@ namespace WebAthenPs.API.Data
 
             modelBuilder.Entity<Comment>()
                 .HasKey(c => c.Id); // Chave primária única para Comment
+
+            modelBuilder.Entity<Proposal>()
+                .HasKey(p => p.ProposalId); // Chave primária
+
+            modelBuilder.Entity<Proposal>()
+                .HasOne(p => p.Client)
+                .WithMany(c => c.Proposals)
+                .HasForeignKey(p => p.ClientId)
+                .OnDelete(DeleteBehavior.Cascade); // Excluir propostas ao excluir o cliente
+
+            modelBuilder.Entity<Proposal>()
+                .HasOne(p => p.Professional)
+                .WithMany(gp => gp.Proposals)
+                .HasForeignKey(p => p.ProfessionalId)
+                .OnDelete(DeleteBehavior.Restrict); // Propostas não são excluídas ao excluir o profissional
 
 
             modelBuilder.Entity<ApplicationUser>().HasData(

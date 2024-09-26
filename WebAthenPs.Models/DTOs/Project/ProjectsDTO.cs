@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WebAthenPs.Models.DTOs.Client;
 using WebAthenPs.Models.DTOs.Professional;
 
 namespace WebAthenPs.Models.DTOs.Project
@@ -34,6 +35,7 @@ namespace WebAthenPs.Models.DTOs.Project
 
         public ICollection<GenericProfessionalDTO>? LProfessionals { get; set; } = new List<GenericProfessionalDTO>();
         public ICollection<ProjectProfessionalDTO>? ProjectProfessionals { get; set; } = new List<ProjectProfessionalDTO>();
+        public ClientDTO? Client { get; set; }
 
     }
 }

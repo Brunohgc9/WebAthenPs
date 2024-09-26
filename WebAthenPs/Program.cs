@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using WebAthenPs.API.Data;
+using WebAthenPs.API.SignalRHubs;
 using WebAthenPs.API.Mappings.MappingProjectDTO;
 using WebAthenPs.API.Repositories;
 using WebAthenPs.API.Repositories.Implementations;
@@ -15,6 +16,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Configuração dos serviços
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSignalR();
+builder.Services.AddScoped<IProposalRepository, ProposalRepository>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IArchitectRepository, ArchitectRepository>();
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
@@ -128,7 +131,7 @@ app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.MapHub<ProposalHub>("/proposalHub");
 app.MapControllers();
 
 app.Run();
