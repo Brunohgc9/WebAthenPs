@@ -8,7 +8,6 @@ using WebAthenPs.Project.Services.Implementation.Client;
 using WebAthenPs.Project.Services.Implementation.Components;
 using WebAthenPs.Project.Services.Implementation.Professional.ProfessionalTypes;
 using WebAthenPs.Project.Services.Implementation.Project;
-using WebAthenPs.Project.Services.Implementation.User;
 using WebAthenPs.Project.Services.Interfaces.Client;
 using WebAthenPs.Project.Services.Interfaces.Components;
 using WebAthenPs.Project.Services.Interfaces.Professional;

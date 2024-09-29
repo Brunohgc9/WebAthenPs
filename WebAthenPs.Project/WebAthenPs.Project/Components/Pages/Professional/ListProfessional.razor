@@ -3,16 +3,26 @@
 @using WebAthenPs.Models.DTOs.Professional
 @using WebAthenPs.Project.Services.Interfaces.Professional
 @inject IGenericProfessionalService ProfessionalService
+@rendermode InteractiveServer
 
 @code {
     private IEnumerable<GenericProfessionalDTO> _professionals;
     private bool _isLoading = true;
     private string _professionalTypeFilter = string.Empty;
 
-    protected override async Task OnInitializedAsync()
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await LoadProfessionals();
-    }
+        if (firstRender)
+        {
+            await LoadProfessionals();
+            StateHasChanged();
+        }
+        else
+        {
+            await LoadProfessionals();
+            StateHasChanged();
+        }    }
 
     private async Task LoadProfessionals()
     {

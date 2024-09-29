@@ -1,4 +1,5 @@
 ﻿@page "/login"
+@rendermode InteractiveServer
 @using WebAthenPs.Models.DTOs.User
 @using Blazored.LocalStorage
 @using WebAthenPs.Models.DTOs.User
@@ -19,7 +20,7 @@
 <div class="card">
     <div class="card-body">
         <h5 class="card-title">Credenciais</h5>
-        <EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+        <EditForm Model="loginModel" OnValidSubmit="HandleLogin" >
             <DataAnnotationsValidator />
             <ValidationSummary />
 
@@ -50,16 +51,14 @@
         {
             var result = await AuthService.Login(loginModel);
 
-            if (!string.IsNullOrEmpty(result.Token)) // Verifique se o Token não está vazio ou nulo
+            if (!string.IsNullOrEmpty(result.Token)) 
             {
-                // Armazene o token e o ID do usuário no LocalStorage
                 await LocalStorageService.SetItemAsync("authToken", result.Token);
-                if (!string.IsNullOrEmpty(result.UserId))
+                if (result.UserId != Guid.Empty) 
                 {
-                    await LocalStorageService.SetItemAsync("userId", result.UserId);
+                    await LocalStorageService.SetItemAsync("userId", result.UserId.ToString());
                 }
 
-                // Redirecione para a página inicial após o login bem-sucedido
                 NavigationManager.NavigateTo("/");
             }
             else
@@ -67,6 +66,7 @@
                 Error = "Login inválido";
                 ShowErrors = true;
             }
+
         }
         catch (Exception ex)
         {

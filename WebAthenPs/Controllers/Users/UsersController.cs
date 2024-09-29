@@ -120,7 +120,7 @@ namespace WebAthenPs.API.Controllers.Users
             {
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
                 TokenExpiration = expiration,
-                UserId = userId // Inclua o UserId no token
+                UserId = Guid.Parse(userId) // Converter string para Guid
             };
         }
 

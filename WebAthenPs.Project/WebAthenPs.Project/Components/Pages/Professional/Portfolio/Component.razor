@@ -1,4 +1,6 @@
 ﻿@page "/portfolio/{id:int}"
+
+
 @using WebAthenPs.Models.DTOs.Professional
 @using WebAthenPs.Models.DTOs.Project
 @using WebAthenPs.Models.DTOs.Components
@@ -141,6 +143,7 @@
                 {
                     _comments.Add(createdComment);
                     _newCommentContent = string.Empty;
+                    InvokeAsync(StateHasChanged);
                 }
             }
             else

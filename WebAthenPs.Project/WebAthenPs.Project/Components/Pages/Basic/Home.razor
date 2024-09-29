@@ -1,17 +1,20 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 @using WebAthenPs.Models.DTOs.Project
-@rendermode InteractiveServer
-@using Blazored.LocalStorage
+@using WebAthenPs.Project.Services.Authentication
 @using WebAthenPs.Project.Services.Interfaces.Project
-@inject ILocalStorageService LocalStorageService
 @inject IProjectService ProjectService
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@rendermode InteractiveServer
+
 
 <PageTitle>Home</PageTitle>
 
 @if (isUserLoggedIn)
 {
-    <h1>Olá, @userName!</h1>
+    <h1>Olá, @userName! (ID: @userId)</h1>
 
     @if (projects != null && projects.Any())
     {
@@ -41,17 +44,32 @@ else
 
 @code {
     private bool isUserLoggedIn;
+    private string userId;
     private string userName;
     private List<ProjectsDTO> projects;
 
     protected override async Task OnInitializedAsync()
     {
-        // Verifica se o usuário está logado
-        userName = await LocalStorageService.GetItemAsync<string>("userName");
-        isUserLoggedIn = !string.IsNullOrEmpty(userName);
+        var authState = await ((APIAuthenticationStateProvider)AuthenticationStateProvider).GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        isUserLoggedIn = user.Identity.IsAuthenticated;
 
         if (isUserLoggedIn)
         {
+            // Obtém o ID do usuário
+            userId = user.FindFirst(c => c.Type == "sub")?.Value; // ID do usuário está na claim "sub"
+
+            // Tente obter o nome do usuário de diferentes claims possíveis
+            userName = user.FindFirst(c => c.Type == "name")?.Value ??
+                       user.FindFirst(c => c.Type == "unique_name")?.Value ??
+                       user.FindFirst(c => c.Type == ClaimTypes.Name)?.Value;
+
+            if (string.IsNullOrEmpty(userName))
+            {
+                userName = "Usuário Desconhecido"; // Fallback se o nome não for encontrado
+            }
+
             try
             {
                 // Busca os projetos do usuário logado
