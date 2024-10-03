@@ -1,28 +1,24 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Blazored.LocalStorage;
 using System.Security.Claims;
 using System.Text.Json;
-using WebAthenPs.Models.DTOs.User;
-using WebAthenPs.Project.Services.Interfaces.User;
 
 namespace WebAthenPs.Project.Services.Authentication
 {
     public class APIAuthenticationStateProvider : AuthenticationStateProvider
     {
-        private readonly IAuthService _authService;
-        private LoginResult _loginResult;
+        private readonly ILocalStorageService _localStorage;
 
-        public APIAuthenticationStateProvider(IAuthService authService)
+        public APIAuthenticationStateProvider(ILocalStorageService localStorage)
         {
-            _authService = authService;
+            _localStorage = localStorage;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            // Obtém o LoginResult a partir do IAuthService
-            _loginResult = await _authService.GetLoginResultAsync();
-
-            var savedToken = _loginResult?.Token;
+            var savedToken = await _localStorage.GetItemAsync<string>("authToken");
+            var expirationToken = await _localStorage.GetItemAsync<string>("tokenExpiration");
 
             if (string.IsNullOrWhiteSpace(savedToken))
             {
@@ -31,12 +27,15 @@ namespace WebAthenPs.Project.Services.Authentication
             }
 
             return new AuthenticationState(new ClaimsPrincipal(
-                new ClaimsIdentity(ParseClaimsFromJwt(savedToken), "jwt")));
+               new ClaimsIdentity(ParseClaimsFromJwt(savedToken), "jwt")));
         }
 
         public void MarkUserAsAuthenticated(string email)
         {
-            var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, email) }, "apiauth"));
+            var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+           new Claim(ClaimTypes.Name, email)
+        }, "apiauth"));
 
             var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
             NotifyAuthenticationStateChanged(authState);
@@ -49,6 +48,19 @@ namespace WebAthenPs.Project.Services.Authentication
             NotifyAuthenticationStateChanged(authState);
         }
 
+        private bool TokenExpirou(string dataToken)
+        {
+            DateTime dataAtualUtc = DateTime.UtcNow;
+            DateTime dataExpiracao =
+                DateTime.ParseExact(dataToken, "yyyy-MM-dd'T'HH:mm:ss.fffffff'Z'", null,
+                System.Globalization.DateTimeStyles.RoundtripKind);
+
+            if (dataExpiracao < dataAtualUtc)
+            {
+                return true;
+            }
+            return false;
+        }
         private IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
         {
             var claims = new List<Claim>();
@@ -88,11 +100,6 @@ namespace WebAthenPs.Project.Services.Authentication
                 case 3: base64 += "="; break;
             }
             return Convert.FromBase64String(base64);
-        }
-
-        public void UpdateLoginResult(LoginResult loginResult)
-        {
-            _loginResult = loginResult;
         }
     }
 }

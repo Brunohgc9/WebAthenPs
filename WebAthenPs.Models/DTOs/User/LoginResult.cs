@@ -13,7 +13,7 @@ namespace WebAthenPs.Models.DTOs.User
         public string ErrorMessage { get; set; }
         public bool? IsProfessional { get; set; }
         public bool NeedsProfessionalTypeRegistration { get; set; }
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
     }
 
 }

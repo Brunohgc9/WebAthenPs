@@ -4,7 +4,7 @@
     {
         public string? Token {  get; set; }
         public DateTime TokenExpiration { get; set; }
-        public Guid UserId { get; set; } // Adicione esta linha
+        public string UserId { get; set; } // Adicione esta linha
 
     }
 }

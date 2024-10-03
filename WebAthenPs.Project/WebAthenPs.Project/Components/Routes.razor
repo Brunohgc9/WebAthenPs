@@ -3,8 +3,8 @@
 @using Microsoft.AspNetCore.Components.Web
 @using WebAthenPs.Project.Components.Layout
 @inject NavigationManager NavigationManager
-<CascadingAuthenticationState>
-    <Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="new[] { typeof(Client._Imports).Assembly }">
+﻿<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
@@ -17,10 +17,10 @@
             <FocusOnNavigate RouteData="@routeData" Selector="h1" />
         </Found>
         <NotFound>
+            <PageTitle>Not found</PageTitle>
             <LayoutView Layout="@typeof(MainLayout)">
                 <p role="alert">Nada a ser executado neste endereço.</p>
             </LayoutView>
         </NotFound>
     </Router>
 </CascadingAuthenticationState>
-

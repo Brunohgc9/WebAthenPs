@@ -7,6 +7,5 @@ namespace WebAthenPs.Project.Services.Interfaces.User
         Task<LoginResult> Login(LoginModel loginModel);
         Task<string?> Register(RegisterModel registerModel);
         Task Logout();
-        Task<LoginResult> GetLoginResultAsync();
     }
 }
