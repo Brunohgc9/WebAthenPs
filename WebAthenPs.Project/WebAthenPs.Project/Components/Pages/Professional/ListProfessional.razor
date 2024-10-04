@@ -3,6 +3,7 @@
 @using WebAthenPs.Models.DTOs.Professional
 @using WebAthenPs.Project.Services.Interfaces.Professional
 @inject IGenericProfessionalService ProfessionalService
+@inject NavigationManager Navigation // Injeção do NavigationManager
 
 @code {
     private IEnumerable<GenericProfessionalDTO> _professionals;
@@ -36,6 +37,11 @@
         _isLoading = true;
         await LoadProfessionals();
     }
+
+    private void NavigateToPortfolio(int professionalId)
+    {
+        Navigation.NavigateTo($"/portfolio/{professionalId}"); // Redireciona para o portfólio do profissional
+    }
 }
 
 @if (_isLoading)
@@ -62,13 +68,12 @@ else
                     <p><strong>Professional Type:</strong> @string.Join(", ", professional.ProfessionalTypes)</p>
                 </div>
                 <div class="card-footer">
-                    <!-- Adicione ações aqui se necessário, como editar ou excluir -->
+                    <button @onclick="() => NavigateToPortfolio(professional.Id)">View Portfolio</button> <!-- Botão para ver o portfólio -->
                 </div>
             </div>
         }
     </div>
 }
-
 
 <style>
     .card-container {

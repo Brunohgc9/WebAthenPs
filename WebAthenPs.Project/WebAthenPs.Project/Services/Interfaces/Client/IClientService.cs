@@ -12,5 +12,8 @@ namespace WebAthenPs.Project.Services.Interfaces.Client
         Task<IEnumerable<ClientDTO>> GetByName(string name);
         Task<ClientDTO> UpdateAsync(int id, ClientDTO clientDto);
         Task DeleteAsync(int id);
+
+        Task<ClientDTO> GetByUserId(string userId);
+
     }
 }

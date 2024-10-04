@@ -1,46 +1,164 @@
-﻿@page "/receive-proposal"
+﻿@page "/viewproposal"
 @using Microsoft.AspNetCore.SignalR.Client
 @using WebAthenPs.Models.DTOs.Components
+@using WebAthenPs.Models.DTOs.Professional
+@using Blazored.SessionStorage
+@using WebAthenPs.Project.Services.Interfaces.Components
+@using WebAthenPs.Project.Services.Interfaces.Professional
+@using WebAthenPs.Project.Services.Interfaces.User
 @inject NavigationManager Navigation
+@inject Blazored.SessionStorage.ISessionStorageService SessionStorage
+@inject IHttpClientFactory HttpClientFactory
+@inject IAuthService AuthService
+@inject IGenericProfessionalService ProfessionalService
+@inject IProposalService ProposalService
 @implements IDisposable
 
-<h3>Propostas Recebidas</h3>
+<h3>Ver Propostas Recebidas</h3>
 
-@if (receivedProposals.Count == 0)
+@if (proposals != null && proposals.Any())
 {
-    <p>Nenhuma proposta recebida ainda.</p>
+    foreach (var proposal in proposals)
+    {
+        <div class="proposal-details border p-3 mb-3">
+            <label><strong>Mensagem:</strong></label>
+            <p>@proposal.ProposalMessage</p>
+
+            <label><strong>Valor:</strong></label>
+            <p>@proposal.ProposalValue.ToString("C")</p>
+
+            <label><strong>Status:</strong></label>
+            <p>@(proposal.IsAccepted ? "Aceita" : "Pendente")</p>
+
+            @if (!proposal.IsAccepted)
+            {
+                <div class="actions">
+                    <button class="btn btn-success" @onclick="() => AcceptProposal(proposal)">Aceitar</button>
+                    <button class="btn btn-danger" @onclick="() => DeclineProposal(proposal)">Recusar</button>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">Esta proposta já foi aceita.</div>
+            }
+        </div>
+    }
 }
 else
 {
-    <ul>
-        @foreach (var proposal in receivedProposals)
-        {
-            <li>
-                <strong>Mensagem:</strong> @proposal.ProposalMessage<br />
-                <strong>Valor:</strong> R$ @proposal.ProposalValue
-            </li>
-        }
-    </ul>
+    <p>Nenhuma proposta recebida.</p>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger mt-3">@errorMessage</div>
 }
 
 @code {
     private HubConnection hubConnection;
-    private List<ProposalDTO> receivedProposals = new();
+    private List<ProposalDTO> proposals = new List<ProposalDTO>();
+    private string professionalId;
+    private string errorMessage;
 
     protected override async Task OnInitializedAsync()
     {
+        await InitializeConnection();
+        await LoadProposals();
+    }
+
+    private async Task InitializeConnection()
+    {
         hubConnection = new HubConnectionBuilder()
-            .WithUrl(Navigation.ToAbsoluteUri("/proposalHub"))  // URL do Hub da API
+            .WithUrl(Navigation.ToAbsoluteUri("https://localhost:7171/proposalHub"))
             .Build();
 
-        hubConnection.On<ProposalDTO>("ReceiveProposal", (proposalDto) =>
+        try
         {
-            // Adiciona a proposta recebida à lista
-            receivedProposals.Add(proposalDto);
-            InvokeAsync(StateHasChanged);  // Atualiza a UI
-        });
+            await hubConnection.StartAsync();
+            Console.WriteLine("Conexão ao hub estabelecida com sucesso.");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Erro ao conectar ao hub: {ex.Message}";
+            Console.WriteLine(errorMessage);
+        }
 
-        await hubConnection.StartAsync();
+        hubConnection.Closed += async (error) =>
+        {
+            await Task.Delay(new Random().Next(0, 5000));
+            await InitializeConnection();
+        };
+    }
+
+    private async Task LoadProposals()
+    {
+        try
+        {
+            // Obtém o userId usando o AuthService
+            var userId = await AuthService.GetUserIdFromToken();
+            if (string.IsNullOrEmpty(userId))
+            {
+                errorMessage = "User ID não encontrado.";
+                return;
+            }
+
+            // Obtenha o profissional associado ao userId
+            var professionalDto = await ProfessionalService.GetByUserId(userId);
+            professionalId = professionalDto?.Id.ToString();
+
+            if (string.IsNullOrEmpty(professionalId))
+            {
+                errorMessage = "Profissional não encontrado.";
+                return;
+            }
+
+            // Verifique se há propostas para este profissional
+            proposals = (await ProposalService.GetByClientIdAsync(int.Parse(professionalId))).ToList(); // Use ToList() aqui
+
+            if (proposals == null || !proposals.Any())
+            {
+                errorMessage = "Nenhuma proposta recebida.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Erro ao carregar propostas: {ex.Message}";
+        }
+    }
+
+
+    private async Task AcceptProposal(ProposalDTO proposal)
+    {
+        try
+        {
+            proposal.IsAccepted = true;
+            await hubConnection.InvokeAsync("UpdateProposalStatus", proposal);
+
+            // Atualiza a proposta usando o método UpdateAsync
+            await ProposalService.UpdateAsync(Guid.Parse(proposal.Professional.UserId), proposal); // Ajuste o método conforme necessário
+            errorMessage = null;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Erro ao aceitar a proposta: {ex.Message}";
+        }
+    }
+
+    private async Task DeclineProposal(ProposalDTO proposal)
+    {
+        try
+        {
+            proposal.IsAccepted = false;
+            await hubConnection.InvokeAsync("UpdateProposalStatus", proposal);
+
+            // Atualiza a proposta usando o método UpdateAsync
+            await ProposalService.UpdateAsync(Guid.Parse(proposal.Professional.UserId), proposal); // Ajuste o método conforme necessário
+            errorMessage = null;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Erro ao recusar a proposta: {ex.Message}";
+        }
     }
 
     public void Dispose()

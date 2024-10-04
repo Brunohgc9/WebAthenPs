@@ -1,100 +1,227 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-using Blazored.LocalStorage;
-using Microsoft.AspNetCore.Components.Authorization;
+﻿using System.Net.Http;
+using System.Net.Http.Json;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Components.Authorization;
 using WebAthenPs.Models.DTOs.Client;
 using WebAthenPs.Project.Services.Interfaces.Client;
+using WebAthenPs.Project.Services.Interfaces.User;
 
-namespace WebAthenPs.Project.Services.Implementation.Client
+namespace WebAthenPs.Project.Services.Implementation
 {
     public class ClientService : IClientService
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<ClientService> _logger;
-        private readonly ILocalStorageService _localStorage;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
+        private readonly IAuthService _authService;
 
         public ClientService(
             IHttpClientFactory httpClientFactory,
             ILogger<ClientService> logger,
-            ILocalStorageService localStorage,
-            AuthenticationStateProvider authenticationStateProvider)
+            AuthenticationStateProvider authenticationStateProvider,
+            IAuthService authService)
         {
             _httpClientFactory = httpClientFactory;
             _logger = logger;
-            _localStorage = localStorage;
             _authenticationStateProvider = authenticationStateProvider;
+            _authService = authService;
         }
 
         private async Task<HttpClient> CreateAuthorizedClientAsync()
         {
             var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
-            var token = await _localStorage.GetItemAsync<string>("authToken");
+
+            // Verifica se o usuário está logado
+            if (!await _authService.IsLoggedIn())
+            {
+                _logger.LogWarning("Usuário não está logado.");
+                throw new UnauthorizedAccessException("Usuário não está logado."); // Ou trate como preferir
+            }
+
+            var token = await _authService.GetToken(); // Obtém o token descriptografado
 
             if (!string.IsNullOrEmpty(token))
             {
+                _logger.LogInformation($"Token: {token}");
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }
+            else
+            {
+                _logger.LogWarning("Token não encontrado ou está vazio.");
+            }
+
             return httpClient;
         }
 
-        public async Task<ClientDTO> CreateAsync(RegisterClientModel clientModel, string userId)
+        public async Task<IEnumerable<ClientDTO>> GetAll()
         {
             try
             {
-                var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
+                var httpClient = await CreateAuthorizedClientAsync();
+                var clientsDto = await httpClient.GetFromJsonAsync<IEnumerable<ClientDTO>>("api/Clients");
 
-
-                var modelAsJson = JsonSerializer.Serialize(clientModel);
-                var requestContent = new StringContent(modelAsJson, Encoding.UTF8, "application/json");
-
-                var response = await httpClient.PostAsync("api/Clients", requestContent);
-
-                if (response.IsSuccessStatusCode)
+                if (clientsDto == null)
                 {
-                    var createdDto = JsonSerializer.Deserialize<ClientDTO>(
-                        await response.Content.ReadAsStringAsync(),
-                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                    return createdDto;
+                    _logger.LogWarning("Nenhum cliente encontrado na API em 'api/Clients'.");
                 }
-                else
-                {
-                    var errorMessage = await response.Content.ReadAsStringAsync();
-                    throw new Exception($"Error from server: {errorMessage}");
-                }
+                return clientsDto;
+            }
+            catch (HttpRequestException httpEx)
+            {
+                _logger.LogError(httpEx, "Erro ao acessar a API de clientes. URL: api/Clients");
+                throw;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error creating client.");
+                _logger.LogError(ex, "Erro inesperado ao acessar a API de clientes.");
                 throw;
             }
         }
-
-
 
         public async Task<ClientDTO> GetById(int id)
         {
             try
             {
                 var httpClient = await CreateAuthorizedClientAsync();
-                var clientDto = await httpClient.GetFromJsonAsync<ClientDTO>($"api/Clients/{id}");
+                var clientDto = await httpClient.GetFromJsonAsync<ClientDTO>($"api/Clients/id/{id}");
 
                 if (clientDto == null)
                 {
                     _logger.LogWarning($"Cliente com ID {id} não encontrado.");
-                    return null;
                 }
                 return clientDto;
             }
+            catch (HttpRequestException httpEx)
+            {
+                _logger.LogError(httpEx, $"Erro ao acessar a API de clientes para ID {id}. URL: api/Clients/{id}");
+                throw;
+            }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Erro ao acessar cliente com ID {id}.");
+                _logger.LogError(ex, $"Erro inesperado ao acessar a API de clientes para ID {id}.");
+                throw;
+            }
+        }
+
+        public async Task<ClientDTO> CreateClient(RegisterClientModel model)
+        {
+            try
+            {
+                var httpClient = await CreateAuthorizedClientAsync();
+                var response = await httpClient.PostAsJsonAsync("api/Clients", model);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var createdClient = await response.Content.ReadFromJsonAsync<ClientDTO>();
+                    _logger.LogInformation("Cliente criado com sucesso.");
+                    return createdClient;
+                }
+
+                var errorContent = await response.Content.ReadAsStringAsync();
+                _logger.LogError($"Erro ao criar o cliente. StatusCode: {response.StatusCode}, Conteúdo: {errorContent}");
+                return null;
+            }
+            catch (HttpRequestException httpEx)
+            {
+                _logger.LogError(httpEx, "Erro ao acessar a API para criar um cliente.");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro inesperado ao criar um cliente.");
+                throw;
+            }
+        }
+
+        public async Task DeleteClient(int id)
+        {
+            try
+            {
+                var httpClient = await CreateAuthorizedClientAsync();
+                var response = await httpClient.DeleteAsync($"api/Clients/{id}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError($"Erro ao deletar o cliente com ID {id}. StatusCode: {response.StatusCode}");
+                }
+            }
+            catch (HttpRequestException httpEx)
+            {
+                _logger.LogError(httpEx, $"Erro ao acessar a API para deletar o cliente com ID {id}. URL: api/Clients/{id}");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Erro inesperado ao deletar o cliente com ID {id}.");
+                throw;
+            }
+        }
+
+        public async Task<ClientDTO> UpdateClient(int id, ClientDTO dto)
+        {
+            // Validação do DTO
+            if (dto == null)
+            {
+                throw new ArgumentNullException(nameof(dto), "O DTO do cliente não pode ser nulo.");
+            }
+
+            try
+            {
+                var httpClient = await CreateAuthorizedClientAsync();
+                var response = await httpClient.PutAsJsonAsync($"api/Clients/{id}", dto);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var updatedClient = await response.Content.ReadFromJsonAsync<ClientDTO>();
+                    _logger.LogInformation("Cliente atualizado com sucesso.");
+                    return updatedClient;
+                }
+
+                var errorContent = await response.Content.ReadAsStringAsync();
+                _logger.LogError($"Erro ao atualizar o cliente. StatusCode: {response.StatusCode}, Conteúdo: {errorContent}");
+                return null;
+            }
+            catch (HttpRequestException httpEx)
+            {
+                _logger.LogError(httpEx, "Erro ao acessar a API para atualizar um cliente.");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro inesperado ao atualizar um cliente.");
+                throw;
+            }
+        }
+
+        public async Task<ClientDTO> CreateAsync(RegisterClientModel clientModel, string userId)
+        {
+            try
+            {
+                var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs"); // Não precisa estar autenticado
+                var response = await httpClient.PostAsJsonAsync($"api/Clients/{userId}", clientModel);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var createdClient = await response.Content.ReadFromJsonAsync<ClientDTO>();
+                    _logger.LogInformation("Cliente criado com sucesso.");
+                    return createdClient;
+                }
+
+                var errorContent = await response.Content.ReadAsStringAsync();
+                _logger.LogError($"Erro ao criar o cliente. StatusCode: {response.StatusCode}, Conteúdo: {errorContent}");
+                return null;
+            }
+            catch (HttpRequestException httpEx)
+            {
+                _logger.LogError(httpEx, "Erro ao acessar a API para criar um cliente.");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro inesperado ao criar um cliente.");
                 throw;
             }
         }
@@ -112,40 +239,50 @@ namespace WebAthenPs.Project.Services.Implementation.Client
                 }
                 return clientsDto;
             }
+            catch (HttpRequestException httpEx)
+            {
+                _logger.LogError(httpEx, $"Erro ao acessar a API de clientes com o nome {name}. URL: api/Clients/name/{name}");
+                throw;
+            }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Erro ao acessar clientes com o nome {name}.");
+                _logger.LogError(ex, $"Erro inesperado ao acessar a API de clientes com o nome {name}.");
                 throw;
             }
         }
 
         public async Task<ClientDTO> UpdateAsync(int id, ClientDTO clientDto)
         {
+            // Validação do DTO
+            if (clientDto == null)
+            {
+                throw new ArgumentNullException(nameof(clientDto), "O DTO do cliente não pode ser nulo.");
+            }
+
             try
             {
                 var httpClient = await CreateAuthorizedClientAsync();
-                var clientAsJson = JsonSerializer.Serialize(clientDto);
-                var requestContent = new StringContent(clientAsJson, Encoding.UTF8, "application/json");
-
-                var response = await httpClient.PutAsync($"api/Clients/{id}", requestContent);
+                var response = await httpClient.PutAsJsonAsync($"api/Clients/{id}", clientDto);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var updatedDto = JsonSerializer.Deserialize<ClientDTO>(
-                        await response.Content.ReadAsStringAsync(),
-                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    var updatedClient = await response.Content.ReadFromJsonAsync<ClientDTO>();
+                    _logger.LogInformation("Cliente atualizado com sucesso.");
+                    return updatedClient;
+                }
 
-                    return updatedDto;
-                }
-                else
-                {
-                    _logger.LogError($"Erro ao atualizar cliente. Status code: {response.StatusCode}");
-                    return null;
-                }
+                var errorContent = await response.Content.ReadAsStringAsync();
+                _logger.LogError($"Erro ao atualizar o cliente. StatusCode: {response.StatusCode}, Conteúdo: {errorContent}");
+                return null;
+            }
+            catch (HttpRequestException httpEx)
+            {
+                _logger.LogError(httpEx, "Erro ao acessar a API para atualizar um cliente.");
+                throw;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Erro ao atualizar cliente com ID {id}.");
+                _logger.LogError(ex, "Erro inesperado ao atualizar um cliente.");
                 throw;
             }
         }
@@ -159,35 +296,46 @@ namespace WebAthenPs.Project.Services.Implementation.Client
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogError($"Erro ao excluir cliente com ID {id}. Status code: {response.StatusCode}");
-                    throw new Exception("Erro ao excluir cliente.");
+                    _logger.LogError($"Erro ao deletar o cliente com ID {id}. StatusCode: {response.StatusCode}");
                 }
+            }
+            catch (HttpRequestException httpEx)
+            {
+                _logger.LogError(httpEx, $"Erro ao acessar a API para deletar o cliente com ID {id}. URL: api/Clients/{id}");
+                throw;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Erro ao excluir cliente com ID {id}.");
+                _logger.LogError(ex, $"Erro inesperado ao deletar o cliente com ID {id}.");
                 throw;
             }
         }
 
-        public async Task<IEnumerable<ClientDTO>> GetAll()
+        public async Task<ClientDTO> GetByUserId(string userId)
         {
             try
             {
                 var httpClient = await CreateAuthorizedClientAsync();
-                var clientsDto = await httpClient.GetFromJsonAsync<IEnumerable<ClientDTO>>("api/Clients");
+                var clientDto = await httpClient.GetFromJsonAsync<ClientDTO>($"api/Clients/user/{userId}");
 
-                if (clientsDto == null)
+                if (clientDto == null)
                 {
-                    _logger.LogWarning("Nenhum cliente encontrado na API.");
+                    _logger.LogWarning($"Cliente com UserId {userId} não encontrado.");
                 }
-                return clientsDto;
+                return clientDto;
+            }
+            catch (HttpRequestException httpEx)
+            {
+                _logger.LogError(httpEx, $"Erro ao acessar a API de clientes para UserId {userId}. URL: api/Clients/user/{userId}");
+                throw;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao acessar todos os clientes.");
+                _logger.LogError(ex, $"Erro inesperado ao acessar a API de clientes para UserId {userId}.");
                 throw;
             }
         }
+
+
     }
 }

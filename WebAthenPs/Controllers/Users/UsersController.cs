@@ -10,6 +10,7 @@ using WebAthenPs.API.Entities;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 using System;
+using Microsoft.EntityFrameworkCore;
 using WebAthenPs.Models.DTOs.User;
 
 namespace WebAthenPs.API.Controllers.Users
@@ -21,14 +22,17 @@ namespace WebAthenPs.API.Controllers.Users
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IConfiguration _configuration;
+        private readonly ApplicationDbContext _context;
 
         public UsersController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
+            _context = context;
         }
 
         [HttpPost("Register")]
@@ -58,14 +62,11 @@ namespace WebAthenPs.API.Controllers.Users
 
             if (result.Succeeded)
             {
-                // Retorne o UserId do usuário registrado
                 return Ok(new RegisterResult { UserId = user.Id });
             }
 
             return BadRequest(new { result.Errors });
         }
-
-
 
         [HttpPost("Login")]
         public async Task<ActionResult<UserToken>> Login([FromBody] LoginModel userInfo)
@@ -81,7 +82,7 @@ namespace WebAthenPs.API.Controllers.Users
                 return BadRequest("Usuário não encontrado.");
             }
 
-            var result = await _signInManager.PasswordSignInAsync(userInfo.Email, userInfo.Password, isPersistent: false, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(userInfo.Email, userInfo.Password, isPersistent: true, lockoutOnFailure: false);
 
             if (result.Succeeded)
             {
@@ -99,10 +100,10 @@ namespace WebAthenPs.API.Controllers.Users
         {
             var claims = new[]
             {
-        new Claim(JwtRegisteredClaimNames.Sub, userId), // Adicione o UserId como claim
-        new Claim(JwtRegisteredClaimNames.UniqueName, userInfo.Email),
-        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-    };
+                new Claim(JwtRegisteredClaimNames.Sub, userId),
+                new Claim(JwtRegisteredClaimNames.UniqueName, userInfo.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -120,10 +121,34 @@ namespace WebAthenPs.API.Controllers.Users
             {
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
                 TokenExpiration = expiration,
-                UserId = userId // Inclua o UserId no token
+                UserId = userId
             };
         }
 
+        [HttpGet("{userId}")]
+        public async Task<ActionResult<ApplicationUser>> GetUserInfo(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound("Usuário não encontrado.");
+            }
 
+            // Retorna o objeto ApplicationUser
+            return Ok(new ApplicationUser
+            {
+                UserName = user.UserName,
+                Email = user.Email,
+                Role = user.Role,
+                UserType = user.UserType,
+                CPF = user.CPF,
+                RG = user.RG,
+                Gender = user.Gender,
+                Address = user.Address,
+                City = user.City,
+                State = user.State,
+                PostalCode = user.PostalCode
+            });
+        }
     }
 }

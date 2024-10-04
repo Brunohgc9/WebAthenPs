@@ -1,10 +1,20 @@
 ﻿@page "/sendproposal"
 @using Microsoft.AspNetCore.SignalR.Client
+@using System.Net.Http.Headers
 @using WebAthenPs.Models.DTOs.Components
 @using WebAthenPs.Models.DTOs.Client
 @using WebAthenPs.Models.DTOs.Professional
+@using Blazored.LocalStorage
+@using WebAthenPs.Project.Services.Interfaces.User
+@using WebAthenPs.Project.Services.Interfaces.Client // Adicione esta linha
 @inject NavigationManager Navigation
+@inject ILocalStorageService LocalStorage
+@inject IHttpClientFactory HttpClientFactory
+@inject IAuthService AuthService
+@inject IClientService ClientService // Injete o ClientService
 @implements IDisposable
+@rendermode InteractiveServer
+
 
 <h3>Enviar Proposta</h3>
 
@@ -15,13 +25,29 @@
     <label>Valor:</label>
     <input type="number" @bind="proposalValue" />
 
+    <label>ID do Profissional:</label>
+    <input type="text" @bind="professionalId" /> <!-- Novo campo de entrada para professionalId -->
+
     <button @onclick="SendProposal">Enviar Proposta</button>
 </div>
+
+@if (isSuccess)
+{
+    <div class="alert alert-success mt-3">Proposta enviada com sucesso!</div>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger mt-3">@errorMessage</div>
+}
 
 @code {
     private HubConnection hubConnection;
     private string proposalMessage;
     private decimal proposalValue;
+    private int professionalId;
+    private bool isSuccess = false;
+    private string errorMessage;
 
     protected override async Task OnInitializedAsync()
     {
@@ -31,7 +57,7 @@
     private async Task InitializeConnection()
     {
         hubConnection = new HubConnectionBuilder()
-            .WithUrl(Navigation.ToAbsoluteUri("https://localhost:7171/proposalHub"))  // Certifique-se de que esta URL está correta
+            .WithUrl(Navigation.ToAbsoluteUri("https://localhost:7171/proposalHub"))
             .Build();
 
         try
@@ -56,12 +82,36 @@
     {
         try
         {
+            // Verifica a conexão
             if (hubConnection.State == HubConnectionState.Disconnected)
             {
-                Console.WriteLine("Reconnecting...");
+                Console.WriteLine("Reconectando...");
                 await hubConnection.StartAsync();
             }
 
+            // Obtém o token usando o AuthService
+            var token = await AuthService.GetToken();
+
+            if (string.IsNullOrEmpty(token))
+            {
+                errorMessage = "Token não encontrado ou está vazio.";
+                return;
+            }
+
+            // Lê o userId do token JWT
+            var userId = await AuthService.GetUserIdFromToken();
+
+            // Chama o ClientService para obter o ClientId usando o UserId
+            var clientDto = await ClientService.GetByUserId(userId);
+            var clientId = clientDto?.ClientId;
+
+            if (clientId == null)
+            {
+                errorMessage = "Cliente não encontrado para o UserId.";
+                return;
+            }
+
+            // Cria a proposta
             var proposalDto = new ProposalDTO
                 {
                     ProposalId = Guid.NewGuid(),
@@ -69,26 +119,30 @@
                     ProposalValue = proposalValue,
                     ProposalType = "Serviço",
                     IsAccepted = false,
-                    Client = new ClientDTO { ClientId = 1 },
-                    Professional = new GenericProfessionalDTO { Id = 2, UserId = "profissional_user_id" }
+                    Client = new ClientDTO { ClientId = clientId.Value },
+                    Professional = new GenericProfessionalDTO { Id = professionalId}
                 };
 
             await hubConnection.InvokeAsync("SendProposal", proposalDto);
-            Console.WriteLine("Proposal sent successfully.");
+            Console.WriteLine("Proposta enviada com sucesso.");
+            isSuccess = true;
+            errorMessage = null; // Limpa mensagens de erro se tudo correr bem
         }
         catch (HttpRequestException httpEx)
         {
-            Console.WriteLine($"HTTP request failed: {httpEx.Message}");
+            errorMessage = $"Erro de requisição HTTP: {httpEx.Message}";
+            Console.WriteLine(errorMessage);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error sending proposal: {ex.Message}");
+            errorMessage = $"Erro ao enviar a proposta: {ex.Message}";
+            Console.WriteLine(errorMessage);
         }
     }
-
 
     public void Dispose()
     {
         _ = hubConnection?.DisposeAsync();
     }
 }
+

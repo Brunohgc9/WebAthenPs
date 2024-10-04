@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WebAthenPs.API.Data;
+using WebAthenPs.API.Entities.Clients;
 using WebAthenPs.API.Entities.Professional;
 using WebAthenPs.API.Entities.Professional.ProfessionalTypes;
 using WebAthenPs.API.Repositories.Interfaces;
@@ -110,5 +111,17 @@ namespace WebAthenPs.API.Repositories.Implementations
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<GenericProfessional> GetByUserId(string userId)
+        {
+            return await _context.GenericProfessionals
+                .Include(gp => gp.User)
+                .Include(gp => gp.Client)
+                .Include(gp => gp.ProjectProfessionals)
+                    .ThenInclude(pp => pp.Project)
+                .Include(gp => gp.Architect) // Inclui o arquiteto
+                .FirstOrDefaultAsync(gp => gp.UserId == userId);
+        }
+
     }
 }

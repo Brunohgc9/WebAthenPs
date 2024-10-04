@@ -1,11 +1,16 @@
 ﻿@page "/"
-@using WebAthenPs.Models.DTOs.Project
-@rendermode InteractiveServer
 @using Blazored.LocalStorage
+@using Blazored.SessionStorage
+@using System.IdentityModel.Tokens.Jwt
+@using WebAthenPs.Models.DTOs.Project
+@using WebAthenPs.Project.Services.Implementation.Project
 @using WebAthenPs.Project.Services.Interfaces.Project
+@using WebAthenPs.Project.Services.Interfaces.User
 @inject ILocalStorageService LocalStorageService
-@inject IProjectService ProjectService
+@inject ISessionStorageService SessionStorageService
+@inject IAuthService AuthService
 @inject NavigationManager NavigationManager
+@inject IProjectService ProjectService
 
 <PageTitle>Home</PageTitle>
 
@@ -46,23 +51,42 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        // Verifica se o usuário está logado
-        userName = await LocalStorageService.GetItemAsync<string>("userName");
-        isUserLoggedIn = !string.IsNullOrEmpty(userName);
+        // Recupera o token através do AuthService
+        string token = await AuthService.GetToken();
+
+        Console.WriteLine($"Token: {token}"); // Log para verificar se o token está sendo recuperado
+
+        isUserLoggedIn = !string.IsNullOrEmpty(token);
 
         if (isUserLoggedIn)
         {
             try
             {
+                // Obtém o userId do token
+                var userId = await AuthService.GetUserIdFromToken();
+
+                // Armazena o nome do usuário a partir do local ou session storage
+                userName = await LocalStorageService.GetItemAsync<string>("userName") ??
+                            await SessionStorageService.GetItemAsync<string>("userName");
+
                 // Busca os projetos do usuário logado
                 projects = (await ProjectService.GetProjectsByLoggedInUser()).ToList();
             }
-            catch (HttpRequestException)
+            catch (HttpRequestException ex)
             {
                 // Lida com a exceção caso o pedido falhe
-                projects = new List<ProjectsDTO>();
+                Console.WriteLine($"Erro ao buscar dados: {ex.Message}");
+                projects = new List<ProjectsDTO>(); // Garante que projects seja uma lista vazia
             }
         }
+
+    }
+
+    private async Task Logout()
+    {
+        await AuthService.Logout(); // Lógica de logout
+        NavigationManager.NavigateTo("/"); // Redireciona para a página inicial após logout
+        StateHasChanged(); // Atualiza a interface do usuário
     }
 
     private void EditProject(int projectId)

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using WebAthenPs.Models.DTOs.Project;
 using WebAthenPs.Project.Services.Interfaces.Project;
 using WebAthenPs.Models.DTOs.Professional;
+using WebAthenPs.Project.Services.Interfaces.User;
 
 namespace WebAthenPs.Project.Services.Implementation.Project
 {
@@ -16,28 +17,45 @@ namespace WebAthenPs.Project.Services.Implementation.Project
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<ProjectService> _logger;
-        private readonly ILocalStorageService _localStorage;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
+        private readonly IAuthService _authService;
 
-        public ProjectService(IHttpClientFactory httpClientFactory, ILogger<ProjectService> logger, ILocalStorageService localStorage, AuthenticationStateProvider authenticationStateProvider)
+        public ProjectService(IHttpClientFactory httpClientFactory, ILogger<ProjectService> logger, AuthenticationStateProvider authenticationStateProvider, IAuthService authService)
         {
             _httpClientFactory = httpClientFactory;
             _logger = logger;
-            _localStorage = localStorage;
             _authenticationStateProvider = authenticationStateProvider;
+            _authService = authService;
         }
 
         private async Task<HttpClient> CreateAuthorizedClientAsync()
         {
             var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
-            var token = await _localStorage.GetItemAsync<string>("authToken");
+
+            // Verifica se o usuário está logado
+            if (!await _authService.IsLoggedIn())
+            {
+                _logger.LogWarning("Usuário não está logado.");
+                throw new UnauthorizedAccessException("Usuário não está logado."); // Ou trate como preferir
+            }
+
+            var token = await _authService.GetToken(); // Obtém o token descriptografado
 
             if (!string.IsNullOrEmpty(token))
             {
+                _logger.LogInformation($"Token: {token}");
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }
+            else
+            {
+                _logger.LogWarning("Token não encontrado ou está vazio.");
+            }
+
             return httpClient;
         }
+
+
+
 
         public async Task<IEnumerable<ProjectsDTO>> GetAll()
         {
@@ -169,7 +187,6 @@ namespace WebAthenPs.Project.Services.Implementation.Project
             }
         }
 
-
         public async Task DeleteProject(int id)
         {
             try
@@ -267,11 +284,5 @@ namespace WebAthenPs.Project.Services.Implementation.Project
                 throw;
             }
         }
-
-
-
-
-
-
     }
 }

@@ -1,144 +1,159 @@
-﻿using Blazored.LocalStorage;
-using Microsoft.AspNetCore.Components.Authorization;
+﻿using System.Net.Http;
+using System.Net.Http.Json;
+using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using Blazored.LocalStorage;
 using System.Net.Http.Headers;
-using System.Text.Json;
-using System.Text;
+using Microsoft.AspNetCore.Components.Authorization;
 using WebAthenPs.Models.DTOs.Professional;
 using WebAthenPs.Project.Services.Interfaces.Professional;
+using WebAthenPs.Project.Services.Interfaces.User;
+using WebAthenPs.Models.DTOs.Client;
 
 public class GenericProfessionalService : IGenericProfessionalService
 {
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly ILocalStorageService _localStorage;
+    private readonly ILogger<GenericProfessionalService> _logger;
     private readonly AuthenticationStateProvider _authenticationStateProvider;
+    private readonly IAuthService _authService;
 
-    public GenericProfessionalService(IHttpClientFactory httpClientFactory,
-        ILocalStorageService localStorage,
-        AuthenticationStateProvider authenticationStateProvider)
+    public GenericProfessionalService(IHttpClientFactory httpClientFactory, ILogger<GenericProfessionalService> logger, AuthenticationStateProvider authenticationStateProvider, IAuthService authService)
     {
         _httpClientFactory = httpClientFactory;
-        _localStorage = localStorage;
+        _logger = logger;
         _authenticationStateProvider = authenticationStateProvider;
+        _authService = authService;
+    }
+
+    private async Task<HttpClient> CreateAuthorizedClientAsync()
+    {
+        var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
+
+        // Verifica se o usuário está logado
+        if (!await _authService.IsLoggedIn())
+        {
+            _logger.LogWarning("Usuário não está logado.");
+            throw new UnauthorizedAccessException("Usuário não está logado.");
+        }
+
+        var token = await _authService.GetToken(); // Obtém o token descriptografado
+
+        if (!string.IsNullOrEmpty(token))
+        {
+            _logger.LogInformation($"Token: {token}");
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        }
+        else
+        {
+            _logger.LogWarning("Token não encontrado ou está vazio.");
+        }
+
+        return httpClient;
     }
 
     public async Task<GenericProfessionalDTO> CreateAsync(RegisterProfessionalModel model, string userId)
     {
         try
         {
-            var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
-
-
-            var modelAsJson = JsonSerializer.Serialize(model);
-            var requestContent = new StringContent(modelAsJson, Encoding.UTF8, "application/json");
-
-            var response = await httpClient.PostAsync("api/GenericProfessional", requestContent);
+            var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs"); // Não precisa estar autenticado
+            var response = await httpClient.PostAsJsonAsync($"api/GenericProfessional/{userId}", model);
 
             if (response.IsSuccessStatusCode)
             {
-                var createdDto = JsonSerializer.Deserialize<GenericProfessionalDTO>(
-                    await response.Content.ReadAsStringAsync(),
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var createdProfessional = await response.Content.ReadFromJsonAsync<GenericProfessionalDTO>();
+                _logger.LogInformation("Profissional criado com sucesso.");
+                return createdProfessional;
+            }
 
-                return createdDto;
-            }
-            else
-            {
-                var errorMessage = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Error from server: {errorMessage}");
-            }
+            var errorContent = await response.Content.ReadAsStringAsync();
+            _logger.LogError($"Erro ao criar o profissional. StatusCode: {response.StatusCode}, Conteúdo: {errorContent}");
+            return null;
+        }
+        catch (HttpRequestException httpEx)
+        {
+            _logger.LogError(httpEx, "Erro ao acessar a API para criar um profissional.");
+            throw;
         }
         catch (Exception ex)
         {
-            // Log or handle the exception as needed
-            throw new Exception($"Error creating professional: {ex.Message}", ex);
+            _logger.LogError(ex, "Erro inesperado ao criar um profissional.");
+            throw;
         }
     }
-
 
     public async Task<GenericProfessionalDTO> GetByIdAsync(int id)
     {
         try
         {
-            var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
-            var authToken = await _localStorage.GetItemAsync<string>("authToken");
-            httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("bearer", authToken);
+            var httpClient = await CreateAuthorizedClientAsync();
+            var professionalDto = await httpClient.GetFromJsonAsync<GenericProfessionalDTO>($"api/GenericProfessional/{id}");
 
-            var response = await httpClient.GetAsync($"api/GenericProfessional/{id}");
-
-            if (response.IsSuccessStatusCode)
+            if (professionalDto == null)
             {
-                var dto = JsonSerializer.Deserialize<GenericProfessionalDTO>(
-                    await response.Content.ReadAsStringAsync(),
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                return dto;
+                _logger.LogWarning($"Profissional com ID {id} não encontrado.");
             }
-            return null;
+            return professionalDto;
         }
-        catch (Exception)
+        catch (HttpRequestException httpEx)
         {
+            _logger.LogError(httpEx, $"Erro ao acessar a API de profissionais para ID {id}. URL: api/GenericProfessional/{id}");
             throw;
-        }
-    }
-
-    public async Task<IEnumerable<GenericProfessionalDTO>> GetAllAsync(string professionalType)
-    {
-        try
-        {
-            var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
-            var authToken = await _localStorage.GetItemAsync<string>("authToken");
-            httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("bearer", authToken);
-
-            var url = "api/GenericProfessional";
-            if (!string.IsNullOrEmpty(professionalType))
-            {
-                url += $"?professionalType={professionalType}";
-            }
-
-            var response = await httpClient.GetAsync(url);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var dtoList = JsonSerializer.Deserialize<IEnumerable<GenericProfessionalDTO>>(
-                    await response.Content.ReadAsStringAsync(),
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                return dtoList;
-            }
-            return Enumerable.Empty<GenericProfessionalDTO>();
-        }
-        catch (Exception)
-        {
-            throw;
-        }
-    }
-
-    public async Task<IEnumerable<GenericProfessionalDTO>> GetByProfessionalTypeAsync(string professionalType)
-    {
-        try
-        {
-            var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
-            var authToken = await _localStorage.GetItemAsync<string>("authToken");
-            httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("bearer", authToken);
-
-            var response = await httpClient.GetAsync($"api/GenericProfessional?professionalType={professionalType}");
-
-            if (response.IsSuccessStatusCode)
-            {
-                var dtoList = JsonSerializer.Deserialize<IEnumerable<GenericProfessionalDTO>>(
-                    await response.Content.ReadAsStringAsync(),
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                return dtoList;
-            }
-            return Enumerable.Empty<GenericProfessionalDTO>();
         }
         catch (Exception ex)
         {
-            throw new Exception($"Error fetching professionals by type: {ex.Message}", ex);
+            _logger.LogError(ex, $"Erro inesperado ao acessar a API de profissionais para ID {id}.");
+            throw;
+        }
+    }
+
+    public async Task<IEnumerable<GenericProfessionalDTO>> GetAllAsync()
+    {
+        try
+        {
+            var httpClient = await CreateAuthorizedClientAsync();
+            var professionalsDto = await httpClient.GetFromJsonAsync<IEnumerable<GenericProfessionalDTO>>("api/GenericProfessional");
+
+            if (professionalsDto == null)
+            {
+                _logger.LogWarning("Nenhum profissional encontrado na API em 'api/GenericProfessional'.");
+            }
+            return professionalsDto;
+        }
+        catch (HttpRequestException httpEx)
+        {
+            _logger.LogError(httpEx, "Erro ao acessar a API de profissionais.");
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Erro inesperado ao acessar a API de profissionais.");
+            throw;
+        }
+    }
+
+    public async Task<IEnumerable<GenericProfessionalDTO>> GetByName(string name)
+    {
+        try
+        {
+            var httpClient = await CreateAuthorizedClientAsync();
+            var professionalsDto = await httpClient.GetFromJsonAsync<IEnumerable<GenericProfessionalDTO>>($"api/GenericProfessional/name/{name}");
+
+            if (professionalsDto == null)
+            {
+                _logger.LogWarning($"Nenhum profissional encontrado com o nome {name}.");
+            }
+            return professionalsDto;
+        }
+        catch (HttpRequestException httpEx)
+        {
+            _logger.LogError(httpEx, $"Erro ao acessar a API de profissionais com o nome {name}.");
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Erro inesperado ao acessar a API de profissionais com o nome {name}.");
+            throw;
         }
     }
 
@@ -146,28 +161,28 @@ public class GenericProfessionalService : IGenericProfessionalService
     {
         try
         {
-            var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
-            var authToken = await _localStorage.GetItemAsync<string>("authToken");
-            httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("bearer", authToken);
-
-            var modelAsJson = JsonSerializer.Serialize(model);
-            var requestContent = new StringContent(modelAsJson, Encoding.UTF8, "application/json");
-
-            var response = await httpClient.PutAsync($"api/GenericProfessional/{id}", requestContent);
+            var httpClient = await CreateAuthorizedClientAsync();
+            var response = await httpClient.PutAsJsonAsync($"api/GenericProfessional/{id}", model);
 
             if (response.IsSuccessStatusCode)
             {
-                var updatedDto = JsonSerializer.Deserialize<GenericProfessionalDTO>(
-                    await response.Content.ReadAsStringAsync(),
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                return updatedDto;
+                var updatedProfessional = await response.Content.ReadFromJsonAsync<GenericProfessionalDTO>();
+                _logger.LogInformation("Profissional atualizado com sucesso.");
+                return updatedProfessional;
             }
+
+            var errorContent = await response.Content.ReadAsStringAsync();
+            _logger.LogError($"Erro ao atualizar o profissional. StatusCode: {response.StatusCode}, Conteúdo: {errorContent}");
             return null;
         }
-        catch (Exception)
+        catch (HttpRequestException httpEx)
         {
+            _logger.LogError(httpEx, "Erro ao acessar a API para atualizar um profissional.");
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Erro inesperado ao atualizar um profissional.");
             throw;
         }
     }
@@ -176,20 +191,97 @@ public class GenericProfessionalService : IGenericProfessionalService
     {
         try
         {
-            var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
-            var authToken = await _localStorage.GetItemAsync<string>("authToken");
-            httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("bearer", authToken);
-
+            var httpClient = await CreateAuthorizedClientAsync();
             var response = await httpClient.DeleteAsync($"api/GenericProfessional/{id}");
 
             if (!response.IsSuccessStatusCode)
             {
-                throw new Exception("Error deleting the professional.");
+                _logger.LogError($"Erro ao deletar o profissional com ID {id}. StatusCode: {response.StatusCode}");
             }
         }
-        catch (Exception)
+        catch (HttpRequestException httpEx)
         {
+            _logger.LogError(httpEx, $"Erro ao acessar a API para deletar o profissional com ID {id}. URL: api/GenericProfessional/{id}");
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Erro inesperado ao deletar o profissional com ID {id}.");
+            throw;
+        }
+    }
+
+    public async Task<IEnumerable<GenericProfessionalDTO>> GetByProfessionalTypeAsync(string professionalType)
+    {
+        try
+        {
+            var httpClient = await CreateAuthorizedClientAsync();
+            var professionalsDto = await httpClient.GetFromJsonAsync<IEnumerable<GenericProfessionalDTO>>($"api/GenericProfessional/type/{professionalType}");
+
+            if (professionalsDto == null || !professionalsDto.Any())
+            {
+                _logger.LogWarning($"Nenhum profissional encontrado com o tipo {professionalType}.");
+            }
+            return professionalsDto;
+        }
+        catch (HttpRequestException httpEx)
+        {
+            _logger.LogError(httpEx, $"Erro ao acessar a API de profissionais com o tipo {professionalType}.");
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Erro inesperado ao acessar a API de profissionais com o tipo {professionalType}.");
+            throw;
+        }
+    }
+
+    public async Task<IEnumerable<GenericProfessionalDTO>> GetAllAsync(string professionalType)
+    {
+        try
+        {
+            var httpClient = await CreateAuthorizedClientAsync();
+            var professionalsDto = await httpClient.GetFromJsonAsync<IEnumerable<GenericProfessionalDTO>>($"api/GenericProfessional");
+
+            if (professionalsDto == null || !professionalsDto.Any())
+            {
+                _logger.LogWarning($"Nenhum profissional encontrado para o tipo {professionalType}.");
+            }
+            return professionalsDto;
+        }
+        catch (HttpRequestException httpEx)
+        {
+            _logger.LogError(httpEx, $"Erro ao acessar a API de profissionais para o tipo {professionalType}.");
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Erro inesperado ao acessar a API de profissionais para o tipo {professionalType}.");
+            throw;
+        }
+    }
+
+    public async Task<GenericProfessionalDTO> GetByUserId(string userId)
+    {
+        try
+        {
+            var httpClient = await CreateAuthorizedClientAsync();
+            var profDto = await httpClient.GetFromJsonAsync<GenericProfessionalDTO>($"api/GenericProfessional/user/{userId}");
+
+            if (profDto == null)
+            {
+                _logger.LogWarning($"Cliente com UserId {userId} não encontrado.");
+            }
+            return profDto;
+        }
+        catch (HttpRequestException httpEx)
+        {
+            _logger.LogError(httpEx, $"Erro ao acessar a API de clientes para UserId {userId}. URL: api/Clients/user/{userId}");
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Erro inesperado ao acessar a API de clientes para UserId {userId}.");
             throw;
         }
     }

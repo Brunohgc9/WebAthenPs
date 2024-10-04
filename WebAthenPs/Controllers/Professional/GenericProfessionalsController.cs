@@ -11,6 +11,9 @@
     using WebAthenPs.Models.DTOs.Professional;
     using WebAthenPs.API.Mappings.MappingProfessionalsDTO;
 using WebAthenPs.API.Entities.Professional.ProfessionalTypes;
+using Microsoft.AspNetCore.Authorization;
+using WebAthenPs.API.Repositories;
+using WebAthenPs.Models.DTOs.Client;
 
     namespace WebAthenPs.API.Controllers.Professional
     {
@@ -181,7 +184,26 @@ using WebAthenPs.API.Entities.Professional.ProfessionalTypes;
                 }
             }
 
+        [HttpGet("user/{userId}")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<ActionResult<ClientDTO>> GetByUserId(string userId)
+        {
+            try
+            {
+                var client = await _repository.GetByUserId(userId);
+                if (client == null)
+                {
+                    return NotFound($"Cliente não encontrado para UserId {userId}.");
+                }
 
-
+                var clientDTO = client.ConverterProfessionalParaDTO();
+                return Ok(clientDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao acessar a base de dados. Detalhes: " + ex.Message);
+            }
         }
+
+    }
     }

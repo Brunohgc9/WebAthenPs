@@ -10,5 +10,6 @@ namespace WebAthenPs.Project.Services.Interfaces.Components
         Task<ProposalDTO> UpdateAsync(Guid id, ProposalDTO proposalDTO);
         Task DeleteAsync(Guid id);
 
+
     }
 }

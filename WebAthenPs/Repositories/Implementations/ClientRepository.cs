@@ -67,5 +67,15 @@ namespace WebAthenPs.API.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<Client> GetByUserId(string userId)
+        {
+            return await _context.Clients
+                .Include(c => c.User)
+                .Include(c => c.Houses)
+                .Include(c => c.GenericProfessionals)
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+        }
+
     }
 }

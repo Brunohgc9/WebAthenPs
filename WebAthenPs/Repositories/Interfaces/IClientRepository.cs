@@ -10,5 +10,8 @@ namespace WebAthenPs.API.Repositories.Interfaces
         Task<Client> Create(Client client);
         Task Update(Client client);
         Task Delete(int id);
+
+        Task<Client> GetByUserId(string userId);
+
     }
 }

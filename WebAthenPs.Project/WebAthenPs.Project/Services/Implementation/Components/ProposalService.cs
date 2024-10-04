@@ -1,9 +1,16 @@
 ﻿using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.Extensions.Logging;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Net.Http.Headers;
 using WebAthenPs.Models.DTOs.Components;
 using WebAthenPs.Project.Services.Interfaces.Components;
+using WebAthenPs.Project.Services.Interfaces.User;
 
 namespace WebAthenPs.Project.Services.Implementation.Components
 {
@@ -12,21 +19,53 @@ namespace WebAthenPs.Project.Services.Implementation.Components
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILocalStorageService _localStorage;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
+        private readonly ILogger<ProposalService> _logger;
+        private readonly IAuthService _authService;
 
         public ProposalService(IHttpClientFactory httpClientFactory,
             ILocalStorageService localStorage,
-            AuthenticationStateProvider authenticationStateProvider)
+            AuthenticationStateProvider authenticationStateProvider,
+            ILogger<ProposalService> logger,
+            IAuthService authService)
         {
             _httpClientFactory = httpClientFactory;
             _localStorage = localStorage;
             _authenticationStateProvider = authenticationStateProvider;
+            _logger = logger;
+            _authService = authService;
+        }
+
+        private async Task<HttpClient> CreateAuthorizedClientAsync()
+        {
+            var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
+
+            // Verifica se o usuário está logado
+            if (!await _authService.IsLoggedIn())
+            {
+                _logger.LogWarning("Usuário não está logado.");
+                throw new UnauthorizedAccessException("Usuário não está logado."); // Ou trate como preferir
+            }
+
+            var token = await _authService.GetToken(); // Obtém o token descriptografado
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                _logger.LogInformation($"Token: {token}");
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+            else
+            {
+                _logger.LogWarning("Token não encontrado ou está vazio.");
+            }
+
+            return httpClient;
         }
 
         public async Task<ProposalDTO> CreateAsync(ProposalDTO proposalDTO)
         {
             try
             {
-                var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
+                var httpClient = await CreateAuthorizedClientAsync();
                 var modelAsJson = JsonSerializer.Serialize(proposalDTO);
                 var requestContent = new StringContent(modelAsJson, Encoding.UTF8, "application/json");
 
@@ -43,11 +82,13 @@ namespace WebAthenPs.Project.Services.Implementation.Components
                 else
                 {
                     var errorMessage = await response.Content.ReadAsStringAsync();
+                    _logger.LogError($"Erro ao criar proposta. StatusCode: {response.StatusCode}, Conteúdo: {errorMessage}");
                     throw new Exception($"Error from server: {errorMessage}");
                 }
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao criar proposta.");
                 throw new Exception($"Error creating proposal: {ex.Message}", ex);
             }
         }
@@ -56,7 +97,7 @@ namespace WebAthenPs.Project.Services.Implementation.Components
         {
             try
             {
-                var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
+                var httpClient = await CreateAuthorizedClientAsync();
                 var response = await httpClient.GetAsync($"api/Proposal/{id}");
 
                 if (response.IsSuccessStatusCode)
@@ -67,10 +108,13 @@ namespace WebAthenPs.Project.Services.Implementation.Components
 
                     return dto;
                 }
+
+                _logger.LogWarning($"Proposta com ID {id} não encontrada.");
                 return null;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao buscar proposta por ID.");
                 throw;
             }
         }
@@ -79,7 +123,7 @@ namespace WebAthenPs.Project.Services.Implementation.Components
         {
             try
             {
-                var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
+                var httpClient = await CreateAuthorizedClientAsync();
                 var response = await httpClient.GetAsync($"api/Proposal?clientId={clientId}");
 
                 if (response.IsSuccessStatusCode)
@@ -90,10 +134,13 @@ namespace WebAthenPs.Project.Services.Implementation.Components
 
                     return dtoList;
                 }
+
+                _logger.LogWarning($"Nenhuma proposta encontrada para o cliente com ID {clientId}.");
                 return Enumerable.Empty<ProposalDTO>();
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao buscar propostas por ID do cliente.");
                 throw new Exception($"Error fetching proposals by client ID: {ex.Message}", ex);
             }
         }
@@ -102,7 +149,7 @@ namespace WebAthenPs.Project.Services.Implementation.Components
         {
             try
             {
-                var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
+                var httpClient = await CreateAuthorizedClientAsync();
                 var modelAsJson = JsonSerializer.Serialize(proposalDTO);
                 var requestContent = new StringContent(modelAsJson, Encoding.UTF8, "application/json");
 
@@ -116,10 +163,13 @@ namespace WebAthenPs.Project.Services.Implementation.Components
 
                     return updatedDto;
                 }
+
+                _logger.LogWarning($"Erro ao atualizar proposta com ID {id}. StatusCode: {response.StatusCode}");
                 return null;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao atualizar proposta.");
                 throw;
             }
         }
@@ -128,19 +178,19 @@ namespace WebAthenPs.Project.Services.Implementation.Components
         {
             try
             {
-                var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
+                var httpClient = await CreateAuthorizedClientAsync();
                 var response = await httpClient.DeleteAsync($"api/Proposal/{id}");
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    throw new Exception("Error deleting the proposal.");
+                    _logger.LogError($"Erro ao deletar proposta com ID {id}. StatusCode: {response.StatusCode}");
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Erro ao deletar proposta.");
                 throw;
             }
         }
-
     }
 }

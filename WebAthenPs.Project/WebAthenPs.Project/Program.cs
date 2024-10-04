@@ -1,10 +1,11 @@
 using Blazored.LocalStorage;
+using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Text.Json;
 using WebAthenPs.Project.Client.Pages;
 using WebAthenPs.Project.Components;
 using WebAthenPs.Project.Services.Authentication;
-using WebAthenPs.Project.Services.Implementation.Client;
+using WebAthenPs.Project.Services.Implementation;
 using WebAthenPs.Project.Services.Implementation.Components;
 using WebAthenPs.Project.Services.Implementation.Professional.ProfessionalTypes;
 using WebAthenPs.Project.Services.Implementation.Project;
@@ -35,6 +36,7 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly); // Ensure that AutoMap
 
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddAuthorizationCore();
+builder.Services.AddBlazoredSessionStorage();
 builder.Services.AddScoped<AuthenticationStateProvider, APIAuthenticationStateProvider>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProposalService, ProposalService>();
