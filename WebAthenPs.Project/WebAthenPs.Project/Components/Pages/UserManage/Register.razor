@@ -193,7 +193,7 @@
                             UserId = userId
                         };
 
-                    var clientCreationResult = await ClientService.CreateAsync(clientDto, userId);
+                    var clientCreationResult = await ClientService.CreateAsync(clientDto);
                     if (clientCreationResult == null)
                     {
                         Error = "Failed to register client.";
@@ -210,7 +210,7 @@
                             ProfessionalTypes = additionalInfo.ProfessionalTypes.Where(p => p.Value).Select(p => p.Key).ToList()
                         };
 
-                    var professionalCreationResult = await ProfessionalService.CreateAsync(professionalModel, userId);
+                    var professionalCreationResult = await ProfessionalService.CreateAsync(professionalModel);
                     if (professionalCreationResult == null)
                     {
                         Error = "Failed to register professional.";

@@ -41,7 +41,6 @@ namespace WebAthenPs.API.Repositories.Implementations
         {
             return await _context.Proposals
                 .Where(p => p.ClientId == clientId)
-                .Include(p => p.Professional) 
                 .ToListAsync();
         }
 
@@ -49,9 +48,9 @@ namespace WebAthenPs.API.Repositories.Implementations
         {
             return await _context.Proposals
                 .Where(p => p.ProfessionalId == professionalId)
-                .Include(p => p.Client) 
                 .ToListAsync();
         }
+
 
         public async Task<Proposal> GetByIdAsync(Guid proposalId)
         {
@@ -79,5 +78,7 @@ namespace WebAthenPs.API.Repositories.Implementations
                         .ThenInclude(gp => gp.User) // Inclui o User relacionado ao Professional
                 .ToListAsync();
         }
+
+
     }
 }

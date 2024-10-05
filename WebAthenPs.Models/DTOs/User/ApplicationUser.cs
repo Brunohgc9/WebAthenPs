@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WebAthenPs.Models.DTOs.User
 {
-    public class ApplicationUserDTO
+    public class ApplicationUser
     {
         public string Id { get; set; }
         public string UserName { get; set; }
@@ -20,5 +20,8 @@ namespace WebAthenPs.Models.DTOs.User
         public string PostalCode { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }
+        public string? CPF {  get; set; }
+        public string? RG {  get; set; }
+
     }
 }

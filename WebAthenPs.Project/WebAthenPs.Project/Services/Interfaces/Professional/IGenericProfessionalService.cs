@@ -7,7 +7,7 @@ namespace WebAthenPs.Project.Services.Interfaces.Professional
 {
     public interface IGenericProfessionalService
     {
-        Task<GenericProfessionalDTO> CreateAsync(RegisterProfessionalModel model, string userId);
+        Task<GenericProfessionalDTO> CreateAsync(RegisterProfessionalModel model);
         Task<GenericProfessionalDTO> GetByIdAsync(int id);
         Task<IEnumerable<GenericProfessionalDTO>> GetByProfessionalTypeAsync(string professionalType);
         Task<GenericProfessionalDTO> UpdateAsync(int id, RegisterProfessionalModel model);

@@ -196,12 +196,12 @@ namespace WebAthenPs.Project.Services.Implementation
             }
         }
 
-        public async Task<ClientDTO> CreateAsync(RegisterClientModel clientModel, string userId)
+        public async Task<ClientDTO> CreateAsync(RegisterClientModel clientModel)
         {
             try
             {
                 var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs"); // Não precisa estar autenticado
-                var response = await httpClient.PostAsJsonAsync($"api/Clients/{userId}", clientModel);
+                var response = await httpClient.PostAsJsonAsync("api/Clients", clientModel);
 
                 if (response.IsSuccessStatusCode)
                 {

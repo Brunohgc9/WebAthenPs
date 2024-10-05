@@ -71,7 +71,7 @@
             // Atribuir os tipos selecionados ao modelo
             newProfessional.ProfessionalTypes = selectedProfessionalTypes;
 
-            createdProfessional = await GenericProfessionalService.CreateAsync(newProfessional, userId);
+            createdProfessional = await GenericProfessionalService.CreateAsync(newProfessional);
             if (createdProfessional == null)
             {
                 Error = "Erro ao criar profissional.";

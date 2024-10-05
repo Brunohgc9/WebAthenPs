@@ -6,6 +6,7 @@ using WebAthenPs.API.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using WebAthenPs.API.Entities.Components;
 using WebAthenPs.API.Mappings.MappingComponentDTO;
+using WebAthenPs.API.Entities.Clients;
 
 namespace WebAthenPs.API.Controllers.Components
 {
@@ -20,7 +21,6 @@ namespace WebAthenPs.API.Controllers.Components
             _proposalRepository = proposalRepository;
         }
 
-        // Método POST para criar uma proposta
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ProposalDTO proposalDTO)
         {
@@ -29,13 +29,8 @@ namespace WebAthenPs.API.Controllers.Components
 
             try
             {
-                // Mapeamento de ProposalDTO para Proposal
                 var proposal = proposalDTO.CriarPropostaEmDTO();
-
-                // Salvar a proposta
                 var createdProposal = await _proposalRepository.CreateAsync(proposal);
-
-                // Retornar DTO criado
                 var createdDto = createdProposal.ConverterPropostaParaDTO();
                 return CreatedAtAction(nameof(GetProposal), new { id = createdDto.ProposalId }, createdDto);
             }
@@ -84,7 +79,6 @@ namespace WebAthenPs.API.Controllers.Components
             }
         }
 
-        // Método GET para buscar uma proposta por ID
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetProposal(Guid id)
         {
@@ -93,7 +87,6 @@ namespace WebAthenPs.API.Controllers.Components
                 var proposal = await _proposalRepository.GetByIdAsync(id);
                 if (proposal == null) return NotFound("Proposta não encontrada.");
 
-                // Retornar DTO
                 var dto = proposal.ConverterPropostaParaDTO();
                 return Ok(dto);
             }
@@ -103,7 +96,6 @@ namespace WebAthenPs.API.Controllers.Components
             }
         }
 
-        // Método GET para buscar todas as propostas
         [HttpGet]
         public async Task<IActionResult> GetAllProposals()
         {
@@ -118,5 +110,58 @@ namespace WebAthenPs.API.Controllers.Components
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao acessar o banco de dados: {ex.Message}");
             }
         }
+
+        [HttpGet("client/{clientId:int}")]
+        public async Task<IActionResult> GetProposalsByClient(int clientId)
+        {
+            try
+            {
+                // Obtém as propostas do repositório para o clientId informado
+                var proposals = await _proposalRepository.GetByClientIdAsync(clientId);
+
+                // Verifica se proposals é null
+                if (proposals == null)
+                {
+                    return NotFound("Não foram encontradas propostas para o cliente informado.");
+                }
+
+                // Converte diretamente a proposta para DTO
+                var proposalDTO = proposals.ConverterPropostasParaDTO();
+
+                return Ok(proposalDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao acessar o banco de dados: {ex.Message}");
+            }
+        }
+
+        [HttpGet("professional/{professionalId:int}")]
+        public async Task<IActionResult> GetProposalsByProfessional(int professionalId)
+        {
+            try
+            {
+                // Obtém as propostas do repositório para o professionalId informado
+                var proposals = await _proposalRepository.GetByProfessionalIdAsync(professionalId);
+
+                // Verifica se proposals é null
+                if (proposals == null)
+                {
+                    return NotFound("Não foram encontradas propostas para o profissional informado.");
+                }
+
+                // Converte diretamente a proposta para DTO
+                var proposalDTO = proposals.ConverterPropostasParaDTO();
+
+                return Ok(proposalDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao acessar o banco de dados: {ex.Message}");
+            }
+        }
+
+
+
     }
 }

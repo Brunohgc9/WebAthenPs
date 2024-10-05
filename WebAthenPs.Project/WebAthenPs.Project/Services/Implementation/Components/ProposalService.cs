@@ -124,7 +124,7 @@ namespace WebAthenPs.Project.Services.Implementation.Components
             try
             {
                 var httpClient = await CreateAuthorizedClientAsync();
-                var response = await httpClient.GetAsync($"api/Proposal?clientId={clientId}");
+                var response = await httpClient.GetAsync($"api/Proposal/client/{clientId}");
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -192,5 +192,32 @@ namespace WebAthenPs.Project.Services.Implementation.Components
                 throw;
             }
         }
+
+        public async Task<IEnumerable<ProposalDTO>> GetByProfessionalIdAsync(int professionalId)
+        {
+            try
+            {
+                var httpClient = await CreateAuthorizedClientAsync();
+                var response = await httpClient.GetAsync($"api/Proposal/professional/{professionalId}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var dtoList = JsonSerializer.Deserialize<IEnumerable<ProposalDTO>>(
+                        await response.Content.ReadAsStringAsync(),
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    return dtoList;
+                }
+
+                _logger.LogWarning($"Nenhuma proposta encontrada para o profissional com ID {professionalId}.");
+                return Enumerable.Empty<ProposalDTO>();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao buscar propostas por ID do profissional.");
+                throw new Exception($"Error fetching proposals by professional ID: {ex.Message}", ex);
+            }
+        }
+
     }
 }

@@ -10,7 +10,6 @@ using WebAthenPs.API.Entities;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 using System;
-using Microsoft.EntityFrameworkCore;
 using WebAthenPs.Models.DTOs.User;
 
 namespace WebAthenPs.API.Controllers.Users
@@ -19,22 +18,20 @@ namespace WebAthenPs.API.Controllers.Users
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<Data.ApplicationUser> _userManager;
+        private readonly SignInManager<Data.ApplicationUser> _signInManager;
         private readonly IConfiguration _configuration;
-        private readonly ApplicationDbContext _context;
 
-        public UsersController(UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
-            IConfiguration configuration,
-            ApplicationDbContext context)
+        public UsersController(UserManager<Data.ApplicationUser> userManager,
+            SignInManager<Data.ApplicationUser> signInManager,
+            IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
-            _context = context;
         }
 
+        // Método de registro já existente
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
@@ -43,7 +40,7 @@ namespace WebAthenPs.API.Controllers.Users
                 return BadRequest("Email and password are required.");
             }
 
-            var user = new ApplicationUser
+            var user = new Data.ApplicationUser
             {
                 UserName = model.Email,
                 Email = model.Email,
@@ -68,6 +65,7 @@ namespace WebAthenPs.API.Controllers.Users
             return BadRequest(new { result.Errors });
         }
 
+        // Método para login já existente
         [HttpPost("Login")]
         public async Task<ActionResult<UserToken>> Login([FromBody] LoginModel userInfo)
         {
@@ -96,6 +94,7 @@ namespace WebAthenPs.API.Controllers.Users
             }
         }
 
+        // Método para construir o token já existente
         private UserToken BuildToken(LoginModel userInfo, string userId)
         {
             var claims = new[]
@@ -125,8 +124,9 @@ namespace WebAthenPs.API.Controllers.Users
             };
         }
 
+        // Método para retornar informações do usuário já existente
         [HttpGet("{userId}")]
-        public async Task<ActionResult<ApplicationUser>> GetUserInfo(string userId)
+        public async Task<ActionResult<Data.ApplicationUser>> GetUserInfo(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
@@ -135,7 +135,7 @@ namespace WebAthenPs.API.Controllers.Users
             }
 
             // Retorna o objeto ApplicationUser
-            return Ok(new ApplicationUser
+            return base.Ok(new Data.ApplicationUser
             {
                 UserName = user.UserName,
                 Email = user.Email,
@@ -149,6 +149,67 @@ namespace WebAthenPs.API.Controllers.Users
                 State = user.State,
                 PostalCode = user.PostalCode
             });
+        }
+
+        // Atualização de informações do usuário
+        [HttpPut("UpdateUserInfo/{userId}")]
+        public async Task<IActionResult> UpdateUserInfo(string userId, [FromBody] UpdateUserModel model)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound("Usuário não encontrado.");
+            }
+
+            // Atualiza os campos permitidos
+            user.CPF = model.CPF;
+            user.RG = model.RG;
+            user.Gender = model.Gender;
+            user.Address = model.Address;
+            user.City = model.City;
+            user.State = model.State;
+            user.PostalCode = model.PostalCode;
+            user.UserType = model.UserType;
+
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                return Ok("Informações do usuário atualizadas com sucesso.");
+            }
+
+            return BadRequest(result.Errors);
+        }
+
+        // Deletar conta do usuário
+        [HttpDelete("DeleteAccount/{userId}")]
+        public async Task<IActionResult> DeleteAccount(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound("Usuário não encontrado.");
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+            if (result.Succeeded)
+            {
+                return Ok("Conta excluída com sucesso.");
+            }
+
+            return BadRequest(result.Errors);
+        }
+
+        // Retornar o tipo de usuário
+        [HttpGet("GetUserType/{userId}")]
+        public async Task<ActionResult<string>> GetUserTypeById(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound("Usuário não encontrado.");
+            }
+
+            return Ok(user.UserType);
         }
     }
 }

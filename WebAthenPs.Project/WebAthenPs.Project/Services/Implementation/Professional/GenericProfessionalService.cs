@@ -52,12 +52,12 @@ public class GenericProfessionalService : IGenericProfessionalService
         return httpClient;
     }
 
-    public async Task<GenericProfessionalDTO> CreateAsync(RegisterProfessionalModel model, string userId)
+    public async Task<GenericProfessionalDTO> CreateAsync(RegisterProfessionalModel model)
     {
         try
         {
             var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs"); // Não precisa estar autenticado
-            var response = await httpClient.PostAsJsonAsync($"api/GenericProfessional/{userId}", model);
+            var response = await httpClient.PostAsJsonAsync($"api/GenericProfessional/", model);
 
             if (response.IsSuccessStatusCode)
             {

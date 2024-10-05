@@ -6,7 +6,7 @@ namespace WebAthenPs.Project.Services.Interfaces.Client
 {
     public interface IClientService
     {
-        Task<ClientDTO> CreateAsync(RegisterClientModel clientModel, string userId);
+        Task<ClientDTO> CreateAsync(RegisterClientModel clientModel);
         Task<IEnumerable<ClientDTO>> GetAll();
         Task<ClientDTO> GetById(int id);
         Task<IEnumerable<ClientDTO>> GetByName(string name);
