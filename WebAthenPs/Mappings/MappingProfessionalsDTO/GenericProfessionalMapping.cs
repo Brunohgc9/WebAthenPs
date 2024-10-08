@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using WebAthenPs.API.Entities.Professional;
+using WebAthenPs.Models.DTOs.Components;
 using WebAthenPs.Models.DTOs.Professional;
 using WebAthenPs.Models.DTOs.Professional.ProfessionalTypes.Architect;
 
@@ -35,7 +36,13 @@ namespace WebAthenPs.API.Mappings.MappingProfessionalsDTO
                             genericId = professional.Architect.genericId,
                             name = professional.User?.UserName,
                             email = professional.User?.Email
-                        } : null
+                        } : null,
+                        Proposals = professional.Proposals
+                .Select(pp => new ProposalDTO
+                {
+                    ProposalId = pp.ProposalId
+                }).ToList(),
+
                     }).ToList();
         }
 
@@ -64,7 +71,12 @@ namespace WebAthenPs.API.Mappings.MappingProfessionalsDTO
                     genericId = professional.Architect.genericId,
                     name = professional.User?.UserName,
                     email = professional.User?.Email
-                } : null
+                } : null,
+                Proposals = professional.Proposals
+                .Select(pp => new ProposalDTO
+                {
+                    ProposalId = pp.ProposalId
+                }).ToList(),
             };
         }
 

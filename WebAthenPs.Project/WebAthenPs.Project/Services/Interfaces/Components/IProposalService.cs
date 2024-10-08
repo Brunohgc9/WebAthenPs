@@ -10,7 +10,7 @@ namespace WebAthenPs.Project.Services.Interfaces.Components
         Task<ProposalDTO> UpdateAsync(Guid id, ProposalDTO proposalDTO);
         Task DeleteAsync(Guid id);
         Task<IEnumerable<ProposalDTO>> GetByProfessionalIdAsync(int professionalId);
-
+        Task RespondToProposalAsync(Guid id, bool isAccepted);
 
 
     }

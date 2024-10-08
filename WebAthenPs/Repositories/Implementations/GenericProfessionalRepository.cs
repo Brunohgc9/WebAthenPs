@@ -45,6 +45,7 @@ namespace WebAthenPs.API.Repositories.Implementations
                 .Include(gp => gp.Client)
                 .Include(gp => gp.ProjectProfessionals) // Inclui ProjectProfessionals
                     .ThenInclude(pp => pp.Project) // Inclui projetos associados
+                .Include(pr => pr.Proposals)
                 .ToListAsync();
         }
 
@@ -56,6 +57,7 @@ namespace WebAthenPs.API.Repositories.Implementations
                 .Include(gp => gp.ProjectProfessionals)
                     .ThenInclude(pp => pp.Project)
                 .Include(gp => gp.Architect) // Inclui o arquiteto
+                                .Include(pr => pr.Proposals)
                 .FirstOrDefaultAsync(gp => gp.Id == id);
         }
 
@@ -68,6 +70,7 @@ namespace WebAthenPs.API.Repositories.Implementations
                 .Include(gp => gp.Client)
                 .Include(gp => gp.ProjectProfessionals) // Inclui ProjectProfessionals
                     .ThenInclude(pp => pp.Project) // Inclui projetos associados
+                                    .Include(pr => pr.Proposals)
                 .FirstOrDefaultAsync(gp => gp.User.UserName == name); // Assumindo que 'name' corresponde ao UserName
         }
 
@@ -81,6 +84,7 @@ namespace WebAthenPs.API.Repositories.Implementations
                 .Include(gp => gp.Client)
                 .Include(gp => gp.ProjectProfessionals) // Inclui ProjectProfessionals
                     .ThenInclude(pp => pp.Project) // Inclui projetos associados
+                                    .Include(pr => pr.Proposals)
                 .Where(gp => gp.ProfessionalTypes.Contains(professionalType)) // Verifica se a lista contém o tipo
                 .ToListAsync();
         }
@@ -120,6 +124,7 @@ namespace WebAthenPs.API.Repositories.Implementations
                 .Include(gp => gp.ProjectProfessionals)
                     .ThenInclude(pp => pp.Project)
                 .Include(gp => gp.Architect) // Inclui o arquiteto
+                                .Include(pr => pr.Proposals)
                 .FirstOrDefaultAsync(gp => gp.UserId == userId);
         }
 

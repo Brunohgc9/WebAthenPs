@@ -1,14 +1,49 @@
 ﻿@page "/professionals"
+@using WebAthenPs.Project.Components.Components
 @using WebAthenPs.Project.Services
 @using WebAthenPs.Models.DTOs.Professional
 @using WebAthenPs.Project.Services.Interfaces.Professional
 @inject IGenericProfessionalService ProfessionalService
-@inject NavigationManager Navigation // Injeção do NavigationManager
+@inject NavigationManager Navigation
+
+<ProposalModal @ref="proposalModal" />
+
+@if (_isLoading)
+{
+    <p>Carregando...</p>
+}
+else
+{
+    <div>
+        <input type="text" @bind="_professionalTypeFilter" placeholder="Filtrar por tipo" />
+        <button @onclick="FilterProfessionals">Filtrar</button>
+    </div>
+
+    <div class="card-container">
+        @foreach (var professional in _professionals)
+        {
+            <div class="card">
+                <div class="card-header">
+                    <h3>@professional.UserName</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>Email:</strong> @professional.Email</p>
+                    <p><strong>Telefone:</strong> @professional.PhoneNumber</p>
+                    <p><strong>Tipos de Profissional:</strong> @string.Join(", ", professional.ProfessionalTypes)</p>
+                </div>
+                <div class="card-footer">
+                    <button @onclick="() => proposalModal.OpenModal(professional.Id)">Enviar Proposta</button>
+                </div>
+            </div>
+        }
+    </div>
+}
 
 @code {
     private IEnumerable<GenericProfessionalDTO> _professionals;
     private bool _isLoading = true;
     private string _professionalTypeFilter = string.Empty;
+    private ProposalModal proposalModal; // Referência para o modal
 
     protected override async Task OnInitializedAsync()
     {
@@ -23,8 +58,7 @@
         }
         catch (Exception ex)
         {
-            // Tratar exceção
-            Console.WriteLine($"Error fetching professionals: {ex.Message}");
+            Console.WriteLine($"Erro ao carregar profissionais: {ex.Message}");
         }
         finally
         {
@@ -37,42 +71,6 @@
         _isLoading = true;
         await LoadProfessionals();
     }
-
-    private void NavigateToPortfolio(int professionalId)
-    {
-        Navigation.NavigateTo($"/portfolio/{professionalId}"); // Redireciona para o portfólio do profissional
-    }
-}
-
-@if (_isLoading)
-{
-    <p>Loading...</p>
-}
-else
-{
-    <div>
-        <input type="text" @bind="_professionalTypeFilter" placeholder="Filter by type" />
-        <button @onclick="FilterProfessionals">Filter</button>
-    </div>
-
-    <div class="card-container">
-        @foreach (var professional in _professionals)
-        {
-            <div class="card">
-                <div class="card-header">
-                    <h3>@professional.UserName</h3>
-                </div>
-                <div class="card-body">
-                    <p><strong>Email:</strong> @professional.Email</p>
-                    <p><strong>Phone Number:</strong> @professional.PhoneNumber</p>
-                    <p><strong>Professional Type:</strong> @string.Join(", ", professional.ProfessionalTypes)</p>
-                </div>
-                <div class="card-footer">
-                    <button @onclick="() => NavigateToPortfolio(professional.Id)">View Portfolio</button> <!-- Botão para ver o portfólio -->
-                </div>
-            </div>
-        }
-    </div>
 }
 
 <style>

@@ -47,6 +47,24 @@ namespace WebAthenPs.API.SignalRHubs
             }
         }
 
+        // Profissional aceita ou rejeita uma proposta
+        public async Task RespondToProposal(Guid proposalId, bool isAccepted)
+        {
+            // Buscar a proposta pelo ID
+            var proposal = await _proposalRepository.GetByIdAsync(proposalId);
+            if (proposal == null)
+            {
+                throw new ArgumentException("Proposta não encontrada.", nameof(proposalId));
+            }
 
+            // Atualiza a proposta com a resposta do profissional
+            proposal.IsAccepted = isAccepted;
+
+            // Atualizar a proposta no banco de dados
+            await _proposalRepository.UpdateAsync(proposal);
+
+            // Enviar a resposta de volta ao cliente que enviou a proposta
+            await Clients.User(proposal.ClientId.ToString()).SendAsync("ProposalResponse", proposalId, isAccepted);
+        }
     }
 }

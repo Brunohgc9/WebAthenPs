@@ -8,11 +8,25 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebAthenPs.API.Migrations
 {
     /// <inheritdoc />
-    public partial class seventh : Migration
+    public partial class idkkk2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Architects",
+                columns: table => new
+                {
+                    ArchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    genericId = table.Column<int>(type: "int", nullable: false),
+                    RegistroConselho = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Especialidade = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Architects", x => x.ArchId);
+                });
+
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -189,6 +203,64 @@ namespace WebAthenPs.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Posts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LikedByUserIds = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Posts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Posts_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GenericProfessionals",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ClientId = table.Column<int>(type: "int", nullable: true),
+                    ProfessionalTypes = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ArchId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GenericProfessionals", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GenericProfessionals_Architects_ArchId",
+                        column: x => x.ArchId,
+                        principalTable: "Architects",
+                        principalColumn: "ArchId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_GenericProfessionals_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_GenericProfessionals_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Clients",
+                        principalColumn: "ClientId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Projects",
                 columns: table => new
                 {
@@ -226,73 +298,82 @@ namespace WebAthenPs.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Architects",
-                columns: table => new
-                {
-                    ArchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    genericId = table.Column<int>(type: "int", nullable: false),
-                    RegistroConselho = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Especialidade = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Architects", x => x.ArchId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "GenericProfessionals",
+                name: "Comments",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ClientId = table.Column<int>(type: "int", nullable: true),
-                    ProfessionalTypes = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ArchitectArchId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PostId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GenericProfessionals", x => x.Id);
+                    table.PrimaryKey("PK_Comments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_GenericProfessionals_Architects_ArchitectArchId",
-                        column: x => x.ArchitectArchId,
-                        principalTable: "Architects",
-                        principalColumn: "ArchId");
-                    table.ForeignKey(
-                        name: "FK_GenericProfessionals_AspNetUsers_UserId",
+                        name: "FK_Comments_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_GenericProfessionals_Clients_ClientId",
-                        column: x => x.ClientId,
-                        principalTable: "Clients",
-                        principalColumn: "ClientId",
-                        onDelete: ReferentialAction.Restrict);
+                        name: "FK_Comments_Posts_PostId",
+                        column: x => x.PostId,
+                        principalTable: "Posts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProjectProfessional",
+                name: "Proposals",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ProjectId = table.Column<int>(type: "int", nullable: false),
+                    ProposalId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProposalMessage = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProposalValue = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ProposalType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsAccepted = table.Column<bool>(type: "bit", nullable: false),
+                    ClientId = table.Column<int>(type: "int", nullable: false),
                     ProfessionalId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProjectProfessional", x => x.Id);
+                    table.PrimaryKey("PK_Proposals", x => x.ProposalId);
                     table.ForeignKey(
-                        name: "FK_ProjectProfessional_GenericProfessionals_ProfessionalId",
+                        name: "FK_Proposals_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Clients",
+                        principalColumn: "ClientId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Proposals_GenericProfessionals_ProfessionalId",
                         column: x => x.ProfessionalId,
+                        principalTable: "GenericProfessionals",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GenericProfessionalProjecty",
+                columns: table => new
+                {
+                    ProfessionalsId = table.Column<int>(type: "int", nullable: false),
+                    ProjectsProjectId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GenericProfessionalProjecty", x => new { x.ProfessionalsId, x.ProjectsProjectId });
+                    table.ForeignKey(
+                        name: "FK_GenericProfessionalProjecty_GenericProfessionals_ProfessionalsId",
+                        column: x => x.ProfessionalsId,
                         principalTable: "GenericProfessionals",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ProjectProfessional_Projects_ProjectId",
-                        column: x => x.ProjectId,
+                        name: "FK_GenericProfessionalProjecty_Projects_ProjectsProjectId",
+                        column: x => x.ProjectsProjectId,
                         principalTable: "Projects",
                         principalColumn: "ProjectId",
                         onDelete: ReferentialAction.Cascade);
@@ -303,14 +384,15 @@ namespace WebAthenPs.API.Migrations
                 columns: table => new
                 {
                     ProjectId = table.Column<int>(type: "int", nullable: false),
+                    ProfessionalId = table.Column<int>(type: "int", nullable: false),
                     Id = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProjectProfessionals", x => new { x.ProjectId, x.Id });
+                    table.PrimaryKey("PK_ProjectProfessionals", x => new { x.ProfessionalId, x.ProjectId });
                     table.ForeignKey(
-                        name: "FK_ProjectProfessionals_GenericProfessionals_Id",
-                        column: x => x.Id,
+                        name: "FK_ProjectProfessionals_GenericProfessionals_ProfessionalId",
+                        column: x => x.ProfessionalId,
                         principalTable: "GenericProfessionals",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -323,40 +405,50 @@ namespace WebAthenPs.API.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Architects",
+                columns: new[] { "ArchId", "Especialidade", "RegistroConselho", "genericId" },
+                values: new object[,]
+                {
+                    { new Guid("9876b54c-7952-4f52-a170-ed3036394792"), "Residencial", "123456", 1 },
+                    { new Guid("a05cf0e7-d957-44ba-9e2a-313def7408ba"), "Comercial", "654321", 6 },
+                    { new Guid("c151318e-3c52-4120-a0c1-b47b35ce07d1"), "Industrial", "112233", 12 }
+                });
+
+            migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "Address", "CPF", "City", "ConcurrencyStamp", "CreatedDate", "Email", "EmailConfirmed", "Gender", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "PostalCode", "RG", "Role", "SecurityStamp", "State", "TwoFactorEnabled", "UpdatedDate", "UserName", "UserType" },
                 values: new object[,]
                 {
-                    { "user1", 0, "Rua A, 123", "12345678901", "São Paulo", "256c1bae-12a1-4fe3-a394-424ef8641b40", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(5900), "carlos.silva@example.com", false, "M", false, null, null, null, null, null, false, "01000-000", "1234567", null, "38cffb04-899f-42cd-a2d1-4ab6a68e62af", "SP", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(5902), "Carlos Silva", "Client" },
-                    { "user10", 0, "Rua J, 707", "01234567890", "Manaus", "84736f75-3a99-4d45-9fe5-b493268540e0", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6219), "claudia.rodrigues@example.com", false, "F", false, null, null, null, null, null, false, "69000-000", "0123456", null, "4f5c6d10-19c4-4d26-8619-9621636aa862", "AM", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6219), "Claudia Rodrigues", "Client" },
-                    { "user11", 0, "Rua K, 808", "12345678901", "São Luís", "0c25ecb6-7b56-43ba-866b-d64d7860e30d", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6234), "fernando.oliveira@example.com", false, "M", false, null, null, null, null, null, false, "65000-000", "1234567", null, "cc97a8eb-4694-4e87-bb6e-b9d4e0f7cb2f", "MA", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6235), "Fernando Oliveira", "Client" },
-                    { "user12", 0, "Rua L, 909", "23456789012", "São José de Ribamar", "9fd4c540-d7ac-4172-a317-7b97036f1ad0", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6248), "luciana.pereira@example.com", false, "F", false, null, null, null, null, null, false, "65100-000", "2345678", null, "807aab30-1dc0-43be-9e68-7b1a19bd1231", "MA", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6248), "Luciana Pereira", "Client" },
-                    { "user13", 0, "Rua M, 1010", "34567890123", "Teresina", "02ef8814-fb0c-4577-97d1-d6eaac458bd9", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6260), "eduardo.costa@example.com", false, "M", false, null, null, null, null, null, false, "64000-000", "3456789", null, "f4da2393-61e8-4d36-a08a-90da0b1af2c7", "PI", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6260), "Eduardo Costa", "Client" },
-                    { "user14", 0, "Rua N, 1111", "45678901234", "Maceió", "a89ee89b-71c3-4c37-bf0d-07613c84b5c8", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6271), "renata.almeida@example.com", false, "F", false, null, null, null, null, null, false, "57000-000", "4567890", null, "10be005d-ee41-4485-9a11-9e26896f3028", "AL", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6271), "Renata Almeida", "Client" },
-                    { "user15", 0, "Rua O, 1212", "56789012345", "João Pessoa", "f30f4ec7-0e30-4b9e-a022-381ccb912404", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6284), "carlos.eduardo@example.com", false, "M", false, null, null, null, null, null, false, "58000-000", "5678901", null, "e4da27a0-587f-474e-9822-026ef1ebf49d", "PB", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6284), "Carlos Eduardo", "Client" },
-                    { "user16", 0, "Rua P, 1313", "67890123456", "São Paulo", "8e2845a4-aa57-40ea-8c92-40c0bb3c51f1", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6295), "lucas.oliveira@example.com", false, "M", false, null, null, null, null, null, false, "01001-000", "6789012", null, "cf5b131b-09aa-448c-8d9c-c1e6861bbeea", "SP", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6296), "Lucas Oliveira", "Professional" },
-                    { "user17", 0, "Rua Q, 1414", "78901234567", "Rio de Janeiro", "2cbc6eb4-789c-4ec4-9ab2-5f208e6cb1c1", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6307), "mariana.silva@example.com", false, "F", false, null, null, null, null, null, false, "20001-000", "7890123", null, "2495d7f3-e2b3-4fd5-9b18-fcfd78c3f4c6", "RJ", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6307), "Mariana Silva", "Professional" },
-                    { "user18", 0, "Rua R, 1515", "89012345678", "Belo Horizonte", "cf784f0d-edf8-4c3f-a729-253d05986a9d", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6320), "gabriel.santos@example.com", false, "M", false, null, null, null, null, null, false, "30001-000", "8901234", null, "e43f2551-dbc3-4d09-ab3f-6445ca203195", "MG", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6320), "Gabriel Santos", "Professional" },
-                    { "user19", 0, "Rua S, 1616", "90123456789", "Salvador", "92c837e8-5adb-4bd4-958c-e8fbcc6dd687", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6331), "juliana.costa@example.com", false, "F", false, null, null, null, null, null, false, "40001-000", "9012345", null, "d891ab6b-ce64-413d-a1f8-ace0b72119ec", "BA", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6331), "Juliana Costa", "Professional" },
-                    { "user2", 0, "Rua B, 456", "23456789012", "Rio de Janeiro", "0d63622e-0541-4814-89a6-87d086cffb22", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6021), "ana.souza@example.com", false, "F", false, null, null, null, null, null, false, "20000-000", "2345678", null, "06579c18-91bb-4e52-aac6-d0b377c042d1", "RJ", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6021), "Ana Souza", "Client" },
-                    { "user20", 0, "Rua T, 1717", "01234567890", "Fortaleza", "ad9f0ca3-ee65-42e7-be4c-5089e069e2a2", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6344), "roberto.almeida@example.com", false, "M", false, null, null, null, null, null, false, "60001-000", "0123456", null, "b5dfc773-2b8d-4d7b-9431-1011b315fe23", "CE", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6344), "Roberto Almeida", "Professional" },
-                    { "user21", 0, "Rua U, 1818", "12345678901", "Curitiba", "3ab1eb7d-6abc-4dc1-a186-a9e0ffbece17", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6355), "patricia.martins@example.com", false, "F", false, null, null, null, null, null, false, "80001-000", "1234567", null, "28820731-7dac-436d-b2e1-0c03e1b002d8", "PR", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6355), "Patricia Martins", "Professional" },
-                    { "user22", 0, "Rua V, 1919", "23456789012", "Porto Alegre", "2b186fc3-4a79-4221-9515-e607e104fb35", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6366), "ricardo.lima@example.com", false, "M", false, null, null, null, null, null, false, "90001-000", "2345678", null, "9dbed96f-432d-4933-a031-81dd650edf68", "RS", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6367), "Ricardo Lima", "Professional" },
-                    { "user23", 0, "Rua W, 2020", "34567890123", "São Luís", "1c66b787-8bb8-49e3-bde1-d3c742cc83bb", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6379), "claudia.souza@example.com", false, "F", false, null, null, null, null, null, false, "65001-000", "3456789", null, "a276c3cb-9f49-4bcd-b231-a2331ae7c6da", "MA", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6380), "Claudia Souza", "Professional" },
-                    { "user24", 0, "Rua X, 2121", "45678901234", "Teresina", "88f6ef91-4e04-4cbf-aa12-1befd1d1cf11", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6391), "fernando.santos@example.com", false, "M", false, null, null, null, null, null, false, "64001-000", "4567890", null, "10d4d57b-36e7-4a02-a90d-5bb63a07ab08", "PI", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6391), "Fernando Santos", "Professional" },
-                    { "user25", 0, "Rua Y, 2222", "56789012345", "Maceió", "a35d092e-405c-4811-99ad-5b918a2d4b52", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6402), "juliana.lima@example.com", false, "F", false, null, null, null, null, null, false, "57001-000", "5678901", null, "140d155d-12fb-4bd0-a251-81a1ad36a134", "AL", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6402), "Juliana Lima", "Professional" },
-                    { "user26", 0, "Rua Z, 2323", "67890123456", "João Pessoa", "2225cdd6-db1b-47ab-9541-adf8d9152137", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6415), "ricardo.costa@example.com", false, "M", false, null, null, null, null, null, false, "58001-000", "6789012", null, "486e472d-6a41-411a-a37c-30fe088afc0d", "PB", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6415), "Ricardo Costa", "Professional" },
-                    { "user27", 0, "Rua AA, 2424", "78901234567", "São Paulo", "75bfe12f-9cac-4a92-9208-00afff63889b", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6452), "mariana.almeida@example.com", false, "F", false, null, null, null, null, null, false, "01002-000", "7890123", null, "87a5afa1-4083-4804-a482-d7e18d86f9ef", "SP", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6453), "Mariana Almeida", "Professional" },
-                    { "user28", 0, "Rua BB, 2525", "89012345678", "Rio de Janeiro", "435471fd-da32-4f76-807b-3319cfbff882", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6465), "gabriel.souza@example.com", false, "M", false, null, null, null, null, null, false, "20002-000", "8901234", null, "ab111a57-a4c8-46f6-9eb2-b01a13bb33ec", "RJ", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6466), "Gabriel Souza", "Professional" },
-                    { "user29", 0, "Rua CC, 2626", "90123456789", "Belo Horizonte", "3fa4d41a-ecb2-4306-88b7-9dc8facff94a", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6477), "juliana.rodrigues@example.com", false, "F", false, null, null, null, null, null, false, "30002-000", "9012345", null, "3ee24a83-9e03-412b-9f5d-4ff4184339af", "MG", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6477), "Juliana Rodrigues", "Professional" },
-                    { "user3", 0, "Rua C, 789", "34567890123", "Belo Horizonte", "d4f0df77-dc22-4ee2-b4d3-4767938344e8", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6034), "joao.oliveira@example.com", false, "M", false, null, null, null, null, null, false, "30000-000", "3456789", null, "87b983f2-829f-465c-8c58-66d5db3a2723", "MG", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6034), "João Oliveira", "Client" },
-                    { "user30", 0, "Rua DD, 2727", "01234567890", "Salvador", "aae2093e-9ad4-4432-9738-3dec95a41656", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6489), "roberto.fernandes@example.com", false, "M", false, null, null, null, null, null, false, "40002-000", "0123456", null, "0a762024-720a-419b-af6b-59862a53913e", "BA", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6490), "Roberto Fernandes", "Professional" },
-                    { "user4", 0, "Rua D, 101", "45678901234", "Salvador", "6b8b6ccb-b1ef-424e-a013-58e32395460c", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6047), "maria.santos@example.com", false, "F", false, null, null, null, null, null, false, "40000-000", "4567890", null, "16045a84-072a-472b-8306-cad40433c3af", "BA", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6047), "Maria Santos", "Client" },
-                    { "user5", 0, "Rua E, 202", "56789012345", "Fortaleza", "1f903e4a-c9d5-48e6-bbb3-3b91f59b2fae", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6058), "pedro.almeida@example.com", false, "M", false, null, null, null, null, null, false, "60000-000", "5678901", null, "c9ddf8a0-3716-41e6-ad3b-8be9e405e913", "CE", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6059), "Pedro Almeida", "Client" },
-                    { "user6", 0, "Rua F, 303", "67890123456", "Curitiba", "d53aa8a2-7463-4897-b26b-cfe901aa6436", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6070), "juliana.costa@example.com", false, "F", false, null, null, null, null, null, false, "80000-000", "6789012", null, "842ec82b-913c-48ce-bcb9-4f7126bb4e9c", "PR", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6070), "Juliana Costa", "Client" },
-                    { "user7", 0, "Rua G, 404", "78901234567", "Porto Alegre", "e70cc45a-e68b-4a40-92cb-0c6f4a9084e9", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6082), "roberto.lima@example.com", false, "M", false, null, null, null, null, null, false, "90000-000", "7890123", null, "d83a7a48-6e4b-4a2c-86e3-59dc213bd504", "RS", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6083), "Roberto Lima", "Client" },
-                    { "user8", 0, "Rua H, 505", "89012345678", "Recife", "b70db2d3-f653-4f2e-baf2-725c75e2cdcd", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6094), "patricia.martins@example.com", false, "F", false, null, null, null, null, null, false, "50000-000", "8901234", null, "c7b5c2a8-efcb-4d10-913a-9c17a8d1093b", "PE", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6094), "Patricia Martins", "Client" },
-                    { "user9", 0, "Rua I, 606", "90123456789", "Belém", "20b58e2f-fa09-49ae-b319-e72f6047d835", new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6106), "ricardo.fernandes@example.com", false, "M", false, null, null, null, null, null, false, "66000-000", "9012345", null, "0cade379-18d2-4d5b-9d42-5c4c46c4d598", "PA", false, new DateTime(2024, 9, 6, 1, 31, 24, 215, DateTimeKind.Utc).AddTicks(6107), "Ricardo Fernandes", "Client" }
+                    { "user1", 0, "Rua A, 123", "12345678901", "São Paulo", "a8080e1d-8fe4-4abe-84a4-5fb2f158b112", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8129), "carlos.silva@example.com", false, "M", false, null, null, null, null, null, false, "01000-000", "1234567", null, "688e0477-af08-412e-8e9f-ddf3f9a9273c", "SP", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8132), "Carlos Silva", "Client" },
+                    { "user10", 0, "Rua J, 707", "01234567890", "Manaus", "2e7d518c-e673-4587-b87a-61162b58f3e4", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8383), "claudia.rodrigues@example.com", false, "F", false, null, null, null, null, null, false, "69000-000", "0123456", null, "5d9b4d2a-b2b7-44c2-8d60-9ea749e8ce48", "AM", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8383), "Claudia Rodrigues", "Client" },
+                    { "user11", 0, "Rua K, 808", "12345678901", "São Luís", "cbe0a376-d56e-42b3-83b2-8285f6743d3f", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8450), "fernando.oliveira@example.com", false, "M", false, null, null, null, null, null, false, "65000-000", "1234567", null, "0151d87a-2a10-4ee9-888e-cf9fa95e9b69", "MA", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8450), "Fernando Oliveira", "Client" },
+                    { "user12", 0, "Rua L, 909", "23456789012", "São José de Ribamar", "5cf86a42-9279-4807-9010-fc2484cd0056", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8465), "luciana.pereira@example.com", false, "F", false, null, null, null, null, null, false, "65100-000", "2345678", null, "c5adb846-5b99-4295-950c-6bd5c7a03057", "MA", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8465), "Luciana Pereira", "Client" },
+                    { "user13", 0, "Rua M, 1010", "34567890123", "Teresina", "c70d4577-84c4-4634-b01a-f4229cf57d61", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8479), "eduardo.costa@example.com", false, "M", false, null, null, null, null, null, false, "64000-000", "3456789", null, "65fcbfe7-7f02-4b08-a720-b6cf12490134", "PI", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8479), "Eduardo Costa", "Client" },
+                    { "user14", 0, "Rua N, 1111", "45678901234", "Maceió", "7b8fefaa-72bb-4e25-bdcc-f88a9c90fd1a", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8491), "renata.almeida@example.com", false, "F", false, null, null, null, null, null, false, "57000-000", "4567890", null, "67353999-97af-4e8d-aed0-addc7c94bb3c", "AL", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8491), "Renata Almeida", "Client" },
+                    { "user15", 0, "Rua O, 1212", "56789012345", "João Pessoa", "c6f7773e-e572-4654-a097-3944f5e2a753", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8506), "carlos.eduardo@example.com", false, "M", false, null, null, null, null, null, false, "58000-000", "5678901", null, "456d8fcb-3a9b-428d-977a-20b5a87d008d", "PB", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8511), "Carlos Eduardo", "Client" },
+                    { "user16", 0, "Rua P, 1313", "67890123456", "São Paulo", "decb87d0-455a-4e48-b244-a5756fbb2726", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8532), "lucas.oliveira@example.com", false, "M", false, null, null, null, null, null, false, "01001-000", "6789012", null, "78737a98-3016-4fe7-b691-cbf0dcf3acda", "SP", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8533), "Lucas Oliveira", "Professional" },
+                    { "user17", 0, "Rua Q, 1414", "78901234567", "Rio de Janeiro", "1287d92f-d9a6-44be-83b4-be39ce209554", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8600), "mariana.silva@example.com", false, "F", false, null, null, null, null, null, false, "20001-000", "7890123", null, "50588624-2326-4a98-be64-17876ce0bca1", "RJ", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8601), "Mariana Silva", "Professional" },
+                    { "user18", 0, "Rua R, 1515", "89012345678", "Belo Horizonte", "8045d9a4-df04-4aca-bb50-3b074b064b28", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8615), "gabriel.santos@example.com", false, "M", false, null, null, null, null, null, false, "30001-000", "8901234", null, "aa2cc6c6-70db-453f-a96e-1b5513233d1d", "MG", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8615), "Gabriel Santos", "Professional" },
+                    { "user19", 0, "Rua S, 1616", "90123456789", "Salvador", "fd4aa34a-b75a-43a4-8300-145887b274a1", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8627), "juliana.costa@example.com", false, "F", false, null, null, null, null, null, false, "40001-000", "9012345", null, "63862d5d-3b90-4fab-a0e9-281dfc360077", "BA", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8627), "Juliana Costa", "Professional" },
+                    { "user2", 0, "Rua B, 456", "23456789012", "Rio de Janeiro", "92fe23d9-9a44-45a4-8dc5-faaaa0e94eab", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8269), "ana.souza@example.com", false, "F", false, null, null, null, null, null, false, "20000-000", "2345678", null, "cc952c3d-d2ab-4d20-844e-7d2c33dbf973", "RJ", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8269), "Ana Souza", "Client" },
+                    { "user20", 0, "Rua T, 1717", "01234567890", "Fortaleza", "6108aea4-9ebb-4a6c-86dc-e51f3d348e89", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8641), "roberto.almeida@example.com", false, "M", false, null, null, null, null, null, false, "60001-000", "0123456", null, "2472e1bd-c097-4c0b-9c6e-56d635f9f44b", "CE", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8642), "Roberto Almeida", "Professional" },
+                    { "user21", 0, "Rua U, 1818", "12345678901", "Curitiba", "7959c3db-ecc6-4b2b-9030-468aaaaffd60", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8653), "patricia.martins@example.com", false, "F", false, null, null, null, null, null, false, "80001-000", "1234567", null, "a1e3a136-e3f9-41eb-9acb-db5434f73ee2", "PR", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8654), "Patricia Martins", "Professional" },
+                    { "user22", 0, "Rua V, 1919", "23456789012", "Porto Alegre", "029a91a5-cd01-4d4d-91a2-030c2845eead", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8665), "ricardo.lima@example.com", false, "M", false, null, null, null, null, null, false, "90001-000", "2345678", null, "6b5bb1aa-28c0-4ed1-b40a-d9f872852240", "RS", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8666), "Ricardo Lima", "Professional" },
+                    { "user23", 0, "Rua W, 2020", "34567890123", "São Luís", "5bd42aff-ae10-4ff9-9096-a4d8fc91dbb0", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8680), "claudia.souza@example.com", false, "F", false, null, null, null, null, null, false, "65001-000", "3456789", null, "04bf9b62-523d-4125-a743-e665a1851d2c", "MA", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8680), "Claudia Souza", "Professional" },
+                    { "user24", 0, "Rua X, 2121", "45678901234", "Teresina", "6fe0679e-3fd9-4cdb-b321-63a22b30b159", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8693), "fernando.santos@example.com", false, "M", false, null, null, null, null, null, false, "64001-000", "4567890", null, "b895afff-2311-4413-b4dd-3ddc1a84ee30", "PI", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8693), "Fernando Santos", "Professional" },
+                    { "user25", 0, "Rua Y, 2222", "56789012345", "Maceió", "d21556c5-0153-484b-90f0-424378821001", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8705), "juliana.lima@example.com", false, "F", false, null, null, null, null, null, false, "57001-000", "5678901", null, "1fb20f1a-fe9d-4312-9b4d-258bf79edd00", "AL", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8705), "Juliana Lima", "Professional" },
+                    { "user26", 0, "Rua Z, 2323", "67890123456", "João Pessoa", "0878c13a-cadf-4525-a134-e13a4c6b04f3", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8720), "ricardo.costa@example.com", false, "M", false, null, null, null, null, null, false, "58001-000", "6789012", null, "512a2466-d5bf-4253-b847-e6abe2b21629", "PB", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8720), "Ricardo Costa", "Professional" },
+                    { "user27", 0, "Rua AA, 2424", "78901234567", "São Paulo", "9de60f67-5049-4c05-9941-0f2cb3dd9e51", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8732), "mariana.almeida@example.com", false, "F", false, null, null, null, null, null, false, "01002-000", "7890123", null, "386a6ecb-c1e3-40c5-9b6a-60957e7a7041", "SP", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8732), "Mariana Almeida", "Professional" },
+                    { "user28", 0, "Rua BB, 2525", "89012345678", "Rio de Janeiro", "13bbaa9a-c68e-4bb7-92d4-d22ba89b56d6", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8747), "gabriel.souza@example.com", false, "M", false, null, null, null, null, null, false, "20002-000", "8901234", null, "966595cd-cec9-4c11-b9e1-7d9dc95ca268", "RJ", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8747), "Gabriel Souza", "Professional" },
+                    { "user29", 0, "Rua CC, 2626", "90123456789", "Belo Horizonte", "c5ece0e5-d5da-4404-9cc8-07a1c8dc0e61", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8759), "juliana.rodrigues@example.com", false, "F", false, null, null, null, null, null, false, "30002-000", "9012345", null, "65f4240a-7686-4434-88e5-711b33d14792", "MG", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8759), "Juliana Rodrigues", "Professional" },
+                    { "user3", 0, "Rua C, 789", "34567890123", "Belo Horizonte", "60e50d87-9141-4d2c-8148-b49845bf4a86", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8282), "joao.oliveira@example.com", false, "M", false, null, null, null, null, null, false, "30000-000", "3456789", null, "2f37ca53-5ceb-42c9-a813-239d1b7e95e0", "MG", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8282), "João Oliveira", "Client" },
+                    { "user30", 0, "Rua DD, 2727", "01234567890", "Salvador", "e88173c8-42e5-467c-9a1c-9ff45627a1df", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8771), "roberto.fernandes@example.com", false, "M", false, null, null, null, null, null, false, "40002-000", "0123456", null, "ac05390e-08ab-4f75-be62-d2728956efa9", "BA", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8771), "Roberto Fernandes", "Professional" },
+                    { "user4", 0, "Rua D, 101", "45678901234", "Salvador", "597441cc-0bfa-42b2-afce-788245596280", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8297), "maria.santos@example.com", false, "F", false, null, null, null, null, null, false, "40000-000", "4567890", null, "e98f3eda-e06d-46f1-8c45-ddbb891c1caf", "BA", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8298), "Maria Santos", "Client" },
+                    { "user5", 0, "Rua E, 202", "56789012345", "Fortaleza", "c80a7976-88fc-455c-96e1-7769efa98d91", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8310), "pedro.almeida@example.com", false, "M", false, null, null, null, null, null, false, "60000-000", "5678901", null, "82f62248-819c-4c61-a0a5-d881f98a5331", "CE", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8310), "Pedro Almeida", "Client" },
+                    { "user6", 0, "Rua F, 303", "67890123456", "Curitiba", "ff5f8d96-f93e-4bc3-980a-ea78d7652d46", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8329), "juliana.costa@example.com", false, "F", false, null, null, null, null, null, false, "80000-000", "6789012", null, "7e0fbd0f-5a95-4478-b4d2-a9e3857a21f5", "PR", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8329), "Juliana Costa", "Client" },
+                    { "user7", 0, "Rua G, 404", "78901234567", "Porto Alegre", "df679334-65ce-4d61-b46f-8b3339b26fe5", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8344), "roberto.lima@example.com", false, "M", false, null, null, null, null, null, false, "90000-000", "7890123", null, "09733840-d953-4251-b2ea-2902f9cff543", "RS", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8344), "Roberto Lima", "Client" },
+                    { "user8", 0, "Rua H, 505", "89012345678", "Recife", "f02209cb-6a5d-48d4-839e-7c235e188368", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8356), "patricia.martins@example.com", false, "F", false, null, null, null, null, null, false, "50000-000", "8901234", null, "d7adc2ac-ee50-4285-95b0-a1ea4708f4f4", "PE", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8356), "Patricia Martins", "Client" },
+                    { "user9", 0, "Rua I, 606", "90123456789", "Belém", "fdbc9075-43b0-453a-b8c5-f21b4957c2cb", new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8368), "ricardo.fernandes@example.com", false, "M", false, null, null, null, null, null, false, "66000-000", "9012345", null, "7c827c2f-a779-4f76-8739-4cc0fe4b5b2b", "PA", false, new DateTime(2024, 10, 8, 18, 20, 53, 749, DateTimeKind.Utc).AddTicks(8369), "Ricardo Fernandes", "Client" }
                 });
 
             migrationBuilder.InsertData(
@@ -383,21 +475,21 @@ namespace WebAthenPs.API.Migrations
 
             migrationBuilder.InsertData(
                 table: "GenericProfessionals",
-                columns: new[] { "Id", "ArchitectArchId", "ClientId", "ProfessionalTypes", "UserId" },
+                columns: new[] { "Id", "ArchId", "ClientId", "ProfessionalTypes", "UserId" },
                 values: new object[,]
                 {
-                    { 1, null, 1, "[\"Arquiteto\"]", "user16" },
+                    { 1, new Guid("9876b54c-7952-4f52-a170-ed3036394792"), 1, "[\"Arquiteto\"]", "user16" },
                     { 2, null, 2, "[\"Eletricista\"]", "user17" },
                     { 3, null, 3, "[\"Engenheiro\"]", "user18" },
                     { 4, null, 4, "[\"Pedreiro\"]", "user19" },
                     { 5, null, 5, "[\"Encanador\"]", "user20" },
-                    { 6, null, 6, "[\"Arquiteto\"]", "user21" },
+                    { 6, new Guid("a05cf0e7-d957-44ba-9e2a-313def7408ba"), 6, "[\"Arquiteto\"]", "user21" },
                     { 7, null, 7, "[\"Eletricista\"]", "user22" },
                     { 8, null, 8, "[\"Engenheiro\"]", "user23" },
                     { 9, null, 9, "[\"Pedreiro\"]", "user24" },
                     { 10, null, 10, "[\"Encanador\"]", "user25" },
                     { 11, null, 11, "[\"Eletricista\"]", "user26" },
-                    { 12, null, 12, "[\"Arquiteto\"]", "user27" },
+                    { 12, new Guid("c151318e-3c52-4120-a0c1-b47b35ce07d1"), 12, "[\"Arquiteto\"]", "user27" },
                     { 13, null, 13, "[\"Engenheiro\"]", "user28" },
                     { 14, null, 14, "[\"Pedreiro\"]", "user29" },
                     { 15, null, 15, "[\"Encanador\"]", "user30" }
@@ -426,57 +518,41 @@ namespace WebAthenPs.API.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Architects",
-                columns: new[] { "ArchId", "Especialidade", "RegistroConselho", "genericId" },
-                values: new object[,]
-                {
-                    { new Guid("516b3960-9f9a-4ad7-85f7-09e94011eaa2"), "Industrial", "112233", 12 },
-                    { new Guid("9285f336-798a-415f-b2e7-3400ba6c1796"), "Comercial", "654321", 6 },
-                    { new Guid("99a71655-8ae6-428d-bfd9-5f09a3ebac30"), "Residencial", "123456", 1 }
-                });
-
-            migrationBuilder.InsertData(
                 table: "ProjectProfessionals",
-                columns: new[] { "Id", "ProjectId" },
+                columns: new[] { "ProfessionalId", "ProjectId", "Id" },
                 values: new object[,]
                 {
-                    { 1, 1 },
-                    { 2, 1 },
-                    { 3, 2 },
-                    { 4, 2 },
-                    { 5, 3 },
-                    { 6, 3 },
-                    { 7, 4 },
-                    { 8, 4 },
-                    { 9, 5 },
-                    { 10, 5 },
-                    { 11, 6 },
-                    { 12, 6 },
-                    { 13, 7 },
-                    { 14, 7 },
-                    { 1, 8 },
-                    { 15, 8 },
-                    { 2, 9 },
-                    { 3, 9 },
-                    { 4, 10 },
-                    { 5, 10 },
-                    { 6, 11 },
-                    { 7, 11 },
-                    { 8, 12 },
-                    { 9, 12 },
-                    { 10, 13 },
-                    { 11, 13 },
-                    { 12, 14 },
-                    { 13, 14 },
-                    { 14, 15 },
-                    { 15, 15 }
+                    { 1, 1, 1 },
+                    { 1, 8, 1 },
+                    { 2, 2, 3 },
+                    { 2, 9, 3 },
+                    { 3, 3, 5 },
+                    { 3, 10, 5 },
+                    { 4, 4, 7 },
+                    { 4, 11, 7 },
+                    { 5, 5, 9 },
+                    { 5, 12, 9 },
+                    { 6, 1, 2 },
+                    { 6, 9, 2 },
+                    { 7, 2, 4 },
+                    { 7, 10, 4 },
+                    { 8, 3, 6 },
+                    { 8, 11, 6 },
+                    { 9, 4, 8 },
+                    { 9, 12, 8 },
+                    { 10, 5, 10 },
+                    { 10, 13, 10 },
+                    { 11, 6, 11 },
+                    { 11, 13, 11 },
+                    { 12, 6, 12 },
+                    { 12, 14, 12 },
+                    { 13, 7, 13 },
+                    { 13, 14, 13 },
+                    { 14, 7, 14 },
+                    { 14, 15, 14 },
+                    { 15, 8, 15 },
+                    { 15, 15, 15 }
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Architects_genericId",
-                table: "Architects",
-                column: "genericId",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -523,9 +599,26 @@ namespace WebAthenPs.API.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GenericProfessionals_ArchitectArchId",
+                name: "IX_Comments_PostId",
+                table: "Comments",
+                column: "PostId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_UserId",
+                table: "Comments",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GenericProfessionalProjecty_ProjectsProjectId",
+                table: "GenericProfessionalProjecty",
+                column: "ProjectsProjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GenericProfessionals_ArchId",
                 table: "GenericProfessionals",
-                column: "ArchitectArchId");
+                column: "ArchId",
+                unique: true,
+                filter: "[ArchId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_GenericProfessionals_ClientId",
@@ -538,41 +631,34 @@ namespace WebAthenPs.API.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProjectProfessional_ProfessionalId",
-                table: "ProjectProfessional",
-                column: "ProfessionalId");
+                name: "IX_Posts_UserId",
+                table: "Posts",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProjectProfessional_ProjectId",
-                table: "ProjectProfessional",
-                column: "ProjectId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProjectProfessionals_Id",
+                name: "IX_ProjectProfessionals_ProjectId",
                 table: "ProjectProfessionals",
-                column: "Id");
+                column: "ProjectId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Projects_ClientId",
                 table: "Projects",
                 column: "ClientId");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_Architects_GenericProfessionals_genericId",
-                table: "Architects",
-                column: "genericId",
-                principalTable: "GenericProfessionals",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+            migrationBuilder.CreateIndex(
+                name: "IX_Proposals_ClientId",
+                table: "Proposals",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Proposals_ProfessionalId",
+                table: "Proposals",
+                column: "ProfessionalId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Architects_GenericProfessionals_genericId",
-                table: "Architects");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -589,13 +675,22 @@ namespace WebAthenPs.API.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "ProjectProfessional");
+                name: "Comments");
+
+            migrationBuilder.DropTable(
+                name: "GenericProfessionalProjecty");
 
             migrationBuilder.DropTable(
                 name: "ProjectProfessionals");
 
             migrationBuilder.DropTable(
+                name: "Proposals");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Posts");
 
             migrationBuilder.DropTable(
                 name: "Projects");

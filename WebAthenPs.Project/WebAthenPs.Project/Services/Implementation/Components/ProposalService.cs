@@ -219,5 +219,26 @@ namespace WebAthenPs.Project.Services.Implementation.Components
             }
         }
 
+        // Novo método para aceitar ou rejeitar propostas
+        public async Task RespondToProposalAsync(Guid id, bool isAccepted)
+        {
+            try
+            {
+                var httpClient = await CreateAuthorizedClientAsync();
+                var response = await httpClient.PutAsync($"api/Proposal/{id}/respond", new StringContent(JsonSerializer.Serialize(isAccepted), Encoding.UTF8, "application/json"));
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    _logger.LogError($"Erro ao responder proposta com ID {id}. StatusCode: {response.StatusCode}, Conteúdo: {errorMessage}");
+                    throw new Exception($"Error responding to proposal: {errorMessage}");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao responder proposta.");
+                throw;
+            }
+        }
     }
 }

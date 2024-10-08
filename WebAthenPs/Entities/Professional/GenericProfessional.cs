@@ -34,7 +34,7 @@ namespace WebAthenPs.API.Entities.Professional
 
         public ICollection<ProjectProfessional> ProjectProfessionals { get; set; } = new List<ProjectProfessional>();
 
-        public ICollection<Proposal>? Proposals { get; set; } = new List<Proposal>(); // Nova coleção de propostas
+        public ICollection<Proposal>? Proposals { get; set; } = new List<Proposal>(); // NÃO MEXE NESSA PORRA TA BUGANDO TODO O SISTEMA
 
 
     }

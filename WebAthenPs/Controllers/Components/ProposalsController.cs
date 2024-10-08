@@ -40,23 +40,23 @@ namespace WebAthenPs.API.Controllers.Components
             }
         }
 
-        // Método PUT para aceitar uma proposta
-        [HttpPut("{id:guid}")]
-        public async Task<IActionResult> AcceptProposal(Guid id)
+        // Método PUT para aceitar ou rejeitar uma proposta
+        [HttpPut("{id:guid}/respond")]
+        public async Task<IActionResult> RespondToProposal(Guid id, [FromBody] bool isAccepted)
         {
             try
             {
                 var proposal = await _proposalRepository.GetByIdAsync(id);
                 if (proposal == null) return NotFound("Proposta não encontrada.");
 
-                proposal.IsAccepted = true; // Marcar como aceita
+                proposal.IsAccepted = isAccepted; // Atualiza o status de aceitação
                 await _proposalRepository.UpdateAsync(proposal);
 
                 return NoContent();
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao aceitar proposta: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao responder proposta: {ex.Message}");
             }
         }
 
@@ -116,18 +116,13 @@ namespace WebAthenPs.API.Controllers.Components
         {
             try
             {
-                // Obtém as propostas do repositório para o clientId informado
                 var proposals = await _proposalRepository.GetByClientIdAsync(clientId);
-
-                // Verifica se proposals é null
                 if (proposals == null)
                 {
                     return NotFound("Não foram encontradas propostas para o cliente informado.");
                 }
 
-                // Converte diretamente a proposta para DTO
                 var proposalDTO = proposals.ConverterPropostasParaDTO();
-
                 return Ok(proposalDTO);
             }
             catch (Exception ex)
@@ -141,18 +136,13 @@ namespace WebAthenPs.API.Controllers.Components
         {
             try
             {
-                // Obtém as propostas do repositório para o professionalId informado
                 var proposals = await _proposalRepository.GetByProfessionalIdAsync(professionalId);
-
-                // Verifica se proposals é null
                 if (proposals == null)
                 {
                     return NotFound("Não foram encontradas propostas para o profissional informado.");
                 }
 
-                // Converte diretamente a proposta para DTO
                 var proposalDTO = proposals.ConverterPropostasParaDTO();
-
                 return Ok(proposalDTO);
             }
             catch (Exception ex)
@@ -160,8 +150,5 @@ namespace WebAthenPs.API.Controllers.Components
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao acessar o banco de dados: {ex.Message}");
             }
         }
-
-
-
     }
 }

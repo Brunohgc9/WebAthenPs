@@ -1,0 +1,141 @@
+﻿@using Blazorise
+@using WebAthenPs.Models.DTOs.Client
+@using WebAthenPs.Models.DTOs.Components
+@using WebAthenPs.Models.DTOs.Professional
+@using Microsoft.AspNetCore.SignalR.Client
+@using WebAthenPs.Project.Services.Interfaces.Client
+@using WebAthenPs.Project.Services.Interfaces.User
+@inject IAuthService AuthService
+@inject IClientService ClientService
+@implements IDisposable
+
+<Modal @bind-Value="isOpen">
+    <ModalHeader>
+        <h5>Enviar Proposta</h5>
+    </ModalHeader>
+    <ModalBody>
+        <label>Mensagem:</label>
+        <InputText @bind-Value="proposalMessage" class="form-control" />
+
+        <label>Valor:</label>
+        <InputNumber @bind-Value="proposalValue" class="form-control" />
+
+        <label>ID do Profissional:</label>
+        <InputText @bind-Value="ProfessionalIdString" class="form-control" ReadOnly />
+    </ModalBody>
+    <ModalFooter>
+        <Button Color="Color.Secondary" @onclick="CloseModal">Fechar</Button>
+        <Button Color="Color.Primary" @onclick="SendProposal">Enviar Proposta</Button>
+    </ModalFooter>
+</Modal>
+
+@if (isSuccess)
+{
+    <div class="alert alert-success mt-3">Proposta enviada com sucesso!</div>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger mt-3">@errorMessage</div>
+}
+
+@code {
+    private HubConnection hubConnection;
+    private string proposalMessage;
+    private decimal proposalValue;
+    private int ProfessionalId { get; set; }
+    private bool isOpen = false; // Estado do modal
+    private bool isSuccess = false;
+    private string errorMessage;
+
+    public string ProfessionalIdString
+    {
+        get => ProfessionalId.ToString();
+        set => ProfessionalId = int.TryParse(value, out var id) ? id : 0; // Converte o valor de volta para int
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await InitializeConnection();
+    }
+
+    private async Task InitializeConnection()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl("https://localhost:7171/proposalHub")
+            .Build();
+
+        await hubConnection.StartAsync();
+        hubConnection.Closed += async (error) =>
+        {
+            await Task.Delay(new Random().Next(0, 5000));
+            await InitializeConnection();
+        };
+    }
+
+    public void OpenModal(int professionalId)
+    {
+        ProfessionalId = professionalId; // Define o ID do profissional
+        isOpen = true; // Abre o modal
+    }
+
+    private void CloseModal()
+    {
+        isOpen = false; // Fecha o modal
+        ResetFields(); // Reseta os campos
+    }
+
+    private void ResetFields()
+    {
+        proposalMessage = string.Empty;
+        proposalValue = 0;
+        isSuccess = false;
+        errorMessage = string.Empty;
+    }
+
+    private async Task SendProposal()
+    {
+        try
+        {
+            if (hubConnection.State == HubConnectionState.Disconnected)
+            {
+                await hubConnection.StartAsync();
+            }
+
+            var token = await AuthService.GetToken();
+            var userId = await AuthService.GetUserIdFromToken();
+            var clientDto = await ClientService.GetByUserId(userId);
+            var clientId = clientDto?.ClientId;
+
+            if (clientId == null)
+            {
+                errorMessage = "Cliente não encontrado para o UserId.";
+                return;
+            }
+
+            var proposalDto = new ProposalDTO
+                {
+                    ProposalId = Guid.NewGuid(),
+                    ProposalMessage = proposalMessage,
+                    ProposalValue = proposalValue,
+                    ProposalType = "Serviço",
+                    IsAccepted = false,
+                    Client = new ClientDTO { ClientId = clientId.Value },
+                    Professional = new GenericProfessionalDTO { Id = ProfessionalId }
+                };
+
+            await hubConnection.InvokeAsync("SendProposal", proposalDto);
+            isSuccess = true;
+            errorMessage = null; // Limpa mensagens de erro se tudo correr bem
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Erro ao enviar a proposta: {ex.Message}";
+        }
+    }
+
+    public void Dispose()
+    {
+        _ = hubConnection?.DisposeAsync();
+    }
+}

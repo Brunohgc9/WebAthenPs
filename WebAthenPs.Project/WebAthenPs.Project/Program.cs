@@ -1,5 +1,7 @@
 using Blazored.LocalStorage;
 using Blazored.SessionStorage;
+using Blazorise;
+using Blazorise.Bootstrap;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Text.Json;
 using WebAthenPs.Project.Client.Pages;
@@ -24,6 +26,12 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
+builder.Services
+    .AddBlazorise(options =>
+    {
+        options.Immediate = true; // Se você deseja ativar a atualização imediata da UI
+    })
+    .AddBootstrapProviders();
 
 var baseUrl = "https://localhost:7171";
 builder.Services.AddHttpClient("APIWebAthenPs", options =>
