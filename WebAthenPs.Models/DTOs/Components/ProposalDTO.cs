@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WebAthenPs.Models.DTOs.Client;
 using WebAthenPs.Models.DTOs.Professional;
+using WebAthenPs.Models.DTOs.Project;
 
 namespace WebAthenPs.Models.DTOs.Components
 {
@@ -20,5 +21,6 @@ namespace WebAthenPs.Models.DTOs.Components
         public ClientDTO? Client { get; set; }
 
         public GenericProfessionalDTO? Professional { get; set; }
+        public ProjectsDTO? Projects { get; set; }
     }
 }

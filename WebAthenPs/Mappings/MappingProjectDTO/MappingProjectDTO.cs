@@ -5,6 +5,8 @@ using WebAthenPs.API.Entities.Professional;
 using WebAthenPs.Models.DTOs.Professional;
 using WebAthenPs.Models.DTOs.Project;
 using WebAthenPs.Models.DTOs.Professional.ProfessionalTypes.Architect;
+using WebAthenPs.Models.DTOs.Client;
+using WebAthenPs.Models.DTOs.Components;
 
 namespace WebAthenPs.API.Mappings.MappingProjectDTO
 {
@@ -48,7 +50,7 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                         ArchId = p.Architect.ArchId,
                         RegistroConselho = p.Architect.RegistroConselho,
                         Especialidade = p.Architect.Especialidade
-                    } : null // Permite que GeneralArchitect seja nulo
+                    } : null
                 }).ToList() ?? new List<GenericProfessionalDTO>(),
                 ProjectProfessionals = item.ProjectProfessionals?.Select(pp => new ProjectProfessionalDTO
                 {
@@ -64,13 +66,35 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                         ProfessionalTypes = pp.Professional.ProfessionalTypes,
                         GeneralArchitect = pp.Professional.Architect != null ? new GeneralArchitectDTO
                         {
-                            genericId = pp.Professional.Id, // Corrigido para corresponder à propriedade correta
+                            genericId = pp.Professional.Id,
                             ArchId = pp.Professional.Architect.ArchId,
                             RegistroConselho = pp.Professional.Architect.RegistroConselho,
                             Especialidade = pp.Professional.Architect.Especialidade
-                        } : null // Permite que GeneralArchitect seja nulo
+                        } : null
                     } : null
-                }).ToList() ?? new List<ProjectProfessionalDTO>()
+                }).ToList() ?? new List<ProjectProfessionalDTO>(),
+                ProjectProposals = item.ProjectProposals?.Select(proposal => new ProposalDTO
+                {
+                    ProposalId = proposal.ProposalId,
+                    ProposalMessage = proposal.ProposalMessage ?? string.Empty,
+                    ProposalValue = proposal.ProposalValue,
+                    ProposalType = proposal.ProposalType ?? string.Empty,
+                    IsAccepted = proposal.IsAccepted,
+                    Client = proposal.Client != null ? new ClientDTO
+                    {
+                        ClientId = proposal.Client.ClientId,
+                        UserId = proposal.Client.UserId,
+                        UserName = proposal.Client.User?.UserName ?? string.Empty,
+                        Email = proposal.Client.User?.Email ?? string.Empty,
+                    } : null,
+                    Professional = proposal.Professional != null ? new GenericProfessionalDTO
+                    {
+                        Id = proposal.Professional.Id,
+                        UserId = proposal.Professional.UserId,
+                        UserName = proposal.Professional.User?.UserName ?? string.Empty,
+                        Email = proposal.Professional.User?.Email ?? string.Empty,
+                    } : null
+                }).ToList() ?? new List<ProposalDTO>()
             }) ?? Enumerable.Empty<ProjectsDTO>();
         }
 
@@ -99,7 +123,6 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                 NumberOfBathrooms = project.NumberOfBathrooms,
                 Step = project.ActStep ?? string.Empty,
 
-                // Mapeando a lista de profissionais
                 LProfessionals = project.Professionals?.Select(p => new GenericProfessionalDTO
                 {
                     Id = p.Id,
@@ -110,14 +133,13 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                     ProfessionalTypes = p.ProfessionalTypes ?? new List<string>(),
                     GeneralArchitect = p.Architect != null ? new GeneralArchitectDTO
                     {
-                        genericId = p.Id, // Corrigido para corresponder à propriedade correta
+                        genericId = p.Id,
                         ArchId = p.Architect.ArchId,
                         RegistroConselho = p.Architect.RegistroConselho,
                         Especialidade = p.Architect.Especialidade
-                    } : null // Permite que GeneralArchitect seja nulo
+                    } : null
                 }).ToList() ?? new List<GenericProfessionalDTO>(),
 
-                // Mapeando ProjectProfessionals
                 ProjectProfessionals = project.ProjectProfessionals?.Select(pp => new ProjectProfessionalDTO
                 {
                     ProfessionalId = pp.ProfessionalId,
@@ -132,13 +154,36 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                         ProfessionalTypes = pp.Professional.ProfessionalTypes ?? new List<string>(),
                         GeneralArchitect = pp.Professional.Architect != null ? new GeneralArchitectDTO
                         {
-                            genericId = pp.Professional.Id, // Corrigido para corresponder à propriedade correta
+                            genericId = pp.Professional.Id,
                             ArchId = pp.Professional.Architect.ArchId,
                             RegistroConselho = pp.Professional.Architect.RegistroConselho,
                             Especialidade = pp.Professional.Architect.Especialidade
-                        } : null // Permite que GeneralArchitect seja nulo
+                        } : null
                     } : null
-                }).ToList() ?? new List<ProjectProfessionalDTO>()
+                }).ToList() ?? new List<ProjectProfessionalDTO>(),
+
+                ProjectProposals = project.ProjectProposals?.Select(proposal => new ProposalDTO
+                {
+                    ProposalId = proposal.ProposalId,
+                    ProposalMessage = proposal.ProposalMessage ?? string.Empty,
+                    ProposalValue = proposal.ProposalValue,
+                    ProposalType = proposal.ProposalType ?? string.Empty,
+                    IsAccepted = proposal.IsAccepted,
+                    Client = proposal.Client != null ? new ClientDTO
+                    {
+                        ClientId = proposal.Client.ClientId,
+                        UserId = proposal.Client.UserId,
+                        UserName = proposal.Client.User?.UserName ?? string.Empty,
+                        Email = proposal.Client.User?.Email ?? string.Empty,
+                    } : null,
+                    Professional = proposal.Professional != null ? new GenericProfessionalDTO
+                    {
+                        Id = proposal.Professional.Id,
+                        UserId = proposal.Professional.UserId,
+                        UserName = proposal.Professional.User?.UserName ?? string.Empty,
+                        Email = proposal.Professional.User?.Email ?? string.Empty,
+                    } : null
+                }).ToList() ?? new List<ProposalDTO>()
             };
         }
 
@@ -181,19 +226,7 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                 Country = updateProjectDTO.Country,
                 TotalArea = updateProjectDTO.TotalArea,
                 NumberOfRooms = updateProjectDTO.NumberOfRooms,
-                ActStep = updateProjectDTO.Step,
                 NumberOfBathrooms = updateProjectDTO.NumberOfBathrooms,
-                Professionals = updateProjectDTO.LProfessionals?.Select(p => new GenericProfessional
-                {
-                    Id = p.Id,
-                    UserId = p.UserId,
-                    ProfessionalTypes = p.ProfessionalTypes
-                }).ToList() ?? new List<GenericProfessional>(),
-                ProjectProfessionals = updateProjectDTO.ProjectProfessionals?.Select(pp => new ProjectProfessional
-                {
-                    ProfessionalId = pp.ProfessionalId,
-                    ProjectId = pp.ProjectId,
-                }).ToList() ?? new List<ProjectProfessional>()
             };
         }
     }

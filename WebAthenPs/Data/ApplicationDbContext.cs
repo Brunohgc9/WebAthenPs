@@ -41,7 +41,7 @@ namespace WebAthenPs.API.Data
 
 
             modelBuilder.Entity<ProjectProfessional>()
-                .HasKey(pp => new { pp.ProfessionalId, pp.ProjectId });
+                .HasKey(pp => pp.Id);
 
             modelBuilder.Entity<ProjectProfessional>()
                 .HasOne(pp => pp.Professional)
@@ -127,6 +127,13 @@ namespace WebAthenPs.API.Data
                 .HasForeignKey(p => p.ProfessionalId)
                 .OnDelete(DeleteBehavior.Restrict); // Propostas não são excluídas ao excluir o profissional
 
+            modelBuilder.Entity<Proposal>()
+                .HasOne(p => p.Project)
+                .WithMany(prop => prop.ProjectProposals)
+                .HasForeignKey(prop => prop.ProjectId)
+                .OnDelete(DeleteBehavior.Cascade); // Exclui propostas ao excluir o projeto
+
+
 
             modelBuilder.Entity<ApplicationUser>().HasData(
                 // 15 Clients
@@ -185,6 +192,13 @@ namespace WebAthenPs.API.Data
                 new Client { ClientId = 15, UserId = "user15" }
             );
 
+            modelBuilder.Entity<Architect>().HasData(
+            new Architect { ArchId = Guid.Parse("9876b54c-7952-4f52-a170-ed3036394792"), genericId = 1, RegistroConselho = "123456", Especialidade = "Residencial" },
+            new Architect { ArchId = Guid.Parse("a05cf0e7-d957-44ba-9e2a-313def7408ba"), genericId = 6, RegistroConselho = "654321", Especialidade = "Comercial" },
+            new Architect { ArchId = Guid.Parse("c151318e-3c52-4120-a0c1-b47b35ce07d1"), genericId = 12, RegistroConselho = "112233", Especialidade = "Industrial" }
+        );
+
+
             modelBuilder.Entity<GenericProfessional>().HasData(
                 new GenericProfessional { Id = 1, UserId = "user16", ClientId = 1, ProfessionalTypes = new List<string> { "Arquiteto" }, ArchId = Guid.Parse("9876b54c-7952-4f52-a170-ed3036394792") },
                 new GenericProfessional { Id = 2, UserId = "user17", ClientId = 2, ProfessionalTypes = new List<string> { "Eletricista" } },
@@ -203,11 +217,6 @@ namespace WebAthenPs.API.Data
                 new GenericProfessional { Id = 15, UserId = "user30", ClientId = 15, ProfessionalTypes = new List<string> { "Encanador" } }
             );
 
-            modelBuilder.Entity<Architect>().HasData(
-                new Architect { ArchId = Guid.Parse("9876b54c-7952-4f52-a170-ed3036394792"), genericId = 1, RegistroConselho = "123456", Especialidade = "Residencial" },
-                new Architect { ArchId = Guid.Parse("a05cf0e7-d957-44ba-9e2a-313def7408ba"), genericId = 6, RegistroConselho = "654321", Especialidade = "Comercial" },
-                new Architect { ArchId = Guid.Parse("c151318e-3c52-4120-a0c1-b47b35ce07d1"), genericId = 12, RegistroConselho = "112233", Especialidade = "Industrial" }
-            );
 
 
 
@@ -230,38 +239,37 @@ namespace WebAthenPs.API.Data
            );
 
             modelBuilder.Entity<ProjectProfessional>().HasData(
-               new ProjectProfessional { Id = 1, ProjectId = 1, ProfessionalId = 1 },
-               new ProjectProfessional { Id = 2, ProjectId = 1, ProfessionalId = 6 },
-               new ProjectProfessional { Id = 3, ProjectId = 2, ProfessionalId = 2 },
-               new ProjectProfessional { Id = 4, ProjectId = 2, ProfessionalId = 7 },
-               new ProjectProfessional { Id = 5, ProjectId = 3, ProfessionalId = 3 },
-               new ProjectProfessional { Id = 6, ProjectId = 3, ProfessionalId = 8 },
-               new ProjectProfessional { Id = 7, ProjectId = 4, ProfessionalId = 4 },
-               new ProjectProfessional { Id = 8, ProjectId = 4, ProfessionalId = 9 },
-               new ProjectProfessional { Id = 9, ProjectId = 5, ProfessionalId = 5 },
-               new ProjectProfessional { Id = 10, ProjectId = 5, ProfessionalId = 10 },
-               new ProjectProfessional { Id = 11, ProjectId = 6, ProfessionalId = 11 },
-               new ProjectProfessional { Id = 12, ProjectId = 6, ProfessionalId = 12 },
-               new ProjectProfessional { Id = 13, ProjectId = 7, ProfessionalId = 13 },
-               new ProjectProfessional { Id = 14, ProjectId = 7, ProfessionalId = 14 },
-               new ProjectProfessional { Id = 15, ProjectId = 8, ProfessionalId = 15 },
-               new ProjectProfessional { Id = 1, ProjectId = 8, ProfessionalId = 1 },
-               new ProjectProfessional { Id = 2, ProjectId = 9, ProfessionalId = 6 },
-               new ProjectProfessional { Id = 3, ProjectId = 9, ProfessionalId = 2 },
-               new ProjectProfessional { Id = 4, ProjectId = 10, ProfessionalId = 7 },
-               new ProjectProfessional { Id = 5, ProjectId = 10, ProfessionalId = 3 },
-               new ProjectProfessional { Id = 6, ProjectId = 11, ProfessionalId = 8 },
-               new ProjectProfessional { Id = 7, ProjectId = 11, ProfessionalId = 4 },
-               new ProjectProfessional { Id = 8, ProjectId = 12, ProfessionalId = 9 },
-               new ProjectProfessional { Id = 9, ProjectId = 12, ProfessionalId = 5 },
-               new ProjectProfessional { Id = 10, ProjectId = 13, ProfessionalId = 10 },
-               new ProjectProfessional { Id = 11, ProjectId = 13, ProfessionalId = 11 },
-               new ProjectProfessional { Id = 12, ProjectId = 14, ProfessionalId = 12 },
-               new ProjectProfessional { Id = 13, ProjectId = 14, ProfessionalId = 13 },
-               new ProjectProfessional { Id = 14, ProjectId = 15, ProfessionalId = 14 },
-               new ProjectProfessional { Id = 15, ProjectId = 15, ProfessionalId = 15 }
-           // Adicione mais associações conforme necessário
-           );
+                new ProjectProfessional { Id = 1, ProjectId = 1, ProfessionalId = 1, ContractedAs = new List<string> { "Arquiteto" } },
+                new ProjectProfessional { Id = 2, ProjectId = 1, ProfessionalId = 6, ContractedAs = new List<string> { "Arquiteto" } },
+                new ProjectProfessional { Id = 3, ProjectId = 2, ProfessionalId = 2, ContractedAs = new List<string> { "Eletricista" } },
+                new ProjectProfessional { Id = 4, ProjectId = 2, ProfessionalId = 7, ContractedAs = new List<string> { "Eletricista" } },
+                new ProjectProfessional { Id = 5, ProjectId = 3, ProfessionalId = 3, ContractedAs = new List<string> { "Engenheiro" } },
+                new ProjectProfessional { Id = 6, ProjectId = 3, ProfessionalId = 8, ContractedAs = new List<string> { "Engenheiro" } },
+                new ProjectProfessional { Id = 7, ProjectId = 4, ProfessionalId = 4, ContractedAs = new List<string> { "Pedreiro" } },
+                new ProjectProfessional { Id = 8, ProjectId = 4, ProfessionalId = 9, ContractedAs = new List<string> { "Pedreiro" } },
+                new ProjectProfessional { Id = 9, ProjectId = 5, ProfessionalId = 5, ContractedAs = new List<string> { "Encanador" } },
+                new ProjectProfessional { Id = 10, ProjectId = 5, ProfessionalId = 10, ContractedAs = new List<string> { "Encanador" } },
+                new ProjectProfessional { Id = 11, ProjectId = 6, ProfessionalId = 11, ContractedAs = new List<string> { "Eletricista" } },
+                new ProjectProfessional { Id = 12, ProjectId = 6, ProfessionalId = 12, ContractedAs = new List<string> { "Arquiteto" } },
+                new ProjectProfessional { Id = 13, ProjectId = 7, ProfessionalId = 13, ContractedAs = new List<string> { "Engenheiro" } },
+                new ProjectProfessional { Id = 14, ProjectId = 7, ProfessionalId = 14, ContractedAs = new List<string> { "Pedreiro" } },
+                new ProjectProfessional { Id = 15, ProjectId = 8, ProfessionalId = 15, ContractedAs = new List<string> { "Encanador" } },
+                new ProjectProfessional { Id = 16, ProjectId = 8, ProfessionalId = 1, ContractedAs = new List<string> { "Arquiteto" } },
+                new ProjectProfessional { Id = 17, ProjectId = 9, ProfessionalId = 6, ContractedAs = new List<string> { "Arquiteto" } },
+                new ProjectProfessional { Id = 18, ProjectId = 9, ProfessionalId = 2, ContractedAs = new List<string> { "Eletricista" } },
+                new ProjectProfessional { Id = 19, ProjectId = 10, ProfessionalId = 7, ContractedAs = new List<string> { "Eletricista" } },
+                new ProjectProfessional { Id = 20, ProjectId = 10, ProfessionalId = 3, ContractedAs = new List<string> { "Engenheiro" } },
+                new ProjectProfessional { Id = 21, ProjectId = 11, ProfessionalId = 8, ContractedAs = new List<string> { "Engenheiro" } },
+                new ProjectProfessional { Id = 22, ProjectId = 11, ProfessionalId = 4, ContractedAs = new List<string> { "Pedreiro" } },
+                new ProjectProfessional { Id = 23, ProjectId = 12, ProfessionalId = 9, ContractedAs = new List<string> { "Pedreiro" } },
+                new ProjectProfessional { Id = 24, ProjectId = 12, ProfessionalId = 5, ContractedAs = new List<string> { "Encanador" } },
+                new ProjectProfessional { Id = 25, ProjectId = 13, ProfessionalId = 10, ContractedAs = new List<string> { "Encanador" } },
+                new ProjectProfessional { Id = 26, ProjectId = 13, ProfessionalId = 11, ContractedAs = new List<string> { "Eletricista" } },
+                new ProjectProfessional { Id = 27, ProjectId = 14, ProfessionalId = 12, ContractedAs = new List<string> { "Arquiteto" } },
+                new ProjectProfessional { Id = 28, ProjectId = 14, ProfessionalId = 13, ContractedAs = new List<string> { "Engenheiro" } },
+                new ProjectProfessional { Id = 29, ProjectId = 15, ProfessionalId = 14, ContractedAs = new List<string> { "Pedreiro" } },
+                new ProjectProfessional { Id = 30, ProjectId = 15, ProfessionalId = 15, ContractedAs = new List<string> { "Encanador" } }
+            );
 
         }
     }

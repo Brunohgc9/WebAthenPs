@@ -1,33 +1,46 @@
-﻿@using Blazorise
-@using WebAthenPs.Models.DTOs.Client
-@using WebAthenPs.Models.DTOs.Components
-@using WebAthenPs.Models.DTOs.Professional
+﻿@page "/sendproposal/{professionalId:int}"
 @using Microsoft.AspNetCore.SignalR.Client
-@using WebAthenPs.Project.Services.Interfaces.Client
+@using System.Net.Http.Headers
+@using WebAthenPs.Models.DTOs.Components
+@using WebAthenPs.Models.DTOs.Client
+@using WebAthenPs.Models.DTOs.Professional
+@using WebAthenPs.Models.DTOs.Project
+@using Blazored.LocalStorage
 @using WebAthenPs.Project.Services.Interfaces.User
+@using WebAthenPs.Project.Services.Interfaces.Client
+@using WebAthenPs.Project.Services.Interfaces.Project
+@inject NavigationManager Navigation
+@inject ILocalStorageService LocalStorage
+@inject IHttpClientFactory HttpClientFactory
 @inject IAuthService AuthService
 @inject IClientService ClientService
+@inject IProjectService ProjectService
 @implements IDisposable
+@rendermode InteractiveServer
 
-<Modal @bind-Value="isOpen">
-    <ModalHeader>
-        <h5>Enviar Proposta</h5>
-    </ModalHeader>
-    <ModalBody>
-        <label>Mensagem:</label>
-        <InputText @bind-Value="proposalMessage" class="form-control" />
+<h3>Enviar Proposta</h3>
 
-        <label>Valor:</label>
-        <InputNumber @bind-Value="proposalValue" class="form-control" />
+<div>
+    <label>Projeto:</label>
+    <select @bind="selectedProjectId">
+        <option value="">Selecione um projeto</option>
+        @if (projects != null)
+        {
+            @foreach (var project in projects)
+            {
+                <option value="@project.ProjectId">@project.ProjectName</option>
+            }
+        }
+    </select>
 
-        <label>ID do Profissional:</label>
-        <InputText @bind-Value="ProfessionalIdString" class="form-control" ReadOnly />
-    </ModalBody>
-    <ModalFooter>
-        <Button Color="Color.Secondary" @onclick="CloseModal">Fechar</Button>
-        <Button Color="Color.Primary" @onclick="SendProposal">Enviar Proposta</Button>
-    </ModalFooter>
-</Modal>
+    <label>Mensagem:</label>
+    <input type="text" @bind="proposalMessage" />
+
+    <label>Valor:</label>
+    <input type="number" @bind="proposalValue" />
+
+    <button @onclick="SendProposal">Enviar Proposta</button>
+</div>
 
 @if (isSuccess)
 {
@@ -40,70 +53,91 @@
 }
 
 @code {
+    [Parameter] public int ProfessionalId { get; set; } // Recebe o ID do profissional da URL
     private HubConnection hubConnection;
     private string proposalMessage;
     private decimal proposalValue;
-    private int ProfessionalId { get; set; }
-    private bool isOpen = false; // Estado do modal
     private bool isSuccess = false;
     private string errorMessage;
+    private int? selectedProjectId; // Para armazenar o ID do projeto selecionado
+    private List<ProjectsDTO> projects; // Para armazenar a lista de projetos
+    private List<string> professionalTypes; // Para armazenar os tipos de profissionais
+    private Dictionary<string, bool> selectedContractedAs = new Dictionary<string, bool>(); // Para armazenar as seleções dos tipos
 
-    public string ProfessionalIdString
-    {
-        get => ProfessionalId.ToString();
-        set => ProfessionalId = int.TryParse(value, out var id) ? id : 0; // Converte o valor de volta para int
-    }
 
     protected override async Task OnInitializedAsync()
     {
         await InitializeConnection();
+        await LoadProjects(); // Carrega os projetos ao inicializar
     }
 
     private async Task InitializeConnection()
     {
         hubConnection = new HubConnectionBuilder()
-            .WithUrl("https://localhost:7171/proposalHub")
+            .WithUrl(Navigation.ToAbsoluteUri("https://localhost:7171/proposalHub"))
             .Build();
 
-        await hubConnection.StartAsync();
+        try
+        {
+            await hubConnection.StartAsync();
+            Console.WriteLine("Conexão ao hub estabelecida com sucesso.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao conectar ao hub: {ex.Message}");
+        }
+
         hubConnection.Closed += async (error) =>
         {
+            Console.WriteLine("Conexão fechada. Tentando reconectar...");
             await Task.Delay(new Random().Next(0, 5000));
             await InitializeConnection();
         };
     }
 
-    public void OpenModal(int professionalId)
-    {
-        ProfessionalId = professionalId; // Define o ID do profissional
-        isOpen = true; // Abre o modal
-    }
 
-    private void CloseModal()
+    private async Task LoadProjects()
     {
-        isOpen = false; // Fecha o modal
-        ResetFields(); // Reseta os campos
-    }
-
-    private void ResetFields()
-    {
-        proposalMessage = string.Empty;
-        proposalValue = 0;
-        isSuccess = false;
-        errorMessage = string.Empty;
+        try
+        {
+            projects = (List<ProjectsDTO>)await ProjectService.GetProjectsByLoggedInUser();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Erro ao carregar projetos: {ex.Message}";
+        }
     }
 
     private async Task SendProposal()
     {
+        if (selectedProjectId == null)
+        {
+            errorMessage = "Por favor, selecione um projeto.";
+            return;
+        }
+
         try
         {
+            // Verifica a conexão
             if (hubConnection.State == HubConnectionState.Disconnected)
             {
+                Console.WriteLine("Reconectando...");
                 await hubConnection.StartAsync();
             }
 
+            // Obtém o token usando o AuthService
             var token = await AuthService.GetToken();
+
+            if (string.IsNullOrEmpty(token))
+            {
+                errorMessage = "Token não encontrado ou está vazio.";
+                return;
+            }
+
+            // Lê o userId do token JWT
             var userId = await AuthService.GetUserIdFromToken();
+
+            // Chama o ClientService para obter o ClientId usando o UserId
             var clientDto = await ClientService.GetByUserId(userId);
             var clientId = clientDto?.ClientId;
 
@@ -113,6 +147,7 @@
                 return;
             }
 
+            // Cria a proposta
             var proposalDto = new ProposalDTO
                 {
                     ProposalId = Guid.NewGuid(),
@@ -121,16 +156,24 @@
                     ProposalType = "Serviço",
                     IsAccepted = false,
                     Client = new ClientDTO { ClientId = clientId.Value },
-                    Professional = new GenericProfessionalDTO { Id = ProfessionalId }
+                    Professional = new GenericProfessionalDTO { Id = ProfessionalId }, // Usando o ID do profissional passado pela URL
+                    Projects = new ProjectsDTO { ProjectId = selectedProjectId.Value } // Usando o ID do projeto selecionado
                 };
 
             await hubConnection.InvokeAsync("SendProposal", proposalDto);
+            Console.WriteLine("Proposta enviada com sucesso.");
             isSuccess = true;
             errorMessage = null; // Limpa mensagens de erro se tudo correr bem
+        }
+        catch (HttpRequestException httpEx)
+        {
+            errorMessage = $"Erro de requisição HTTP: {httpEx.Message}";
+            Console.WriteLine(errorMessage);
         }
         catch (Exception ex)
         {
             errorMessage = $"Erro ao enviar a proposta: {ex.Message}";
+            Console.WriteLine(errorMessage);
         }
     }
 

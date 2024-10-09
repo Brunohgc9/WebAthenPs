@@ -252,8 +252,11 @@ namespace WebAthenPs.Project.Services.Implementation.Project
                     // Verificar se o campo Professional está preenchido
                     if (projectProfessional.Professional == null)
                     {
-                        throw new ArgumentException("O campo Professional não pode ser nulo.");
+                        _logger.LogWarning("O campo Professional está nulo, ignorando...");
+                        continue; // Ignora o Professional nulo
                     }
+
+                    // Você pode adicionar outras validações aqui, se necessário
                 }
             }
 
@@ -284,5 +287,41 @@ namespace WebAthenPs.Project.Services.Implementation.Project
                 throw;
             }
         }
+        public async Task<bool> AddProfessional(int projectId, int professionalId)
+        {
+            // Validação do ID do profissional
+            if (professionalId <= 0)
+            {
+                throw new ArgumentException("O ID do profissional deve ser um valor positivo.", nameof(professionalId));
+            }
+
+            try
+            {
+                var httpClient = await CreateAuthorizedClientAsync();
+                var response = await httpClient.PostAsJsonAsync($"api/Projects/{projectId}/professionals", professionalId);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    _logger.LogInformation($"Profissional com ID {professionalId} adicionado ao projeto com ID {projectId} com sucesso.");
+                    return true;
+                }
+
+                var errorContent = await response.Content.ReadAsStringAsync();
+                _logger.LogError($"Erro ao adicionar o profissional ao projeto. StatusCode: {response.StatusCode}, Conteúdo: {errorContent}");
+                return false;
+            }
+            catch (HttpRequestException httpEx)
+            {
+                _logger.LogError(httpEx, $"Erro ao acessar a API para adicionar o profissional ao projeto com ID {projectId}.");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Erro inesperado ao adicionar o profissional ao projeto com ID {projectId}.");
+                throw;
+            }
+        }
+
+
     }
 }

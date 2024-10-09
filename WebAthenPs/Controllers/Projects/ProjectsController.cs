@@ -84,6 +84,27 @@ namespace WebAthenPs.API.Controllers.Projects
         }
 
 
+        // Adicionar profissionais a um projeto
+        // Adicionar um profissional a um projeto
+        [HttpPost("{projectId:int}/professionals")]
+        public async Task<ActionResult> AddProfessionalToProject(int projectId, [FromBody] int professionalId)
+        {
+            if (professionalId <= 0) // Verifica se o ID é um valor válido
+            {
+                return BadRequest("ID do profissional inválido.");
+            }
+
+            try
+            {
+                // Chama o repositório para adicionar o profissional ao projeto
+                await _projectRepository.AddProfessionalToProject(projectId, professionalId);
+                return NoContent(); // Retorna 204 No Content se a operação for bem-sucedida
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao adicionar profissional ao projeto: {ex.Message}");
+            }
+        }
 
 
 

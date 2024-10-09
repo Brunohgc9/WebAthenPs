@@ -1,12 +1,8 @@
 ﻿@page "/professionals"
-@using WebAthenPs.Project.Components.Components
-@using WebAthenPs.Project.Services
 @using WebAthenPs.Models.DTOs.Professional
 @using WebAthenPs.Project.Services.Interfaces.Professional
 @inject IGenericProfessionalService ProfessionalService
 @inject NavigationManager Navigation
-
-<ProposalModal @ref="proposalModal" />
 
 @if (_isLoading)
 {
@@ -14,9 +10,9 @@
 }
 else
 {
-    <div>
-        <input type="text" @bind="_professionalTypeFilter" placeholder="Filtrar por tipo" />
-        <button @onclick="FilterProfessionals">Filtrar</button>
+    <div class="filter-section">
+        <input type="text" @bind="_professionalTypeFilter" placeholder="Filtrar por tipo" class="filter-input" />
+        <button @onclick="FilterProfessionals" class="filter-button">Filtrar</button>
     </div>
 
     <div class="card-container">
@@ -32,7 +28,7 @@ else
                     <p><strong>Tipos de Profissional:</strong> @string.Join(", ", professional.ProfessionalTypes)</p>
                 </div>
                 <div class="card-footer">
-                    <button @onclick="() => proposalModal.OpenModal(professional.Id)">Enviar Proposta</button>
+                    <button @onclick="() => GoToProposalPage(professional.Id)" class="btn btn-primary">Enviar Proposta</button>
                 </div>
             </div>
         }
@@ -43,7 +39,6 @@ else
     private IEnumerable<GenericProfessionalDTO> _professionals;
     private bool _isLoading = true;
     private string _professionalTypeFilter = string.Empty;
-    private ProposalModal proposalModal; // Referência para o modal
 
     protected override async Task OnInitializedAsync()
     {
@@ -63,6 +58,7 @@ else
         finally
         {
             _isLoading = false;
+            StateHasChanged();
         }
     }
 
@@ -71,9 +67,34 @@ else
         _isLoading = true;
         await LoadProfessionals();
     }
+
+    private void GoToProposalPage(int professionalId)
+    {
+        Navigation.NavigateTo($"/sendproposal/{professionalId}"); // Redireciona para a página de proposta
+    }
 }
 
 <style>
+    .filter-section {
+        margin-bottom: 16px;
+    }
+
+    .filter-input {
+        padding: 8px;
+        margin-right: 8px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+    }
+
+    .filter-button {
+        padding: 8px 12px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
     .card-container {
         display: flex;
         flex-wrap: wrap;
@@ -84,15 +105,12 @@ else
         background-color: #f8f9fa;
         border: 1px solid #dee2e6;
         border-radius: 8px;
-        box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
         padding: 16px;
         width: 300px;
     }
 
     .card-header {
-        border-bottom: 1px solid #dee2e6;
         margin-bottom: 16px;
-        padding-bottom: 8px;
     }
 
     .card-body p {
@@ -100,9 +118,15 @@ else
     }
 
     .card-footer {
-        border-top: 1px solid #dee2e6;
-        margin-top: 16px;
-        padding-top: 8px;
         text-align: right;
+    }
+
+    .btn {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
     }
 </style>

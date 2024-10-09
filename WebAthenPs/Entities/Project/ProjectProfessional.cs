@@ -11,5 +11,7 @@ public class ProjectProfessional
     public Projecty Project { get; set; }
 
     public int ProfessionalId { get; set; }
-    public GenericProfessional Professional { get; set; }
+    public GenericProfessional? Professional { get; set; }
+
+    public List<string> ContractedAs { get; set; } = new List<string>();
 }

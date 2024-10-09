@@ -4,6 +4,7 @@ using WebAthenPs.API.Entities.Components;
 using WebAthenPs.Models.DTOs.Client;
 using WebAthenPs.Models.DTOs.Components;
 using WebAthenPs.Models.DTOs.Professional;
+using WebAthenPs.Models.DTOs.Project;
 
 namespace WebAthenPs.API.Mappings.MappingComponentDTO
 {
@@ -31,6 +32,12 @@ namespace WebAthenPs.API.Mappings.MappingComponentDTO
                     UserId = item.Professional.UserId,
                     UserName = item.Professional.User?.UserName ?? string.Empty,
                     Email = item.Professional.User?.Email ?? string.Empty,
+                } : null,
+                Projects = item.Project != null ? new ProjectsDTO
+                {
+                    ProjectId = item.Project.ProjectId,
+                    ProjectName = item.Project.ProjectName,
+                    // Mapeie outros campos conforme necessário
                 } : null
             }) ?? Enumerable.Empty<ProposalDTO>();
         }
@@ -57,6 +64,10 @@ namespace WebAthenPs.API.Mappings.MappingComponentDTO
                     UserId = proposal.Professional.UserId,
                     UserName = proposal.Professional.User?.UserName ?? string.Empty,
                     Email = proposal.Professional.User?.Email ?? string.Empty,
+                } : null,
+                Projects = proposal.Project != null ? new ProjectsDTO
+                {
+                    ProjectId = proposal.Project.ProjectId,
                 } : null
             };
         }
@@ -71,7 +82,8 @@ namespace WebAthenPs.API.Mappings.MappingComponentDTO
                 ProposalType = proposalDTO.ProposalType,
                 IsAccepted = proposalDTO.IsAccepted,
                 ClientId = proposalDTO.Client?.ClientId ?? default,
-                ProfessionalId = proposalDTO.Professional?.Id ?? default
+                ProfessionalId = proposalDTO.Professional?.Id ?? default,
+                ProjectId = proposalDTO.Projects?.ProjectId ?? default
             };
         }
 
@@ -85,7 +97,8 @@ namespace WebAthenPs.API.Mappings.MappingComponentDTO
                 ProposalType = proposalDTO.ProposalType,
                 IsAccepted = proposalDTO.IsAccepted,
                 ClientId = proposalDTO.Client?.ClientId ?? default,
-                ProfessionalId = proposalDTO.Professional?.Id ?? default
+                ProfessionalId = proposalDTO.Professional?.Id ?? default,
+                ProjectId = proposalDTO.Projects?.ProjectId ?? default
             };
         }
     }

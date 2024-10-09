@@ -33,8 +33,10 @@ public class ProjectRepository : IProjectRepository
                 .ThenInclude(gp => gp.User)
             .Include(p => p.ProjectProfessionals)
                 .ThenInclude(pp => pp.Professional) // Inclui o Professional associado a cada ProjectProfessional
+            .Include(p => p.ProjectProposals) // Inclui as propostas do projeto
             .SingleOrDefaultAsync(i => i.ProjectId == id);
     }
+
 
     public async Task<Projecty> CreateNewProject(Projecty project)
     {
@@ -52,6 +54,7 @@ public class ProjectRepository : IProjectRepository
     {
         _context.Entry(project).State = EntityState.Modified;
 
+        // Gerenciamento de profissionais
         var existingProfessionals = await _context.ProjectProfessionals
             .Where(pp => pp.ProjectId == project.ProjectId)
             .ToListAsync();
@@ -68,8 +71,26 @@ public class ProjectRepository : IProjectRepository
 
         _context.ProjectProfessionals.AddRange(professionalsToAdd);
 
+        // Gerenciamento de propostas
+        var existingProposals = await _context.Proposals
+            .Where(p => p.ProjectId == project.ProjectId)
+            .ToListAsync();
+
+        var proposalsToRemove = existingProposals
+            .Where(ep => !project.ProjectProposals.Any(pp => pp.ProposalId == ep.ProposalId))
+            .ToList();
+
+        _context.Proposals.RemoveRange(proposalsToRemove);
+
+        var proposalsToAdd = project.ProjectProposals
+            .Where(pp => !existingProposals.Any(ep => ep.ProposalId == pp.ProposalId))
+            .ToList();
+
+        _context.Proposals.AddRange(proposalsToAdd);
+
         await _context.SaveChangesAsync();
     }
+
 
     public async Task DeleteProject(int id)
     {
@@ -121,4 +142,28 @@ public class ProjectRepository : IProjectRepository
                 .ThenInclude(pp => pp.Professional) // Inclui o Professional associado a cada ProjectProfessional
             .ToListAsync();
     }
+
+    public async Task AddProfessionalToProject(int projectId, int professionalId)
+    {
+        var project = await _context.Projects
+            .Include(p => p.ProjectProfessionals) // Inclui a relação de profissionais
+            .FirstOrDefaultAsync(p => p.ProjectId == projectId);
+
+        if (project == null)
+            throw new Exception("Projeto não encontrado.");
+
+        var professional = await _context.GenericProfessionals.FindAsync(professionalId);
+        if (professional == null)
+            throw new Exception("Profissional não encontrado.");
+
+        project.ProjectProfessionals.Add(new ProjectProfessional
+        {
+            ProjectId = projectId,
+            ProfessionalId = professionalId
+        });
+
+        await _context.SaveChangesAsync();
+    }
+
+
 }

@@ -13,6 +13,6 @@ namespace WebAthenPs.API.Repositories.Interfaces
         Task UpdateProject(Projecty projecty);
         Task DeleteProject(int id);
         Task<IEnumerable<Projecty>> GetByClientId(int clientId);
-
+        Task AddProfessionalToProject(int projectId, int professionalId);
     }
 }

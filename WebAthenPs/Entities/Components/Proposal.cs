@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using WebAthenPs.API.Entities.Clients;
 using WebAthenPs.API.Entities.Professional;
+using WebAthenPs.API.Entities.Project;
 
 namespace WebAthenPs.API.Entities.Components
 {
@@ -19,6 +20,11 @@ namespace WebAthenPs.API.Entities.Components
 
         [ForeignKey("ProfessionalId")]
         public GenericProfessional Professional { get; set; }
+
+        public int? ProjectId { get; set; }
+
+        [ForeignKey("ProjectId")]
+        public Projecty Project {  get; set; }
 
     }
 }

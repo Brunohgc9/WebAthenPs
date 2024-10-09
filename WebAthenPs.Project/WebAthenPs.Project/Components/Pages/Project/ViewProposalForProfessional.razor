@@ -1,0 +1,170 @@
+﻿@page "/viewproposalprofessional"
+@using WebAthenPs.Models.DTOs.Components
+@using WebAthenPs.Models.DTOs.Professional
+@using WebAthenPs.Project.Services.Interfaces.Components
+@using WebAthenPs.Project.Services.Interfaces.Professional
+@using WebAthenPs.Project.Services.Interfaces.Project
+@using WebAthenPs.Project.Services.Interfaces.User
+
+@inject ILogger<ViewProposalForProfessional> Logger
+@inject IProposalService ProposalService
+@inject IProjectService ProjectService
+@inject IGenericProfessionalService ProfessionalService
+@inject IAuthService AuthService
+
+<h3>Propostas Recebidas</h3>
+
+@if (proposals != null && proposals.Any())
+{
+    foreach (var proposal in proposals)
+    {
+        <div class="proposal-details border p-3 mb-3">
+            <label><strong>Mensagem:</strong></label>
+            <p>@proposal.ProposalMessage</p>
+
+            <label><strong>Valor:</strong></label>
+            <p>@proposal.ProposalValue.ToString("C")</p>
+
+            <label><strong>Status:</strong></label>
+            <p>@(proposal.IsAccepted ? "Aceita" : "Pendente")</p>
+
+@*             @if (!proposal.IsAccepted)
+            { *@
+                <div class="actions">
+                    <button class="btn btn-success" @onclick="() => AcceptProposal(proposal)">Aceitar</button>
+                    <button class="btn btn-danger" @onclick="() => DeclineProposal(proposal)">Recusar</button>
+                </div>
+@*             }
+            else
+            {
+                <div class="alert alert-info">Esta proposta já foi aceita.</div>
+            } *@
+        </div>
+    }
+}
+else
+{
+    <p>Nenhuma proposta recebida.</p>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger mt-3">@errorMessage</div>
+}
+
+@code {
+    private List<ProposalDTO> proposals = new List<ProposalDTO>();
+    private string errorMessage;
+    private string userId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        userId = await AuthService.GetUserIdFromToken();
+        await LoadProposals();
+    }
+
+    private async Task LoadProposals()
+    {
+        try
+        {
+            Logger.LogInformation("Tentando carregar propostas para UserId: {UserId}", userId);
+            var professionalDto = await ProfessionalService.GetByUserId(userId);
+
+            if (professionalDto != null)
+            {
+                var professionalId = professionalDto.Id;
+                // Converta o resultado para uma lista
+                proposals = (await ProposalService.GetByProfessionalIdAsync(professionalId)).ToList();
+                Logger.LogInformation("Propostas carregadas para o profissional com ID: {ProfessionalId}", professionalId);
+            }
+            else
+            {
+                Logger.LogWarning("Usuário não é um profissional.");
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Erro ao carregar propostas: {ex.Message}";
+            Logger.LogError(ex, "Erro ao carregar propostas para UserId: {UserId}", userId);
+        }
+    }
+
+
+    private async Task AcceptProposal(ProposalDTO proposal)
+    {
+        try
+        {
+            proposal.IsAccepted = true;
+            await ProposalService.RespondToProposalAsync(proposal.ProposalId, true);
+            Logger.LogInformation("Proposta aceita: {@Proposal}", proposal);
+
+            if (proposal.Projects != null)
+            {
+                var professionalDto = await ProfessionalService.GetByUserId(userId);
+                var professionalId = professionalDto.Id;
+
+                var projectId = proposal.Projects.ProjectId; // Certifique-se de que isso não é nulo
+                var projectDto = await ProjectService.GetById(projectId);
+
+                if (projectDto != null)
+                {
+                    var projectProfessionalDto = new ProjectProfessionalDTO
+                        {
+                            ProfessionalId = professionalId,
+                            ProjectId = projectId,
+                            Professional = professionalDto // Adiciona detalhes do profissional
+                        };
+
+                    // Chama o método para adicionar o profissional ao projeto
+                    var isAdded = await ProjectService.AddProfessional(projectId, professionalId);
+
+                    if (!isAdded)
+                    {
+                        Logger.LogWarning("Não foi possível adicionar o profissional ao projeto com ID: {ProjectId}", projectId);
+                        errorMessage = "Não foi possível adicionar o profissional ao projeto.";
+                    }
+                    else
+                    {
+                        Logger.LogInformation("Profissional adicionado ao projeto com ID: {ProjectId} com sucesso.", projectId);
+                    }
+                }
+                else
+                {
+                    Logger.LogWarning("Não foi possível encontrar o projeto com ID: {ProjectId}", projectId);
+                    errorMessage = "Projeto não encontrado.";
+                }
+            }
+            else
+            {
+                Logger.LogWarning("A proposta não contém um projeto associado.");
+                errorMessage = "A proposta não contém um projeto associado.";
+            }
+
+            await LoadProposals(); // Recarregar propostas
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Erro ao aceitar a proposta: {ex.Message}";
+            Logger.LogError(ex, "Erro ao aceitar a proposta: {@Proposal}", proposal);
+        }
+    }
+
+
+
+
+    private async Task DeclineProposal(ProposalDTO proposal)
+    {
+        try
+        {
+            proposal.IsAccepted = false;
+            await ProposalService.RespondToProposalAsync(proposal.ProposalId, false);
+            Logger.LogInformation("Proposta recusada: {@Proposal}", proposal);
+            await LoadProposals(); // Recarregar propostas
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Erro ao recusar a proposta: {ex.Message}";
+            Logger.LogError(ex, "Erro ao recusar a proposta: {@Proposal}", proposal);
+        }
+    }
+}
