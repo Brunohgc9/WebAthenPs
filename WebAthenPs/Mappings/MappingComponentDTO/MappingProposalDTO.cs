@@ -38,7 +38,8 @@ namespace WebAthenPs.API.Mappings.MappingComponentDTO
                     ProjectId = item.Project.ProjectId,
                     ProjectName = item.Project.ProjectName,
                     // Mapeie outros campos conforme necessário
-                } : null
+                } : null,
+                ToBeContractedAs = item.ToBeContractedAs?.ToList() ?? new List<string>()
             }) ?? Enumerable.Empty<ProposalDTO>();
         }
 
@@ -68,7 +69,8 @@ namespace WebAthenPs.API.Mappings.MappingComponentDTO
                 Projects = proposal.Project != null ? new ProjectsDTO
                 {
                     ProjectId = proposal.Project.ProjectId,
-                } : null
+                } : null,
+                ToBeContractedAs = proposal.ToBeContractedAs?.ToList() ?? new List<string>()
             };
         }
 
@@ -83,6 +85,7 @@ namespace WebAthenPs.API.Mappings.MappingComponentDTO
                 IsAccepted = proposalDTO.IsAccepted,
                 ClientId = proposalDTO.Client?.ClientId ?? default,
                 ProfessionalId = proposalDTO.Professional?.Id ?? default,
+                ToBeContractedAs = proposalDTO.ToBeContractedAs?.ToList() ?? new List<string>(),
                 ProjectId = proposalDTO.Projects?.ProjectId ?? default
             };
         }
@@ -98,6 +101,7 @@ namespace WebAthenPs.API.Mappings.MappingComponentDTO
                 IsAccepted = proposalDTO.IsAccepted,
                 ClientId = proposalDTO.Client?.ClientId ?? default,
                 ProfessionalId = proposalDTO.Professional?.Id ?? default,
+                ToBeContractedAs = proposalDTO.ToBeContractedAs?.ToList() ?? new List<string>(),
                 ProjectId = proposalDTO.Projects?.ProjectId ?? default
             };
         }

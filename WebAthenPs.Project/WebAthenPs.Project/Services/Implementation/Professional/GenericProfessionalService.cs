@@ -93,12 +93,6 @@ public class GenericProfessionalService : IGenericProfessionalService
             {
                 _logger.LogWarning($"Profissional com ID {id} não encontrado.");
             }
-            else
-            {
-                // Aqui você pode acessar o professionalType diretamente do DTO
-                var professionalType = professionalDto.ProfessionalTypes; // Certifique-se de que esta propriedade exista no DTO
-                _logger.LogInformation($"Tipo do profissional com ID {id}: {professionalType}");
-            }
 
             return professionalDto;
         }
@@ -113,6 +107,7 @@ public class GenericProfessionalService : IGenericProfessionalService
             throw;
         }
     }
+
 
 
     public async Task<IEnumerable<GenericProfessionalDTO>> GetAllAsync()

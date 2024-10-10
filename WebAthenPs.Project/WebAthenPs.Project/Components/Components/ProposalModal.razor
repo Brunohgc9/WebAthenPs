@@ -9,12 +9,14 @@
 @using WebAthenPs.Project.Services.Interfaces.User
 @using WebAthenPs.Project.Services.Interfaces.Client
 @using WebAthenPs.Project.Services.Interfaces.Project
+@using WebAthenPs.Project.Services.Interfaces.Professional
 @inject NavigationManager Navigation
 @inject ILocalStorageService LocalStorage
 @inject IHttpClientFactory HttpClientFactory
 @inject IAuthService AuthService
 @inject IClientService ClientService
 @inject IProjectService ProjectService
+@inject IGenericProfessionalService ProfessionalService
 @implements IDisposable
 @rendermode InteractiveServer
 
@@ -39,7 +41,21 @@
     <label>Valor:</label>
     <input type="number" @bind="proposalValue" />
 
-    <button @onclick="SendProposal">Enviar Proposta</button>
+    <div>
+        <label>Tipo de Contratação:</label>
+        <select @bind="selectedProfessionalType">
+            <option value="">Selecione o tipo de contratação</option>
+            @if (professionalTypes != null)
+            {
+                @foreach (var type in professionalTypes)
+                {
+                    <option value="@type">@type</option>
+                }
+            }
+        </select>
+
+        <button @onclick="SendProposal">Enviar Proposta</button>
+    </div>
 </div>
 
 @if (isSuccess)
@@ -53,22 +69,22 @@
 }
 
 @code {
-    [Parameter] public int ProfessionalId { get; set; } // Recebe o ID do profissional da URL
+    [Parameter] public int ProfessionalId { get; set; }
     private HubConnection hubConnection;
     private string proposalMessage;
     private decimal proposalValue;
     private bool isSuccess = false;
     private string errorMessage;
-    private int? selectedProjectId; // Para armazenar o ID do projeto selecionado
-    private List<ProjectsDTO> projects; // Para armazenar a lista de projetos
-    private List<string> professionalTypes; // Para armazenar os tipos de profissionais
-    private Dictionary<string, bool> selectedContractedAs = new Dictionary<string, bool>(); // Para armazenar as seleções dos tipos
-
+    private int? selectedProjectId;
+    private List<ProjectsDTO> projects;
+    private List<string> professionalTypes = new List<string>();
+    private string selectedProfessionalType = ""; // string
 
     protected override async Task OnInitializedAsync()
     {
         await InitializeConnection();
-        await LoadProjects(); // Carrega os projetos ao inicializar
+        await LoadProjects();
+        await LoadProfessionalTypes(); // Carrega os tipos de profissional
     }
 
     private async Task InitializeConnection()
@@ -95,7 +111,6 @@
         };
     }
 
-
     private async Task LoadProjects()
     {
         try
@@ -108,24 +123,34 @@
         }
     }
 
+    private async Task LoadProfessionalTypes()
+    {
+        try
+        {
+            var professional = await ProfessionalService.GetByIdAsync(ProfessionalId);
+            professionalTypes = professional.ProfessionalTypes; // Carrega os tipos de profissional
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Erro ao carregar os tipos de profissional: {ex.Message}";
+        }
+    }
+
     private async Task SendProposal()
     {
-        if (selectedProjectId == null)
+        if (selectedProjectId == null || string.IsNullOrEmpty(selectedProfessionalType))
         {
-            errorMessage = "Por favor, selecione um projeto.";
+            errorMessage = "Por favor, selecione um projeto e um tipo de contratação.";
             return;
         }
 
         try
         {
-            // Verifica a conexão
             if (hubConnection.State == HubConnectionState.Disconnected)
             {
-                Console.WriteLine("Reconectando...");
                 await hubConnection.StartAsync();
             }
 
-            // Obtém o token usando o AuthService
             var token = await AuthService.GetToken();
 
             if (string.IsNullOrEmpty(token))
@@ -134,10 +159,7 @@
                 return;
             }
 
-            // Lê o userId do token JWT
             var userId = await AuthService.GetUserIdFromToken();
-
-            // Chama o ClientService para obter o ClientId usando o UserId
             var clientDto = await ClientService.GetByUserId(userId);
             var clientId = clientDto?.ClientId;
 
@@ -147,33 +169,30 @@
                 return;
             }
 
-            // Cria a proposta
             var proposalDto = new ProposalDTO
                 {
                     ProposalId = Guid.NewGuid(),
                     ProposalMessage = proposalMessage,
                     ProposalValue = proposalValue,
-                    ProposalType = "Serviço",
+                    ProposalType = selectedProfessionalType, // Usa o tipo de profissional selecionado
                     IsAccepted = false,
                     Client = new ClientDTO { ClientId = clientId.Value },
-                    Professional = new GenericProfessionalDTO { Id = ProfessionalId }, // Usando o ID do profissional passado pela URL
-                    Projects = new ProjectsDTO { ProjectId = selectedProjectId.Value } // Usando o ID do projeto selecionado
+                    Professional = new GenericProfessionalDTO { Id = ProfessionalId },
+                    Projects = new ProjectsDTO { ProjectId = selectedProjectId.Value },
+                    ToBeContractedAs = new List<string> { selectedProfessionalType } // Adiciona como lista de string
                 };
 
             await hubConnection.InvokeAsync("SendProposal", proposalDto);
-            Console.WriteLine("Proposta enviada com sucesso.");
             isSuccess = true;
-            errorMessage = null; // Limpa mensagens de erro se tudo correr bem
+            errorMessage = null;
         }
         catch (HttpRequestException httpEx)
         {
             errorMessage = $"Erro de requisição HTTP: {httpEx.Message}";
-            Console.WriteLine(errorMessage);
         }
         catch (Exception ex)
         {
             errorMessage = $"Erro ao enviar a proposta: {ex.Message}";
-            Console.WriteLine(errorMessage);
         }
     }
 

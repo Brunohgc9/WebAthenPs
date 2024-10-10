@@ -26,5 +26,7 @@ namespace WebAthenPs.API.Entities.Components
         [ForeignKey("ProjectId")]
         public Projecty Project {  get; set; }
 
+        public List<string> ToBeContractedAs { get; set; } = new List<string>();
+
     }
 }

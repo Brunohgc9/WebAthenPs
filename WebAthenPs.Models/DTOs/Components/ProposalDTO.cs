@@ -22,5 +22,8 @@ namespace WebAthenPs.Models.DTOs.Components
 
         public GenericProfessionalDTO? Professional { get; set; }
         public ProjectsDTO? Projects { get; set; }
+
+        public List<string> ToBeContractedAs { get; set; } = new List<string>();
+
     }
 }
