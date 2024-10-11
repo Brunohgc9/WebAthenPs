@@ -7,6 +7,9 @@ using WebAthenPs.Models.DTOs.Project;
 using WebAthenPs.Models.DTOs.Professional.ProfessionalTypes.Architect;
 using WebAthenPs.Models.DTOs.Client;
 using WebAthenPs.Models.DTOs.Components;
+using WebAthenPs.API.Entities.Professional.ProfessionalTypes;
+using WebAthenPs.API.Entities;
+using WebAthenPs.API.Data;
 
 namespace WebAthenPs.API.Mappings.MappingProjectDTO
 {
@@ -229,5 +232,58 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                 NumberOfBathrooms = updateProjectDTO.NumberOfBathrooms,
             };
         }
+
+        // Mapeamento de ProjectProfessionalDTO para ProjectProfessional
+        // Mapeamento de ProjectProfessionalDTO para ProjectProfessional
+        public static ProjectProfessional ConverterDTOParaProjectProfessional(this ProjectProfessionalDTO projectProfessionalDTO)
+        {
+            return new ProjectProfessional
+            {
+                ProfessionalId = projectProfessionalDTO.ProfessionalId,
+                ProjectId = projectProfessionalDTO.ProjectId,
+                ContractedAs = projectProfessionalDTO.ContractedAs ?? new List<string>(),
+                Professional = projectProfessionalDTO.Professional != null ? new GenericProfessional
+                {
+                    Id = projectProfessionalDTO.Professional.Id,
+                    UserId = projectProfessionalDTO.Professional.UserId,
+                    ProfessionalTypes = projectProfessionalDTO.Professional.ProfessionalTypes,
+                    Architect = projectProfessionalDTO.Professional.GeneralArchitect != null ? new Architect
+                    {
+                        ArchId = projectProfessionalDTO.Professional.GeneralArchitect.ArchId,
+                        RegistroConselho = projectProfessionalDTO.Professional.GeneralArchitect.RegistroConselho,
+                        Especialidade = projectProfessionalDTO.Professional.GeneralArchitect.Especialidade
+                    } : null
+                } : null
+            };
+        }
+
+        // Mapeamento de ProjectProfessional para ProjectProfessionalDTO
+        public static ProjectProfessionalDTO ConverterProjectProfessionalParaDTO(this ProjectProfessional projectProfessional)
+        {
+            return new ProjectProfessionalDTO
+            {
+                ProfessionalId = projectProfessional.ProfessionalId,
+                ProjectId = projectProfessional.ProjectId,
+                ContractedAs = projectProfessional.ContractedAs ?? new List<string>(),
+                Professional = projectProfessional.Professional != null ? new GenericProfessionalDTO
+                {
+                    Id = projectProfessional.Professional.Id,
+                    UserId = projectProfessional.Professional.User.Id,
+                    UserName = projectProfessional.Professional.User?.UserName ?? string.Empty,
+                    PhoneNumber = projectProfessional.Professional.User?.PhoneNumber,
+                    Email = projectProfessional.Professional.User?.Email,
+                    ProfessionalTypes = projectProfessional.Professional.ProfessionalTypes,
+                    GeneralArchitect = projectProfessional.Professional.Architect != null ? new GeneralArchitectDTO
+                    {
+                        genericId = projectProfessional.Professional.Id,
+                        ArchId = projectProfessional.Professional.Architect.ArchId,
+                        RegistroConselho = projectProfessional.Professional.Architect.RegistroConselho,
+                        Especialidade = projectProfessional.Professional.Architect.Especialidade
+                    } : null
+                } : null
+            };
+        }
+
+
     }
 }

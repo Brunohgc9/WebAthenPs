@@ -19,7 +19,7 @@ namespace WebAthenPs.Models.DTOs.Components
         public bool IsAccepted { get; set; }
 
         public ClientDTO? Client { get; set; }
-
+        public bool? IsDeclined { get; set; }
         public GenericProfessionalDTO? Professional { get; set; }
         public ProjectsDTO? Projects { get; set; }
 

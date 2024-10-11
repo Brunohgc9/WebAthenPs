@@ -143,27 +143,28 @@ public class ProjectRepository : IProjectRepository
             .ToListAsync();
     }
 
-    public async Task AddProfessionalToProject(int projectId, int professionalId)
+    public async Task AddProfessionalToProject(ProjectProfessional projectProfessional)
     {
+        if (projectProfessional == null)
+            throw new ArgumentNullException(nameof(projectProfessional), "Dados do profissional do projeto não podem ser nulos.");
+
         var project = await _context.Projects
-            .Include(p => p.ProjectProfessionals) // Inclui a relação de profissionais
-            .FirstOrDefaultAsync(p => p.ProjectId == projectId);
+            .Include(p => p.ProjectProfessionals)
+            .FirstOrDefaultAsync(p => p.ProjectId == projectProfessional.ProjectId);
 
         if (project == null)
             throw new Exception("Projeto não encontrado.");
 
-        var professional = await _context.GenericProfessionals.FindAsync(professionalId);
+        var professional = await _context.GenericProfessionals.FindAsync(projectProfessional.ProfessionalId);
         if (professional == null)
             throw new Exception("Profissional não encontrado.");
 
-        project.ProjectProfessionals.Add(new ProjectProfessional
-        {
-            ProjectId = projectId,
-            ProfessionalId = professionalId
-        });
+        project.ProjectProfessionals.Add(projectProfessional);
 
         await _context.SaveChangesAsync();
     }
+
+
 
 
 }

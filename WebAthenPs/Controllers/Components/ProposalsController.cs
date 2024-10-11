@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using WebAthenPs.API.Entities.Components;
 using WebAthenPs.API.Mappings.MappingComponentDTO;
 using WebAthenPs.API.Entities.Clients;
+using WebAthenPs.API.Entities.Components.Chat;
 
 namespace WebAthenPs.API.Controllers.Components
 {
@@ -15,10 +16,12 @@ namespace WebAthenPs.API.Controllers.Components
     public class ProposalController : ControllerBase
     {
         private readonly IProposalRepository _proposalRepository;
+        private readonly IChatRepository _chatRepository; // Repositório para o chat
 
-        public ProposalController(IProposalRepository proposalRepository)
+        public ProposalController(IProposalRepository proposalRepository, IChatRepository chatRepository)
         {
             _proposalRepository = proposalRepository;
+            _chatRepository = chatRepository;
         }
 
         [HttpPost]
@@ -31,6 +34,17 @@ namespace WebAthenPs.API.Controllers.Components
             {
                 var proposal = proposalDTO.CriarPropostaEmDTO();
                 var createdProposal = await _proposalRepository.CreateAsync(proposal);
+
+                // Iniciar o chat
+                var chat = new Chat
+                {
+                    ProposalId = createdProposal.ProposalId,
+                    ClientId = proposal.Client.ClientId,
+                    ProfessionalId = proposal.ProfessionalId
+                };
+
+                await _chatRepository.CreateAsync(chat); // Salvar o chat no banco
+
                 var createdDto = createdProposal.ConverterPropostaParaDTO();
                 return CreatedAtAction(nameof(GetProposal), new { id = createdDto.ProposalId }, createdDto);
             }

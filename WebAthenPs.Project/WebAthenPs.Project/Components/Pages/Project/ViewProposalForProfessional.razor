@@ -12,50 +12,147 @@
 @inject IGenericProfessionalService ProfessionalService
 @inject IAuthService AuthService
 
-<h3>Propostas Recebidas</h3>
+<div class="container">
+    <h3>Propostas Recebidas</h3>
 
-@if (proposals != null && proposals.Any())
-{
-    foreach (var proposal in proposals)
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link @activeTabClass("pending")" @onclick="() => SetActiveTab(State[1])">Pendentes</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @activeTabClass("accepted")" @onclick="() => SetActiveTab(State[0])">Aceitas</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @activeTabClass("declined")" @onclick="() => SetActiveTab(State[2])">Recusadas</a>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-3">
+        @if (activeTab == "pending")
+        {
+            <div class="tab-pane active">
+                <h4>Propostas Pendentes</h4>
+                @if (pendingProposals.Any())
+                {
+                    foreach (var proposal in pendingProposals)
+                    {
+                        <div class="proposal-details border p-3 mb-3">
+                            <label><strong>Mensagem:</strong></label>
+                            <p>@proposal.ProposalMessage</p>
+
+                            <label><strong>Valor:</strong></label>
+                            <p>@proposal.ProposalValue.ToString("C")</p>
+
+                            <label><strong>Projeto:</strong></label>
+                            <p>@proposal.Projects?.ProjectId</p>
+                            <p>@proposal.Projects?.ProjectName</p>
+                            <p>@proposal.Projects?.Client?.UserName</p>
+
+                            <label><strong>Tipo de Profissional:</strong></label>
+                            <p>@string.Join(", ", proposal.ToBeContractedAs)</p>
+
+                            <label><strong>Status:</strong></label>
+                            <p>Pendente</p>
+
+                            <div class="actions">
+                                <button class="btn btn-success" @onclick="() => AcceptProposal(proposal)">Aceitar</button>
+                                <button class="btn btn-danger" @onclick="() => DeclineProposal(proposal)">Recusar</button>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p>Nenhuma proposta pendente.</p>
+                }
+            </div>
+        }
+        else if (activeTab == "accepted")
+        {
+            <div class="tab-pane active">
+                <h4>Propostas Aceitas</h4>
+                @if (acceptedProposals.Any())
+                {
+                    foreach (var proposal in acceptedProposals)
+                    {
+                        <div class="proposal-details border p-3 mb-3">
+                            <label><strong>Mensagem:</strong></label>
+                            <p>@proposal.ProposalMessage</p>
+
+                            <label><strong>Valor:</strong></label>
+                            <p>@proposal.ProposalValue.ToString("C")</p>
+
+                            <label><strong>Projeto:</strong></label>
+                            <p>@proposal.Projects?.ProjectId</p>
+                            <p>@proposal.Projects?.ProjectName</p>
+                            <p>@proposal.Projects?.Client?.UserName</p>
+
+                            <label><strong>Tipo de Profissional:</strong></label>
+                            <p>@string.Join(", ", proposal.ToBeContractedAs)</p>
+
+                            <label><strong>Status:</strong></label>
+                            <p>Aceita</p>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p>Nenhuma proposta aceita.</p>
+                }
+            </div>
+        }
+        else if (activeTab == "declined")
+        {
+            <div class="tab-pane active">
+                <h4>Propostas Recusadas</h4>
+                @if (declinedProposals.Any())
+                {
+                    foreach (var proposal in declinedProposals)
+                    {
+                        <div class="proposal-details border p-3 mb-3">
+                            <label><strong>Mensagem:</strong></label>
+                            <p>@proposal.ProposalMessage</p>
+
+                            <label><strong>Valor:</strong></label>
+                            <p>@proposal.ProposalValue.ToString("C")</p>
+
+                            <label><strong>Projeto:</strong></label>
+                            <p>@proposal.Projects?.ProjectId</p>
+                            <p>@proposal.Projects?.ProjectName</p>
+                            <p>@proposal.Projects?.Client?.UserName</p>
+
+                            <label><strong>Tipo de Profissional:</strong></label>
+                            <p>@string.Join(", ", proposal.ToBeContractedAs)</p>
+
+                            <label><strong>Status:</strong></label>
+                            <p>Recusada</p>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p>Nenhuma proposta recusada.</p>
+                }
+            </div>
+        }
+    </div>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
     {
-        <div class="proposal-details border p-3 mb-3">
-            <label><strong>Mensagem:</strong></label>
-            <p>@proposal.ProposalMessage</p>
-
-            <label><strong>Valor:</strong></label>
-            <p>@proposal.ProposalValue.ToString("C")</p>
-
-            <label><strong>Status:</strong></label>
-            <p>@(proposal.IsAccepted ? "Aceita" : "Pendente")</p>
-
-@*             @if (!proposal.IsAccepted)
-            { *@
-                <div class="actions">
-                    <button class="btn btn-success" @onclick="() => AcceptProposal(proposal)">Aceitar</button>
-                    <button class="btn btn-danger" @onclick="() => DeclineProposal(proposal)">Recusar</button>
-                </div>
-@*             }
-            else
-            {
-                <div class="alert alert-info">Esta proposta já foi aceita.</div>
-            } *@
-        </div>
+        <div class="alert alert-danger mt-3">@errorMessage</div>
     }
-}
-else
-{
-    <p>Nenhuma proposta recebida.</p>
-}
 
-@if (!string.IsNullOrEmpty(errorMessage))
-{
-    <div class="alert alert-danger mt-3">@errorMessage</div>
-}
+</div>
 
 @code {
+    string[] State = ["accepted", "pending", "declined"];
     private List<ProposalDTO> proposals = new List<ProposalDTO>();
+    private List<ProposalDTO> pendingProposals = new List<ProposalDTO>();
+    private List<ProposalDTO> acceptedProposals = new List<ProposalDTO>();
+    private List<ProposalDTO> declinedProposals = new List<ProposalDTO>();
     private string errorMessage;
     private string userId;
+    private string activeTab = "pending"; // Default tab
 
     protected override async Task OnInitializedAsync()
     {
@@ -73,13 +170,18 @@ else
             if (professionalDto != null)
             {
                 var professionalId = professionalDto.Id;
-                // Converta o resultado para uma lista
                 proposals = (await ProposalService.GetByProfessionalIdAsync(professionalId)).ToList();
                 Logger.LogInformation("Propostas carregadas para o profissional com ID: {ProfessionalId}", professionalId);
+
+                // Atualizando a lógica de classificação
+                pendingProposals = proposals.Where(p => !p.IsAccepted && (!p.IsDeclined.HasValue || p.IsDeclined == false)).ToList();
+                acceptedProposals = proposals.Where(p => p.IsAccepted && (!p.IsDeclined.HasValue || p.IsDeclined == false)).ToList(); // Propostas aceitas
+                declinedProposals = proposals.Where(p => p.IsDeclined == true).ToList(); // Propostas recusadas
             }
             else
             {
                 Logger.LogWarning("Usuário não é um profissional.");
+                errorMessage = "Usuário não é um profissional.";
             }
         }
         catch (Exception ex)
@@ -90,19 +192,34 @@ else
     }
 
 
+
+
+    private void SetActiveTab(string tab)
+    {
+        activeTab = tab;
+    }
+
+    private string activeTabClass(string tab) => activeTab == tab ? "active" : "";
+
     private async Task AcceptProposal(ProposalDTO proposal)
     {
         try
         {
-            proposal.IsAccepted = true;
+            var professionalDto = await ProfessionalService.GetByUserId(userId);
+            if (professionalDto == null)
+            {
+                errorMessage = "Usuário não é um profissional.";
+                Logger.LogWarning("Tentativa de aceitar proposta sem profissional associado.");
+                return;
+            }
+
+            proposal.IsAccepted = true; // Marque como aceita
             await ProposalService.RespondToProposalAsync(proposal.ProposalId, true);
             Logger.LogInformation("Proposta aceita: {@Proposal}", proposal);
 
             if (proposal.Projects != null)
             {
-                var professionalDto = await ProfessionalService.GetByUserId(userId);
                 var professionalId = professionalDto.Id;
-
                 var projectId = proposal.Projects.ProjectId; // Certifique-se de que isso não é nulo
                 var projectDto = await ProjectService.GetById(projectId);
 
@@ -112,11 +229,11 @@ else
                         {
                             ProfessionalId = professionalId,
                             ProjectId = projectId,
-                            Professional = professionalDto // Adiciona detalhes do profissional
+                            ContractedAs = proposal.ToBeContractedAs // Passando o valor de ToBeContractedAs
                         };
 
                     // Chama o método para adicionar o profissional ao projeto
-                    var isAdded = await ProjectService.AddProfessional(projectId, professionalId);
+                    var isAdded = await ProjectService.AddProfessional(projectProfessionalDto, proposal); // Passando a proposta
 
                     if (!isAdded)
                     {
@@ -150,16 +267,17 @@ else
     }
 
 
-
-
     private async Task DeclineProposal(ProposalDTO proposal)
     {
         try
         {
-            proposal.IsAccepted = false;
-            await ProposalService.RespondToProposalAsync(proposal.ProposalId, false);
+            proposal.IsAccepted = false; // Marque como não aceita
+            proposal.IsDeclined = true; // Marque como recusada
+            await ProposalService.RespondToProposalAsync(proposal.ProposalId, false); // Atualize a proposta na API
             Logger.LogInformation("Proposta recusada: {@Proposal}", proposal);
-            await LoadProposals(); // Recarregar propostas
+
+            // Recarregar propostas após a rejeição
+            await LoadProposals(); // Recarregar propostas para refletir a nova classificação
         }
         catch (Exception ex)
         {
@@ -167,4 +285,8 @@ else
             Logger.LogError(ex, "Erro ao recusar a proposta: {@Proposal}", proposal);
         }
     }
+
+
+
+
 }

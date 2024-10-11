@@ -14,6 +14,7 @@ using WebAthenPs.API.Entities.Clients;
 using WebAthenPs.Models.DTOs.Project;
 using WebAthenPs.API.Entities.Project;
 using WebAthenPs.API.Entities.Professional;
+using WebAthenPs.Models.DTOs.Professional;
 
 namespace WebAthenPs.API.Controllers.Projects
 {
@@ -86,25 +87,6 @@ namespace WebAthenPs.API.Controllers.Projects
 
         // Adicionar profissionais a um projeto
         // Adicionar um profissional a um projeto
-        [HttpPost("{projectId:int}/professionals")]
-        public async Task<ActionResult> AddProfessionalToProject(int projectId, [FromBody] int professionalId)
-        {
-            if (professionalId <= 0) // Verifica se o ID é um valor válido
-            {
-                return BadRequest("ID do profissional inválido.");
-            }
-
-            try
-            {
-                // Chama o repositório para adicionar o profissional ao projeto
-                await _projectRepository.AddProfessionalToProject(projectId, professionalId);
-                return NoContent(); // Retorna 204 No Content se a operação for bem-sucedida
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao adicionar profissional ao projeto: {ex.Message}");
-            }
-        }
 
 
 
@@ -262,6 +244,45 @@ namespace WebAthenPs.API.Controllers.Projects
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao criar projeto: {ex.Message}");
             }
         }
+
+        [HttpPost("{projectId:int}/professionals")]
+        public async Task<ActionResult<ProjectProfessionalDTO>> AddProfessionalToProject(int projectId, [FromBody] ProjectProfessionalDTO projectProfessionalDTO)
+        {
+            if (projectProfessionalDTO == null || !ModelState.IsValid)
+                return BadRequest("Dados inválidos.");
+
+            try
+            {
+                // Verifica se o projeto existe
+                var existingProject = await _projectRepository.GetById(projectId);
+                if (existingProject == null)
+                    return NotFound("Projeto não encontrado.");
+
+                // Verifica se o profissional existe
+                var professional = await _context.GenericProfessionals.FindAsync(projectProfessionalDTO.ProfessionalId);
+                if (professional == null)
+                    return NotFound("Profissional não encontrado.");
+
+                // Converte DTO para entidade
+                var projectProfessional = projectProfessionalDTO.ConverterDTOParaProjectProfessional();
+                projectProfessional.ProjectId = projectId;
+                projectProfessional.Professional = professional;
+
+                // Adiciona o profissional ao projeto
+                await _projectRepository.AddProfessionalToProject(projectProfessional);
+
+                // Converte a entidade de volta para DTO para retorno
+                var createdDto = projectProfessional.ConverterProjectProfessionalParaDTO();
+
+                return CreatedAtAction(nameof(GetById), new { id = createdDto.ProjectId }, createdDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao adicionar profissional ao projeto: {ex.Message}");
+            }
+        }
+
+
 
 
         // Deletar projeto

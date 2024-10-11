@@ -10,6 +10,7 @@ using WebAthenPs.Models.DTOs.Project;
 using WebAthenPs.Project.Services.Interfaces.Project;
 using WebAthenPs.Models.DTOs.Professional;
 using WebAthenPs.Project.Services.Interfaces.User;
+using WebAthenPs.Models.DTOs.Components;
 
 namespace WebAthenPs.Project.Services.Implementation.Project
 {
@@ -287,22 +288,29 @@ namespace WebAthenPs.Project.Services.Implementation.Project
                 throw;
             }
         }
-        public async Task<bool> AddProfessional(int projectId, int professionalId)
+        public async Task<bool> AddProfessional(ProjectProfessionalDTO projectProfessionalDTO, ProposalDTO proposal)
         {
-            // Validação do ID do profissional
-            if (professionalId <= 0)
+            // Validação do DTO do profissional
+            if (projectProfessionalDTO == null || projectProfessionalDTO.ProfessionalId <= 0 || projectProfessionalDTO.ProjectId <= 0)
             {
-                throw new ArgumentException("O ID do profissional deve ser um valor positivo.", nameof(professionalId));
+                throw new ArgumentException("O DTO do profissional é inválido.", nameof(projectProfessionalDTO));
+            }
+
+            // Verifica se a proposta foi aceita
+            if (!proposal.IsAccepted)
+            {
+                _logger.LogInformation($"Profissional com ID {projectProfessionalDTO.ProfessionalId} não pode ser adicionado ao projeto com ID {projectProfessionalDTO.ProjectId} porque a proposta foi recusada.");
+                return false; // Não registra, pois a proposta não foi aceita
             }
 
             try
             {
                 var httpClient = await CreateAuthorizedClientAsync();
-                var response = await httpClient.PostAsJsonAsync($"api/Projects/{projectId}/professionals", professionalId);
+                var response = await httpClient.PostAsJsonAsync($"api/Projects/{projectProfessionalDTO.ProjectId}/professionals", projectProfessionalDTO);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    _logger.LogInformation($"Profissional com ID {professionalId} adicionado ao projeto com ID {projectId} com sucesso.");
+                    _logger.LogInformation($"Profissional com ID {projectProfessionalDTO.ProfessionalId} adicionado ao projeto com ID {projectProfessionalDTO.ProjectId} com sucesso.");
                     return true;
                 }
 
@@ -312,15 +320,17 @@ namespace WebAthenPs.Project.Services.Implementation.Project
             }
             catch (HttpRequestException httpEx)
             {
-                _logger.LogError(httpEx, $"Erro ao acessar a API para adicionar o profissional ao projeto com ID {projectId}.");
+                _logger.LogError(httpEx, $"Erro ao acessar a API para adicionar o profissional ao projeto com ID {projectProfessionalDTO.ProjectId}.");
                 throw;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Erro inesperado ao adicionar o profissional ao projeto com ID {projectId}.");
+                _logger.LogError(ex, $"Erro inesperado ao adicionar o profissional ao projeto com ID {projectProfessionalDTO.ProjectId}.");
                 throw;
             }
         }
+
+
 
 
     }

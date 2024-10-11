@@ -1,4 +1,5 @@
-﻿using WebAthenPs.Models.DTOs.Professional;
+﻿using WebAthenPs.Models.DTOs.Components;
+using WebAthenPs.Models.DTOs.Professional;
 using WebAthenPs.Models.DTOs.Project;
 
 namespace WebAthenPs.Project.Services.Interfaces.Project
@@ -13,6 +14,6 @@ namespace WebAthenPs.Project.Services.Interfaces.Project
         Task DeleteProject(int id);
         Task<IEnumerable<ProjectsDTO>> GetProjectsByLoggedInUser();
         Task<ProjectsDTO> UpdateProject(int id, ProjectsDTO dto);
-        Task<bool> AddProfessional(int projectId, int professionalId);
+        Task<bool> AddProfessional(ProjectProfessionalDTO projectProfessionalDTO, ProposalDTO proposal);
     }
 }
