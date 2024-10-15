@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using WebAthenPs.API.Entities;
 using WebAthenPs.API.Entities.Clients;
 using WebAthenPs.API.Entities.Components;
+using WebAthenPs.API.Entities.Components.ChatEntities;
 using WebAthenPs.API.Entities.Professional;
 using WebAthenPs.API.Entities.Professional.ProfessionalTypes;
 using WebAthenPs.API.Entities.Project;
@@ -18,11 +20,35 @@ namespace WebAthenPs.API.Data
         public DbSet<Post> Posts { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Proposal> Proposals { get; set; }
-
+        public DbSet<Chat> Chats { get; set; }
+        public DbSet<Message> Messages { get; set; }
+        public DbSet<ChatParticipant> ChatParticipants { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<ChatParticipant>()
+            .HasKey(cp => new { cp.ChatId, cp.UserId }); // Chave composta
+
+            modelBuilder.Entity<ChatParticipant>()
+                .HasOne(cp => cp.Chat)
+                .WithMany(c => c.Participants)
+                .HasForeignKey(cp => cp.ChatId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ChatParticipant>()
+                .HasOne(cp => cp.User)
+                .WithMany()
+                .HasForeignKey(cp => cp.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Relacionamento entre Chat e Message
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.Chat)
+                .WithMany(c => c.Messages)
+                .HasForeignKey(m => m.ChatId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Projecty>()
            .HasMany(p => p.ProjectProfessionals)

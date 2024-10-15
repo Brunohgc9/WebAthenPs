@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using WebAthenPs.API.Entities;
 
 namespace WebAthenPs.API.Data
 {
@@ -16,5 +17,8 @@ namespace WebAthenPs.API.Data
 
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedDate { get; set; } = DateTime.UtcNow;
+
+        public virtual ICollection<Chat>? Chats { get; set; } = new List<Chat>();
+
     }
 }

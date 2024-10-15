@@ -1,0 +1,107 @@
+﻿@page "/chat"
+@using Microsoft.AspNetCore.SignalR.Client
+@using System.Collections.Generic
+@using Microsoft.AspNetCore.Components
+@using WebAthenPs.Models.DTOs.Components.Chats
+@using WebAthenPs.Project.Services.Implementation.User
+@using WebAthenPs.Project.Services.Interfaces.Chats
+@using WebAthenPs.Project.Services.Interfaces.User
+@inject NavigationManager Navigation
+@inject IAuthService AuthService
+@inject IChatService ChatService
+
+<h3>Chat</h3>
+
+<div>
+    <h4>Mensagens</h4>
+    <ul>
+        @foreach (var message in messages)
+        {
+            <li>@message.Content (@message.Timestamp)</li>
+        }
+    </ul>
+
+    <input type="text" @bind="messageContent" placeholder="Digite sua mensagem..." />
+    <button @onclick="SendMessage">Enviar</button>
+</div>
+
+<h4>Criar Novo Chat</h4>
+<div>
+    <input type="text" @bind="newChatName" placeholder="Nome do novo chat..." />
+    <input type="text" @bind="participantId" placeholder="ID do usuário para adicionar..." />
+    <button @onclick="CreateChat">Criar Chat</button>
+</div>
+
+@code {
+    private HubConnection hubConnection;
+    private List<MessageDTO> messages = new List<MessageDTO>();
+    private string messageContent;
+    private string newChatName; // Para o nome do novo chat
+    private string participantId; // Para o ID do participante a ser adicionado
+
+    protected override async Task OnInitializedAsync()
+    {
+        await InitializeConnection();
+        // Não carrega chats inicialmente, pois o usuário pode criar um novo chat.
+    }
+
+    private async Task InitializeConnection()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri("https://localhost:7171/chatHub"))
+            .Build();
+
+        hubConnection.On<MessageDTO>("ReceiveMessage", (message) =>
+        {
+            messages.Add(message);
+            InvokeAsync(StateHasChanged);
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+    private async Task SendMessage()
+    {
+        if (!string.IsNullOrWhiteSpace(messageContent))
+        {
+            var messageDto = new MessageDTO
+                {
+                    Content = messageContent,
+                    Timestamp = DateTime.UtcNow,
+                    SenderId = await AuthService.GetUserIdFromToken() // Inclui o ID do usuário como remetente
+                };
+
+            await hubConnection.InvokeAsync("SendMessage", messageDto);
+            messageContent = string.Empty; // Limpa o campo de entrada
+        }
+    }
+
+    private async Task CreateChat()
+    {
+        if (!string.IsNullOrWhiteSpace(participantId))
+        {
+            var userId = await AuthService.GetUserIdFromToken(); // Obtém o ID do usuário logado
+
+            var chatDto = new ChatDTO
+                {
+                    ChatId = Guid.NewGuid(), // Cria um novo GUID para o chat
+                    Participants = new List<ChatParticipantDTO>
+                {
+                    new ChatParticipantDTO { UserId = userId }, // Adiciona o usuário logado
+                    new ChatParticipantDTO { UserId = participantId } // Adiciona o ID do usuário inserido
+                }
+                };
+
+            var createdChat = await ChatService.CreateChatAsync(chatDto);
+            messages.Clear(); // Limpa mensagens após criar um novo chat
+            newChatName = string.Empty; // Limpa o campo de entrada
+            participantId = string.Empty; // Limpa o campo de ID do participante
+            StateHasChanged(); // Atualiza a UI
+        }
+    }
+
+    public void Dispose()
+    {
+        _ = hubConnection?.DisposeAsync();
+    }
+}

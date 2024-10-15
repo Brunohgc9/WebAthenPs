@@ -145,14 +145,15 @@
 </div>
 
 @code {
-    string[] State = ["accepted", "pending", "declined"];
+    string[] State = { "accepted", "pending", "declined" }; // Mantemos o array State
+
     private List<ProposalDTO> proposals = new List<ProposalDTO>();
     private List<ProposalDTO> pendingProposals = new List<ProposalDTO>();
     private List<ProposalDTO> acceptedProposals = new List<ProposalDTO>();
     private List<ProposalDTO> declinedProposals = new List<ProposalDTO>();
     private string errorMessage;
     private string userId;
-    private string activeTab = "pending"; // Default tab
+    private string activeTab = "pending"; // Aba padrão é "pending"
 
     protected override async Task OnInitializedAsync()
     {
@@ -173,7 +174,6 @@
                 proposals = (await ProposalService.GetByProfessionalIdAsync(professionalId)).ToList();
                 Logger.LogInformation("Propostas carregadas para o profissional com ID: {ProfessionalId}", professionalId);
 
-                // Atualizando a lógica de classificação
                 pendingProposals = proposals.Where(p => !p.IsAccepted && (!p.IsDeclined.HasValue || p.IsDeclined == false)).ToList();
                 acceptedProposals = proposals.Where(p => p.IsAccepted && (!p.IsDeclined.HasValue || p.IsDeclined == false)).ToList(); // Propostas aceitas
                 declinedProposals = proposals.Where(p => p.IsDeclined == true).ToList(); // Propostas recusadas
@@ -190,9 +190,6 @@
             Logger.LogError(ex, "Erro ao carregar propostas para UserId: {UserId}", userId);
         }
     }
-
-
-
 
     private void SetActiveTab(string tab)
     {
@@ -220,7 +217,7 @@
             if (proposal.Projects != null)
             {
                 var professionalId = professionalDto.Id;
-                var projectId = proposal.Projects.ProjectId; // Certifique-se de que isso não é nulo
+                var projectId = proposal.Projects.ProjectId;
                 var projectDto = await ProjectService.GetById(projectId);
 
                 if (projectDto != null)
@@ -229,11 +226,10 @@
                         {
                             ProfessionalId = professionalId,
                             ProjectId = projectId,
-                            ContractedAs = proposal.ToBeContractedAs // Passando o valor de ToBeContractedAs
+                            ContractedAs = proposal.ToBeContractedAs
                         };
 
-                    // Chama o método para adicionar o profissional ao projeto
-                    var isAdded = await ProjectService.AddProfessional(projectProfessionalDto, proposal); // Passando a proposta
+                    var isAdded = await ProjectService.AddProfessional(projectProfessionalDto, proposal);
 
                     if (!isAdded)
                     {
@@ -257,7 +253,7 @@
                 errorMessage = "A proposta não contém um projeto associado.";
             }
 
-            await LoadProposals(); // Recarregar propostas
+            await LoadProposals();
         }
         catch (Exception ex)
         {
@@ -266,18 +262,16 @@
         }
     }
 
-
     private async Task DeclineProposal(ProposalDTO proposal)
     {
         try
         {
             proposal.IsAccepted = false; // Marque como não aceita
             proposal.IsDeclined = true; // Marque como recusada
-            await ProposalService.RespondToProposalAsync(proposal.ProposalId, false); // Atualize a proposta na API
+            await ProposalService.RespondToProposalAsync(proposal.ProposalId, false);
             Logger.LogInformation("Proposta recusada: {@Proposal}", proposal);
 
-            // Recarregar propostas após a rejeição
-            await LoadProposals(); // Recarregar propostas para refletir a nova classificação
+            await LoadProposals();
         }
         catch (Exception ex)
         {
@@ -285,8 +279,4 @@
             Logger.LogError(ex, "Erro ao recusar a proposta: {@Proposal}", proposal);
         }
     }
-
-
-
-
 }

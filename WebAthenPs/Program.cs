@@ -10,13 +10,16 @@ using WebAthenPs.API.Mappings.MappingProjectDTO;
 using WebAthenPs.API.Repositories;
 using WebAthenPs.API.Repositories.Implementations;
 using WebAthenPs.API.Repositories.Interfaces;
+using WebAthenPs.API.Hubs;
+using WebAthenPs.API.Repositories.Implementations.ChatImplementation;
+using WebAthenPs.API.Repositories.Interfaces.ChatImplementation;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Configuração dos serviços
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(); // Adicionado para suporte ao SignalR
 builder.Services.AddScoped<IProposalRepository, ProposalRepository>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IArchitectRepository, ArchitectRepository>();
@@ -24,6 +27,7 @@ builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IGenericProfessionlRepository, GenericProfessionalRepository>();
+builder.Services.AddScoped<IChatRepository, ChatRepository>(); // Adicione o repositório do chat
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "APIWebAthenPs", Version = "v1" });
@@ -41,7 +45,6 @@ builder.Services.AddSwaggerGen(c =>
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
-
         {
             new OpenApiSecurityScheme
             {
@@ -53,7 +56,6 @@ builder.Services.AddSwaggerGen(c =>
             },
             new string[]{}
         }
-
     });
 });
 builder.Services.AddCors(options =>
@@ -132,6 +134,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapHub<ProposalHub>("/proposalHub");
+app.MapHub<ChatHub>("/chatHub"); // Mapeie o ChatHub
 app.MapControllers();
 
 app.Run();
