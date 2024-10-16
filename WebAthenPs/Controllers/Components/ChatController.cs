@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using WebAthenPs.API.Repositories.Interfaces.ChatImplementation;
 using WebAthenPs.Models.DTOs.Components.Chats;
+using WebAthenPs.API.Mappings.MappingComponentDTO;
 using WebAthenPs.API.Entities.Components.ChatEntities;
-using WebAthenPs.API.Entities;
 
 namespace WebAthenPs.API.Controllers.Components
 {
@@ -25,26 +26,29 @@ namespace WebAthenPs.API.Controllers.Components
         {
             if (chatDto == null) return BadRequest("Chat inválido.");
 
-            var chat = new Chat
-            {
-                ChatId = Guid.NewGuid(),
-                Participants = new List<ChatParticipant>(),
-                Messages = new List<Message>()
-            };
+            // Cria o chat a partir do DTO
+            var chat = chatDto.CriarChatEmDTO();
 
-            // Adicionar participantes
-            foreach (var participant in chatDto.Participants)
+            // Cria o chat no repositório e o ChatId é gerado automaticamente
+            var createdChat = await _chatRepository.CreateChatAsync(chat);
+
+            // Vincula o ChatId gerado a todos os participantes e mensagens
+            foreach (var participant in createdChat.Participants)
             {
-                chat.Participants.Add(new ChatParticipant
-                {
-                    ChatId = chat.ChatId,
-                    UserId = participant.UserId
-                });
+                participant.ChatId = createdChat.ChatId;
+            }
+            foreach (var message in createdChat.Messages)
+            {
+                message.ChatId = createdChat.ChatId;
             }
 
-            var createdChat = await _chatRepository.CreateChatAsync(chat);
-            return CreatedAtAction(nameof(GetChat), new { chatId = createdChat.ChatId }, createdChat);
+            // Retorna o chat criado com o ID correto
+            var createdChatDTO = createdChat.ConverterChatParaDTO();
+
+            return CreatedAtAction(nameof(GetChat), new { chatId = createdChatDTO.ChatId }, createdChatDTO);
         }
+
+
 
         [HttpGet("{chatId}")]
         public async Task<IActionResult> GetChat(Guid chatId)
@@ -52,25 +56,7 @@ namespace WebAthenPs.API.Controllers.Components
             var chat = await _chatRepository.GetChatByIdAsync(chatId);
             if (chat == null) return NotFound("Chat não encontrado.");
 
-            // Mapear para DTO
-            var chatDto = new ChatDTO
-            {
-                ChatId = chat.ChatId,
-                Participants = chat.Participants.Select(p => new ChatParticipantDTO
-                {
-                    ChatId = p.ChatId,
-                    UserId = p.UserId
-                }).ToList(),
-                Messages = chat.Messages.Select(m => new MessageDTO
-                {
-                    MessageId = m.MessageId,
-                    Content = m.Content,
-                    Timestamp = m.Timestamp,
-                    SenderId = m.SenderId,
-                    ChatId = m.ChatId
-                }).ToList()
-            };
-
+            var chatDto = chat.ConverterChatParaDTO();
             return Ok(chatDto);
         }
 
@@ -78,7 +64,9 @@ namespace WebAthenPs.API.Controllers.Components
         public async Task<IActionResult> GetChatsByUserId(string userId)
         {
             var chats = await _chatRepository.GetChatsByUserIdAsync(userId);
-            return Ok(chats);
+            var chatsDto = chats.ConverterChatsParaDTO();
+
+            return Ok(chatsDto);
         }
 
         [HttpPost("{chatId}/message")]
@@ -86,22 +74,22 @@ namespace WebAthenPs.API.Controllers.Components
         {
             if (messageDto == null) return BadRequest("Mensagem inválida.");
 
-            var message = new Message
-            {
-                Content = messageDto.Content,
-                SenderId = messageDto.SenderId,
-                ChatId = chatId
-            };
+            var message = messageDto.CriarMensagemEmDTO();
+            message.ChatId = chatId;
 
             var createdMessage = await _chatRepository.AddMessageAsync(message);
-            return CreatedAtAction(nameof(GetMessagesByChatId), new { chatId = chatId }, createdMessage);
+            var createdMessageDTO = createdMessage.ConverterMensagemParaDTO();
+
+            return CreatedAtAction(nameof(GetMessagesByChatId), new { chatId }, createdMessageDTO);
         }
 
         [HttpGet("{chatId}/messages")]
         public async Task<IActionResult> GetMessagesByChatId(Guid chatId)
         {
             var messages = await _chatRepository.GetMessagesByChatIdAsync(chatId);
-            return Ok(messages);
+            var messagesDto = messages.ConverterMensagensParaDTO();
+
+            return Ok(messagesDto);
         }
 
         [HttpPost("{chatId}/participant")]
@@ -118,5 +106,6 @@ namespace WebAthenPs.API.Controllers.Components
             await _chatRepository.AddParticipantAsync(participant);
             return NoContent();
         }
+
     }
 }

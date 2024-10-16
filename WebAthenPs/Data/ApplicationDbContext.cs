@@ -27,21 +27,20 @@ namespace WebAthenPs.API.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
             modelBuilder.Entity<ChatParticipant>()
-            .HasKey(cp => new { cp.ChatId, cp.UserId }); // Chave composta
-
+              .HasKey(cp => cp.Id);
             modelBuilder.Entity<ChatParticipant>()
-                .HasOne(cp => cp.Chat)
-                .WithMany(c => c.Participants)
-                .HasForeignKey(cp => cp.ChatId)
-                .OnDelete(DeleteBehavior.Cascade);
+                    .HasOne(cp => cp.Chat)
+                    .WithMany(c => c.Participants)
+                    .HasForeignKey(cp => cp.ChatId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
+            // Relacionamento entre ChatParticipant e ApplicationUser (UserId como string)
             modelBuilder.Entity<ChatParticipant>()
                 .HasOne(cp => cp.User)
                 .WithMany()
                 .HasForeignKey(cp => cp.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Relacionamento entre Chat e Message
             modelBuilder.Entity<Message>()
@@ -49,6 +48,13 @@ namespace WebAthenPs.API.Data
                 .WithMany(c => c.Messages)
                 .HasForeignKey(m => m.ChatId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Relacionamento entre Message e ApplicationUser (SenderId como string)
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.User)
+                .WithMany()
+                .HasForeignKey(m => m.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Projecty>()
            .HasMany(p => p.ProjectProfessionals)
