@@ -26,6 +26,8 @@ namespace WebAthenPs.API.Hubs.HubServices
             ConnectionUsers.TryRemove(connectionId, out _);
         }
 
+
+
         // Cria um novo chat e associa o criador a ele
         public async Task<Guid> CreateChatAsync(string creatorUserId)
         {
@@ -73,7 +75,9 @@ namespace WebAthenPs.API.Hubs.HubServices
         public async Task AddMessageAsync(string userId, Guid chatId, string message)
         {
             if (!IsUserInChat(userId, chatId))
+            {
                 throw new InvalidOperationException("Usuário não está no chat.");
+            }
 
             var chatMessage = new ChatMessage
             {
@@ -86,6 +90,7 @@ namespace WebAthenPs.API.Hubs.HubServices
             _context.ChatMessages.Add(chatMessage);
             await _context.SaveChangesAsync();
         }
+
 
         // Recupera as mensagens de um chat específico
         public List<ChatMessage> GetMessagesByChatId(Guid chatId)
@@ -116,5 +121,15 @@ namespace WebAthenPs.API.Hubs.HubServices
                 .Select(cu => cu.UserId)
                 .ToList();
         }
+
+        // Obtém os chats que o usuário está associado
+        public List<Chats> GetChatsByUserId(string userId)
+        {
+            return _context.ChatAndUsers
+                .Where(cu => cu.UserId == userId)
+                .Select(cu => cu.Chat)
+                .ToList();
+        }
+
     }
 }
