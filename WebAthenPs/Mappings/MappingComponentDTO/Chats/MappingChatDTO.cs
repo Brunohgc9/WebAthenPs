@@ -16,17 +16,16 @@ namespace WebAthenPs.API.Mappings.MappingComponentDTO
                 ChatId = chat.ChatId,
                 Participants = chat.Participants.Select(p => new ChatParticipantDTO
                 {
-                    Id = p.Id, // Adiciona o ID do participante
                     ChatId = p.ChatId,
-                    UserId = p.User.Id,
+                    UserId = p.User.Id, // Usando p.User.Id
                 }).ToList(),
                 Messages = chat.Messages.Select(m => new MessageDTO
                 {
                     MessageId = m.MessageId,
                     Content = m.Content,
                     Timestamp = m.Timestamp,
-                    SenderId = m.User.Id,
-                    ChatId = m.Chat.ChatId
+                    SenderId = m.User.Id, // Usando m.User.Id
+                    ChatId = m.Chat.ChatId // Usando m.Chat.ChatId
                 }).ToList()
             }) ?? Enumerable.Empty<ChatDTO>();
         }
@@ -38,17 +37,16 @@ namespace WebAthenPs.API.Mappings.MappingComponentDTO
                 ChatId = chat.ChatId,
                 Participants = chat.Participants.Select(p => new ChatParticipantDTO
                 {
-                    Id = p.Id, // Adiciona o ID do participante
                     ChatId = p.ChatId,
-                    UserId = p.UserId
+                    UserId = p.User.Id // Usando p.User.Id
                 }).ToList(),
                 Messages = chat.Messages.Select(m => new MessageDTO
                 {
                     MessageId = m.MessageId,
                     Content = m.Content,
                     Timestamp = m.Timestamp,
-                    SenderId = m.User.Id,
-                    ChatId = m.Chat.ChatId
+                    SenderId = m.User.Id, // Usando m.User.Id
+                    ChatId = m.Chat.ChatId // Usando m.Chat.ChatId
                 }).ToList()
             };
         }
@@ -57,8 +55,10 @@ namespace WebAthenPs.API.Mappings.MappingComponentDTO
         {
             return new Chat
             {
+                ChatId = chatDTO.ChatId,
                 Participants = chatDTO.Participants.Select(p => new ChatParticipant
                 {
+                    ChatId = p.ChatId,
                     UserId = p.UserId // Assume-se que o UserId seja passado corretamente
                 }).ToList(),
                 Messages = chatDTO.Messages.Select(m => new Message
@@ -66,11 +66,11 @@ namespace WebAthenPs.API.Mappings.MappingComponentDTO
                     MessageId = m.MessageId,
                     Content = m.Content,
                     Timestamp = m.Timestamp,
-                    SenderId = m.SenderId,
+                    SenderId = m.SenderId, // Assume-se que o SenderId seja passado corretamente
+                    ChatId = m.ChatId // Assume-se que o ChatId seja passado corretamente
                 }).ToList()
             };
         }
-
 
         public static Chat AtualizarChatDTO(this ChatDTO chatDTO)
         {
@@ -79,17 +79,16 @@ namespace WebAthenPs.API.Mappings.MappingComponentDTO
                 ChatId = chatDTO.ChatId,
                 Participants = chatDTO.Participants.Select(p => new ChatParticipant
                 {
-                    Id = p.Id, // Atualiza o ID do participante
                     ChatId = p.ChatId,
-                    UserId = p.UserId
+                    UserId = p.UserId // Assume-se que o UserId seja passado corretamente
                 }).ToList(),
                 Messages = chatDTO.Messages.Select(m => new Message
                 {
                     MessageId = m.MessageId,
                     Content = m.Content,
                     Timestamp = m.Timestamp,
-                    SenderId = m.SenderId,
-                    ChatId = m.ChatId
+                    SenderId = m.SenderId, // Assume-se que o SenderId seja passado corretamente
+                    ChatId = m.ChatId // Assume-se que o ChatId seja passado corretamente
                 }).ToList()
             };
         }

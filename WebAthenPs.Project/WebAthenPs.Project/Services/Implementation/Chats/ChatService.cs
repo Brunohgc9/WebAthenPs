@@ -61,7 +61,7 @@ namespace WebAthenPs.Project.Services.Implementation.Chat
             return httpClient;
         }
 
-        public async Task<ChatDTO> CreateChatAsync(ChatDTO chatDto)
+        public async Task<ChatDTO> CreateChatAsync(ChatDTO chatDto) // Corrigido
         {
             try
             {
@@ -76,15 +76,6 @@ namespace WebAthenPs.Project.Services.Implementation.Chat
                     var createdDto = JsonSerializer.Deserialize<ChatDTO>(
                         await response.Content.ReadAsStringAsync(),
                         new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                    // Garante que o ChatId gerado pelo servidor seja vinculado a todos os participantes
-                    if (createdDto != null && createdDto.Participants != null)
-                    {
-                        foreach (var participant in createdDto.Participants)
-                        {
-                            participant.ChatId = createdDto.ChatId; // Vincula o ChatId a cada participante
-                        }
-                    }
 
                     return createdDto;
                 }
@@ -101,8 +92,6 @@ namespace WebAthenPs.Project.Services.Implementation.Chat
                 throw new Exception($"Error creating chat: {ex.Message}", ex);
             }
         }
-
-
 
         public async Task<List<ChatDTO>> GetChatsByUserIdAsync(string userId) // Corrigido
         {

@@ -13,6 +13,6 @@ namespace WebAthenPs.API.Entities
 
         public List<ChatParticipant> Participants { get; set; } = new List<ChatParticipant>();
 
-        public List<Message>? Messages { get; set; } = new List<Message>();
+        public List<Message> Messages { get; set; } = new List<Message>();
     }
 }

@@ -21,21 +21,19 @@ namespace WebAthenPs.API.Hubs
         {
             var chat = new Chat
             {
-                ChatId = Guid.NewGuid(),
+                ChatId = Guid.NewGuid(), // Gerar novo ChatId
                 Participants = new List<ChatParticipant>
-        {
-            new ChatParticipant
-            {
-                Id = Guid.NewGuid(),  // Gera um novo Guid para o participante
-                UserId = userId
-            }
-        }
+                {
+                    new ChatParticipant
+                    {
+                        UserId = userId // Adicionar o usuário que criou o chat
+                    }
+                }
             };
 
             await _chatRepository.CreateChatAsync(chat);
             await Clients.User(userId).SendAsync("ChatCreated", chat.ChatId);
         }
-
 
         public async Task SendMessage(string chatId, string content, string senderId)
         {

@@ -61,11 +61,9 @@ namespace WebAthenPs.API.Repositories.Implementations.ChatImplementation
         public async Task<ChatParticipant> AddParticipantAsync(ChatParticipant participant)
         {
             if (participant == null) throw new ArgumentNullException(nameof(participant));
-            participant.Id = Guid.NewGuid();  // Gera um novo Guid para o Id do participante
             await _context.ChatParticipants.AddAsync(participant);
             await _context.SaveChangesAsync();
             return participant;
         }
-
     }
 }

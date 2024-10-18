@@ -84,28 +84,21 @@
 
             var chatDto = new ChatDTO
                 {
-                    // O ChatId será gerado pelo servidor
+                    ChatId = Guid.NewGuid(), // Cria um novo GUID para o chat
                     Participants = new List<ChatParticipantDTO>
-            {
-                new ChatParticipantDTO { UserId = userId }, // Adiciona o usuário logado
-                new ChatParticipantDTO { UserId = participantId } // Adiciona o ID do usuário inserido
-            }
+                {
+                    new ChatParticipantDTO { UserId = userId }, // Adiciona o usuário logado
+                    new ChatParticipantDTO { UserId = participantId } // Adiciona o ID do usuário inserido
+                }
                 };
 
-            // Cria o chat no servidor e obtém o ChatDTO atualizado com o ChatId correto
             var createdChat = await ChatService.CreateChatAsync(chatDto);
-
-            // Limpa o conteúdo da mensagem e os campos de entrada
-            messages.Clear();
-            newChatName = string.Empty;
-            participantId = string.Empty;
-
-            // Atualiza a interface
-            StateHasChanged();
+            messages.Clear(); // Limpa mensagens após criar um novo chat
+            newChatName = string.Empty; // Limpa o campo de entrada
+            participantId = string.Empty; // Limpa o campo de ID do participante
+            StateHasChanged(); // Atualiza a UI
         }
     }
-
-
 
     public void Dispose()
     {
