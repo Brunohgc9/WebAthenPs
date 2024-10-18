@@ -1,0 +1,124 @@
+﻿@page "/chat"
+@rendermode InteractiveAuto
+@using Microsoft.AspNetCore.SignalR.Client
+@using WebAthenPs.Models.DTOs.Components.Chats
+@using WebOllamaChat.Client.SignalConnections
+@inject SignalRConnection signalRConnection
+@inject HttpClient httpClient
+@inject IJSRuntime js
+@implements IDisposable
+
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="card">
+            <div class="card-header display-1 fs-4 text-primary">
+                Chats Disponíveis
+            </div>
+            <div class="card-body">
+                @if (AvailableChats != null && AvailableChats.Count > 0)
+                {
+                    <ul class="list-group">
+                        @foreach (var chat in AvailableChats)
+                        {
+                            <li class="list-group-item list-group-item-action" style="cursor: pointer" @onclick="(() => LoadChat(chat.Id))">
+                                @chat.Id
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <em>Nenhum chat disponível</em>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-9 md-4">
+        <div class="card">
+            <div class="card-header display-1 fs-5 text-success">@CurrentChatTitle</div>
+            <div class="card-body">
+                @if (ChatMessages != null && ChatMessages.Count > 0)
+                {
+                    @foreach (var message in ChatMessages)
+                    {
+                        <div class="message">
+                            @((MarkupString)FormatMessage(message))
+                        </div>
+                    }
+                }
+                else
+                {
+                    <em>Nenhuma mensagem encontrada</em>
+                }
+            </div>
+            <div class="card-footer">
+                <textarea cols="5" @bind="Message" class="form-control mb-3"></textarea>
+                <button class="btn btn-success float-end" @onclick="SendMessage">Enviar Mensagem</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string Message = string.Empty;
+    private string CurrentChatTitle = string.Empty;
+    private List<ChatDto> AvailableChats = new List<ChatDto>();
+    private List<string> ChatMessages = new List<string>();
+    private static string ConnectionId = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        signalRConnection.ConnectionStateChanged += StateHasChanged;
+        await Connect();
+        await LoadAvailableChats();
+
+        // Receber mensagens do SignalR
+        signalRConnection.ReceiveMessage((userId, message) =>
+        {
+            ChatMessages.Add($"{userId}: {message}");
+            StateHasChanged();
+        });
+    }
+
+    private async Task LoadAvailableChats()
+    {
+        AvailableChats = await httpClient.GetFromJsonAsync<List<ChatDto>>("api/ChatService/GetUserChats");
+    }
+
+    private async Task LoadChat(Guid chatId)
+    {
+        CurrentChatTitle = await httpClient.GetStringAsync($"api/ChatService/GetChatTitle/{chatId}");
+        ChatMessages.Clear();
+        ChatMessages = await httpClient.GetFromJsonAsync<List<string>>($"api/ChatService/GetChatMessages/{chatId}");
+        StateHasChanged();
+    }
+
+    private async Task SendMessage()
+    {
+        if (string.IsNullOrEmpty(Message) || string.IsNullOrEmpty(CurrentChatTitle))
+            return;
+
+        // Envia a mensagem para o SignalR
+        await signalRConnection.hubConnection.InvokeAsync("SendMessage", CurrentChatTitle, Message);
+        ChatMessages.Add($"Eu: {Message}");
+        Message = string.Empty; // Limpa o campo de mensagem após o envio
+    }
+
+    private string FormatMessage(string message)
+    {
+        return message; // Formatação adicional pode ser adicionada aqui, se necessário
+    }
+
+    private async Task Connect()
+    {
+        await signalRConnection.StartConnection();
+        ConnectionId = await signalRConnection.GetUserConnectionId(); // Atualiza o ConnectionId
+    }
+
+    public void Dispose()
+    {
+        signalRConnection.ConnectionStateChanged -= StateHasChanged;
+        _ = signalRConnection.CloseConnection();
+    }
+}

@@ -10,6 +10,7 @@
 @using WebAthenPs.Project.Services.Interfaces.Client
 @using WebAthenPs.Project.Services.Interfaces.Project
 @using WebAthenPs.Project.Services.Interfaces.Professional
+@using WebOllamaChat.Client.SignalConnections
 @inject NavigationManager Navigation
 @inject ILocalStorageService LocalStorage
 @inject IHttpClientFactory HttpClientFactory
@@ -17,6 +18,7 @@
 @inject IClientService ClientService
 @inject IProjectService ProjectService
 @inject IGenericProfessionalService ProfessionalService
+@inject SignalRConnection SignalRConnection // Injetando a conexão SignalR
 @implements IDisposable
 @rendermode InteractiveServer
 
@@ -36,10 +38,10 @@
     </select>
 
     <label>Mensagem:</label>
-    <input type="text" @bind="proposalMessage" />
+    <input type="text" @bind="proposalMessage" placeholder="Digite a mensagem da proposta" />
 
     <label>Valor:</label>
-    <input type="number" @bind="proposalValue" />
+    <input type="number" @bind="proposalValue" min="0" placeholder="Digite o valor da proposta" />
 
     <div>
         <label>Tipo de Contratação:</label>
@@ -79,6 +81,7 @@
     private List<ProjectsDTO> projects;
     private List<string> professionalTypes = new List<string>();
     private string selectedProfessionalType = ""; // string
+    private Guid? chatId; // Adicionando um ID para o chat
 
     protected override async Task OnInitializedAsync()
     {
@@ -169,22 +172,47 @@
                 return;
             }
 
+            // Obter o userId do profissional
+            var professional = await ProfessionalService.GetByIdAsync(ProfessionalId);
+            var professionalUserId = professional.UserId; // Supondo que você tenha uma propriedade UserId no DTO
+
+            // Criação do chat
+            SignalRConnection.StartConnection();
+            chatId = await SignalRConnection.CreateChat();
+
+            // Adicionar usuário do cliente e profissional ao chat
+            // Aqui, é necessário garantir que `chatId` não seja nulo antes de passar para o método
+            if (chatId.HasValue)
+            {
+                await SignalRConnection.AddUserToChat(chatId.Value, userId); // Adiciona o cliente
+                await SignalRConnection.AddUserToChat(chatId.Value, professionalUserId); // Adiciona o profissional
+            }
+
+            else
+            {
+                errorMessage = "Não foi possível criar o chat.";
+                return;
+            }
+
             var proposalDto = new ProposalDTO
                 {
                     ProposalId = Guid.NewGuid(),
                     ProposalMessage = proposalMessage,
                     ProposalValue = proposalValue,
-                    ProposalType = selectedProfessionalType, // Usa o tipo de profissional selecionado
+                    ProposalType = selectedProfessionalType,
                     IsAccepted = false,
                     Client = new ClientDTO { ClientId = clientId.Value },
-                    Professional = new GenericProfessionalDTO { Id = ProfessionalId },
+                    Professional = new GenericProfessionalDTO { Id = ProfessionalId, UserId = professionalUserId }, // Adiciona o userId do profissional
                     Projects = new ProjectsDTO { ProjectId = selectedProjectId.Value },
-                    ToBeContractedAs = new List<string> { selectedProfessionalType } // Adiciona como lista de string
+                    ToBeContractedAs = new List<string> { selectedProfessionalType }
                 };
 
             await hubConnection.InvokeAsync("SendProposal", proposalDto);
             isSuccess = true;
             errorMessage = null;
+
+            // Limpar o formulário após o envio
+            ClearForm();
         }
         catch (HttpRequestException httpEx)
         {
@@ -194,6 +222,17 @@
         {
             errorMessage = $"Erro ao enviar a proposta: {ex.Message}";
         }
+    }
+
+
+
+    private void ClearForm()
+    {
+        proposalMessage = string.Empty;
+        proposalValue = 0;
+        selectedProjectId = null;
+        selectedProfessionalType = string.Empty;
+        isSuccess = false;
     }
 
     public void Dispose()

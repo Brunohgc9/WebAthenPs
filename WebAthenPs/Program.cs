@@ -11,8 +11,8 @@ using WebAthenPs.API.Repositories;
 using WebAthenPs.API.Repositories.Implementations;
 using WebAthenPs.API.Repositories.Interfaces;
 using WebAthenPs.API.Hubs;
-using WebAthenPs.API.Repositories.Implementations.ChatImplementation;
-using WebAthenPs.API.Repositories.Interfaces.ChatImplementation;
+using WebAthenPs.API.Hubs.HubServices;
+using WebAthenPs.API.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +27,7 @@ builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IGenericProfessionlRepository, GenericProfessionalRepository>();
-builder.Services.AddScoped<IChatRepository, ChatRepository>(); // Adicione o repositório do chat
+builder.Services.AddScoped<HubService>();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "APIWebAthenPs", Version = "v1" });
@@ -38,7 +38,7 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = @"JWT Authorization headere usando o scheme Bearer
+        Description = @"JWT Authorization header usando o scheme Bearer
                         \r\n\r\n informe 'Bearer'[space].
                         Example: \'Bearer 12345abcdeF\'",
     });
@@ -58,6 +58,7 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
@@ -134,7 +135,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapHub<ProposalHub>("/proposalHub");
-app.MapHub<ChatHub>("/chatHub"); // Mapeie o ChatHub
+app.MapHub<SignalRConnectionHub>("/connect"); // Adicionado para o SignalRConnectionHub
 app.MapControllers();
 
 app.Run();

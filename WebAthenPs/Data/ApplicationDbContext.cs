@@ -20,35 +20,44 @@ namespace WebAthenPs.API.Data
         public DbSet<Post> Posts { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Proposal> Proposals { get; set; }
-        public DbSet<Chat> Chats { get; set; }
-        public DbSet<Message> Messages { get; set; }
-        public DbSet<ChatParticipant> ChatParticipants { get; set; }
+        public DbSet<Chats> Chats { get; set; }
+        public DbSet<ChatAndUsers> ChatAndUsers { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<ChatParticipant>()
-            .HasKey(cp => new { cp.ChatId, cp.UserId }); // Chave composta
+            //modelBuilder.Entity<ChatAndUsers>()
+            //    .HasOne(c => c.Chat)
+            //    .WithMany(c => c.ChatAndUsers)
+            //    .HasForeignKey(c => c.ChatId);            
+            
+            //modelBuilder.Entity<ChatAndUsers>()
+            //    .HasOne(c => c.User)
+            //    .WithMany(c => c.ChatAndUsers)
+            //    .HasForeignKey(c => c.UserId);
 
-            modelBuilder.Entity<ChatParticipant>()
-                .HasOne(cp => cp.Chat)
-                .WithMany(c => c.Participants)
-                .HasForeignKey(cp => cp.ChatId)
-                .OnDelete(DeleteBehavior.Cascade);
+            //modelBuilder.Entity<Chats>()
+            //    .HasMany(c => c.ChatMessages)
+            //    .WithOne(c => c.Chats)
+            //    .HasForeignKey(c => c.ChatId);
 
-            modelBuilder.Entity<ChatParticipant>()
-                .HasOne(cp => cp.User)
-                .WithMany()
-                .HasForeignKey(cp => cp.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+            //modelBuilder.Entity<Chats>()
+            //    .HasMany(c => c.ChatAndUsers)
+            //    .WithOne(c => c.Chat)
+            //    .HasForeignKey(c => c.UserId);
 
-            // Relacionamento entre Chat e Message
-            modelBuilder.Entity<Message>()
-                .HasOne(m => m.Chat)
-                .WithMany(c => c.Messages)
-                .HasForeignKey(m => m.ChatId)
-                .OnDelete(DeleteBehavior.Cascade);
+            //modelBuilder.Entity<ChatMessage>()
+            //    .HasOne(c => c.User)
+            //    .WithMany()
+            //    .HasForeignKey(c => c.UserId);
+
+            //modelBuilder.Entity<ChatMessage>()
+            //    .HasOne(c => c.Chats)
+            //    .WithMany(c => c.ChatMessages)
+            //    .HasForeignKey(c => c.ChatId);
+
 
             modelBuilder.Entity<Projecty>()
            .HasMany(p => p.ProjectProfessionals)
