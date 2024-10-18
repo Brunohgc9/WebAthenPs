@@ -31,8 +31,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Entities\Components\ChatEntities\" />
     <Folder Include="Entities\Professional\ProfessionPool\" />
+    <Folder Include="Mappings\MappingComponentDTO\Chats\" />
     <Folder Include="Migrations\" />
+    <Folder Include="Repositories\Implementations\ChatImplementation\" />
+    <Folder Include="Repositories\Interfaces\ChatInteface\" />
   </ItemGroup>
 
 </Project>
