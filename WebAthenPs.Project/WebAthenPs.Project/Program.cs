@@ -7,7 +7,6 @@ using WebAthenPs.Project.Components;
 using WebAthenPs.Project.Services.Authentication;
 using WebAthenPs.Project.Services.Implementation;
 using WebAthenPs.Project.Services.Implementation.Components;
-using WebAthenPs.Project.Services.Implementation.Professional.ProfessionalTypes;
 using WebAthenPs.Project.Services.Implementation.Project;
 using WebAthenPs.Project.Services.Implementation.User;
 using WebAthenPs.Project.Services.Interfaces.Client;
@@ -16,6 +15,7 @@ using WebAthenPs.Project.Services.Interfaces.Professional;
 using WebAthenPs.Project.Services.Interfaces.Project;
 using WebAthenPs.Project.Services.Interfaces.User;
 using WebAthenPs.Services.Implementation.Comments;
+using WebOllamaChat.Client.SignalConnections;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,7 +42,6 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProposalService, ProposalService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
-builder.Services.AddScoped<IArchitectService, ArchitectService>();
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IGenericProfessionalService, GenericProfessionalService>();
 builder.Services.AddScoped<IPostService, PostService>();

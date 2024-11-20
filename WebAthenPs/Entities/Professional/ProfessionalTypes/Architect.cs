@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using WebAthenPs.API.Entities.Professional.ProfessionalTypes.ProfessionalsRelation;
 using WebAthenPs.API.Entities.Project;
 using WebAthenPs.Project.Components.Pages;
 
@@ -12,7 +11,7 @@ namespace WebAthenPs.API.Entities.Professional.ProfessionalTypes
         public Guid ArchId { get; set; }
 
         [ForeignKey("genericId")]
-        public GenericProfessionalProfessionalType Professional { get; set; }
+        public GenericProfessional Professional { get; set; }
 
         public int genericId { get; set; }
 
