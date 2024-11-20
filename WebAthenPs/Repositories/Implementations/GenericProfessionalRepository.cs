@@ -45,6 +45,7 @@ namespace WebAthenPs.API.Repositories.Implementations
                 .Include(gp => gp.Client)
                 .Include(gp => gp.ProjectProfessionals) // Inclui ProjectProfessionals
                     .ThenInclude(pp => pp.Project) // Inclui projetos associados
+                .Include(gp => gp.EspecializationsId)
                 .Include(pr => pr.Proposals)
                 .ToListAsync();
         }
@@ -56,8 +57,8 @@ namespace WebAthenPs.API.Repositories.Implementations
                 .Include(gp => gp.Client)
                 .Include(gp => gp.ProjectProfessionals)
                     .ThenInclude(pp => pp.Project)
-                .Include(gp => gp.Architect) // Inclui o arquiteto
-                                .Include(pr => pr.Proposals)
+                .Include(gp => gp.EspecializationsId)
+                .Include(pr => pr.Proposals)
                 .FirstOrDefaultAsync(gp => gp.Id == id);
         }
 
@@ -71,6 +72,8 @@ namespace WebAthenPs.API.Repositories.Implementations
                 .Include(gp => gp.ProjectProfessionals) // Inclui ProjectProfessionals
                     .ThenInclude(pp => pp.Project) // Inclui projetos associados
                                     .Include(pr => pr.Proposals)
+                                                    .Include(gp => gp.EspecializationsId)
+
                 .FirstOrDefaultAsync(gp => gp.User.UserName == name); // Assumindo que 'name' corresponde ao UserName
         }
 
@@ -81,6 +84,7 @@ namespace WebAthenPs.API.Repositories.Implementations
 
             return await _context.GenericProfessionals
                 .Include(gp => gp.User)
+                                .Include(gp => gp.EspecializationsId)
                 .Include(gp => gp.Client)
                 .Include(gp => gp.ProjectProfessionals) // Inclui ProjectProfessionals
                     .ThenInclude(pp => pp.Project) // Inclui projetos associados
@@ -96,6 +100,8 @@ namespace WebAthenPs.API.Repositories.Implementations
 
             // Obtém o profissional existente com seus ProjectProfessionals
             var existingProfessional = await _context.GenericProfessionals
+                                .Include(gp => gp.EspecializationsId)
+
                 .Include(gp => gp.ProjectProfessionals) // Inclui ProjectProfessionals
                     .ThenInclude(pp => pp.Project) // Inclui projetos associados
                 .FirstOrDefaultAsync(gp => gp.Id == genericProfessional.Id);
@@ -123,7 +129,7 @@ namespace WebAthenPs.API.Repositories.Implementations
                 .Include(gp => gp.Client)
                 .Include(gp => gp.ProjectProfessionals)
                     .ThenInclude(pp => pp.Project)
-                .Include(gp => gp.Architect) // Inclui o arquiteto
+                .Include(gp => gp.EspecializationsId)
                                 .Include(pr => pr.Proposals)
                 .FirstOrDefaultAsync(gp => gp.UserId == userId);
         }

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WebAthenPs.Models.DTOs.Components;
-using WebAthenPs.Models.DTOs.Professional.ProfessionalTypes.Architect;
 
 namespace WebAthenPs.Models.DTOs.Professional
 {
@@ -20,7 +19,6 @@ namespace WebAthenPs.Models.DTOs.Professional
         public string? ClientName { get; set; }
         
         public List<ProposalDTO> Proposals { get; set; }
-        public GeneralArchitectDTO? GeneralArchitect { get; set; }
 
         public List<ProjectProfessionalDTO> ProjectProfessionals { get; set; } = new List<ProjectProfessionalDTO>();
 

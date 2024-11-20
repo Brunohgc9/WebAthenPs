@@ -6,24 +6,7 @@ using WebAthenPs.Project.Components.Pages;
 
 namespace WebAthenPs.API.Entities.Professional.ProfessionalTypes
 {
-    public class Architect
+    public class Architect : ProfessionalGeneral
     {
-        [Key]
-        public Guid ArchId { get; set; }
-
-        [ForeignKey("genericId")]
-        public GenericProfessional Professional { get; set; }
-
-        public int genericId { get; set; }
-
-        public string? RegistroConselho { get; set; } 
-
-        public string? Especialidade { get; set; }
-
-        [ForeignKey("ProfessionalTypeId")]
-        public GenericProfessionalProfessionalType ProfessionalType { get; set; }
-        public Guid ProfessionalTypeId { get; set; }
-
-
     }
 }

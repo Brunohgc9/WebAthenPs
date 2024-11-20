@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebAthenPs.API.Migrations
 {
     /// <inheritdoc />
-    public partial class AddingNewProfessionalTypes : Migration
+    public partial class socorro : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -347,15 +347,169 @@ namespace WebAthenPs.API.Migrations
                 name: "Architects",
                 columns: table => new
                 {
-                    ArchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    genericId = table.Column<int>(type: "int", nullable: false),
-                    RegistroConselho = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Especialidade = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Architects", x => x.ArchId);
+                    table.PrimaryKey("PK_Architects", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Cabinetmaker",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cabinetmaker", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Carpenter",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Carpenter", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CivilEngineer",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CivilEngineer", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Decorator",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Decorator", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ElectricalEngineer",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ElectricalEngineer", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Electrician",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Electrician", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Foreman",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Foreman", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GenericProfessionalProfessionalType",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    genericId = table.Column<int>(type: "int", nullable: true),
+                    ArchitectId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CivilEngineerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ElectricalEngineerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    HydraulicEngineerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    SurveyorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ForemanId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    MasonId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    PlumberId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ElectricianId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CarpenterId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    RooferId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    PlastererId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    TilerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    PainterId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    MetalworkerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    GlazierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    MarbleWorkerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LandscaperId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CabinetmakerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    InteriorDesignerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DecoratorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GenericProfessionalProfessionalType", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GenericProfessionalProfessionalType_Architects_ArchitectId",
+                        column: x => x.ArchitectId,
+                        principalTable: "Architects",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_GenericProfessionalProfessionalType_Cabinetmaker_CabinetmakerId",
+                        column: x => x.CabinetmakerId,
+                        principalTable: "Cabinetmaker",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_GenericProfessionalProfessionalType_Carpenter_CarpenterId",
+                        column: x => x.CarpenterId,
+                        principalTable: "Carpenter",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_GenericProfessionalProfessionalType_CivilEngineer_CivilEngineerId",
+                        column: x => x.CivilEngineerId,
+                        principalTable: "CivilEngineer",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_GenericProfessionalProfessionalType_Decorator_DecoratorId",
+                        column: x => x.DecoratorId,
+                        principalTable: "Decorator",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_GenericProfessionalProfessionalType_ElectricalEngineer_ElectricalEngineerId",
+                        column: x => x.ElectricalEngineerId,
+                        principalTable: "ElectricalEngineer",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_GenericProfessionalProfessionalType_Electrician_ElectricianId",
+                        column: x => x.ElectricianId,
+                        principalTable: "Electrician",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_GenericProfessionalProfessionalType_Foreman_ForemanId",
+                        column: x => x.ForemanId,
+                        principalTable: "Foreman",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -367,17 +521,11 @@ namespace WebAthenPs.API.Migrations
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ClientId = table.Column<int>(type: "int", nullable: true),
                     ProfessionalTypes = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ArchId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    EspecializationsId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_GenericProfessionals", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_GenericProfessionals_Architects_ArchId",
-                        column: x => x.ArchId,
-                        principalTable: "Architects",
-                        principalColumn: "ArchId",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_GenericProfessionals_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -390,6 +538,232 @@ namespace WebAthenPs.API.Migrations
                         principalTable: "Clients",
                         principalColumn: "ClientId",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_GenericProfessionals_GenericProfessionalProfessionalType_EspecializationsId",
+                        column: x => x.EspecializationsId,
+                        principalTable: "GenericProfessionalProfessionalType",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Glazier",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Glazier", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Glazier_GenericProfessionalProfessionalType_ProfessionalTypeId",
+                        column: x => x.ProfessionalTypeId,
+                        principalTable: "GenericProfessionalProfessionalType",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "HydraulicEngineer",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HydraulicEngineer", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_HydraulicEngineer_GenericProfessionalProfessionalType_ProfessionalTypeId",
+                        column: x => x.ProfessionalTypeId,
+                        principalTable: "GenericProfessionalProfessionalType",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InteriorDesigner",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InteriorDesigner", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_InteriorDesigner_GenericProfessionalProfessionalType_ProfessionalTypeId",
+                        column: x => x.ProfessionalTypeId,
+                        principalTable: "GenericProfessionalProfessionalType",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Landscaper",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Landscaper", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Landscaper_GenericProfessionalProfessionalType_ProfessionalTypeId",
+                        column: x => x.ProfessionalTypeId,
+                        principalTable: "GenericProfessionalProfessionalType",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MarbleWorker",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MarbleWorker", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MarbleWorker_GenericProfessionalProfessionalType_ProfessionalTypeId",
+                        column: x => x.ProfessionalTypeId,
+                        principalTable: "GenericProfessionalProfessionalType",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Mason",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Mason", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Mason_GenericProfessionalProfessionalType_ProfessionalTypeId",
+                        column: x => x.ProfessionalTypeId,
+                        principalTable: "GenericProfessionalProfessionalType",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Metalworker",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Metalworker", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Metalworker_GenericProfessionalProfessionalType_ProfessionalTypeId",
+                        column: x => x.ProfessionalTypeId,
+                        principalTable: "GenericProfessionalProfessionalType",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Painter",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Painter", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Painter_GenericProfessionalProfessionalType_ProfessionalTypeId",
+                        column: x => x.ProfessionalTypeId,
+                        principalTable: "GenericProfessionalProfessionalType",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Plasterer",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Plasterer", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Plasterer_GenericProfessionalProfessionalType_ProfessionalTypeId",
+                        column: x => x.ProfessionalTypeId,
+                        principalTable: "GenericProfessionalProfessionalType",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Plumber",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Plumber", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Plumber_GenericProfessionalProfessionalType_ProfessionalTypeId",
+                        column: x => x.ProfessionalTypeId,
+                        principalTable: "GenericProfessionalProfessionalType",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Roofer",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Roofer", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Roofer_GenericProfessionalProfessionalType_ProfessionalTypeId",
+                        column: x => x.ProfessionalTypeId,
+                        principalTable: "GenericProfessionalProfessionalType",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Surveyor",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Surveyor", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Surveyor_GenericProfessionalProfessionalType_ProfessionalTypeId",
+                        column: x => x.ProfessionalTypeId,
+                        principalTable: "GenericProfessionalProfessionalType",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tiler",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tiler", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Tiler_GenericProfessionalProfessionalType_ProfessionalTypeId",
+                        column: x => x.ProfessionalTypeId,
+                        principalTable: "GenericProfessionalProfessionalType",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -480,448 +854,41 @@ namespace WebAthenPs.API.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Cabinetmaker",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Cabinetmaker", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Carpenter",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Carpenter", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CivilEngineer",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CivilEngineer", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Decorator",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Decorator", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ElectricalEngineer",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ElectricalEngineer", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Electrician",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Electrician", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Foreman",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Foreman", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "GenericProfessionalProfessionalType",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    genericId = table.Column<int>(type: "int", nullable: false),
-                    ArchitectId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CivilEngineerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ElectricalEngineerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    HydraulicEngineerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    SurveyorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ForemanId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    MasonId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    PlumberId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ElectricianId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CarpenterId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    RooferId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    PlastererId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    TilerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    PainterId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    MetalworkerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    GlazierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    MarbleWorkerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    LandscaperId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CabinetmakerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    InteriorDesignerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DecoratorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_GenericProfessionalProfessionalType", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_GenericProfessionalProfessionalType_Architects_ArchitectId",
-                        column: x => x.ArchitectId,
-                        principalTable: "Architects",
-                        principalColumn: "ArchId");
-                    table.ForeignKey(
-                        name: "FK_GenericProfessionalProfessionalType_Cabinetmaker_CabinetmakerId",
-                        column: x => x.CabinetmakerId,
-                        principalTable: "Cabinetmaker",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_GenericProfessionalProfessionalType_Carpenter_CarpenterId",
-                        column: x => x.CarpenterId,
-                        principalTable: "Carpenter",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_GenericProfessionalProfessionalType_CivilEngineer_CivilEngineerId",
-                        column: x => x.CivilEngineerId,
-                        principalTable: "CivilEngineer",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_GenericProfessionalProfessionalType_Decorator_DecoratorId",
-                        column: x => x.DecoratorId,
-                        principalTable: "Decorator",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_GenericProfessionalProfessionalType_ElectricalEngineer_ElectricalEngineerId",
-                        column: x => x.ElectricalEngineerId,
-                        principalTable: "ElectricalEngineer",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_GenericProfessionalProfessionalType_Electrician_ElectricianId",
-                        column: x => x.ElectricianId,
-                        principalTable: "Electrician",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_GenericProfessionalProfessionalType_Foreman_ForemanId",
-                        column: x => x.ForemanId,
-                        principalTable: "Foreman",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_GenericProfessionalProfessionalType_GenericProfessionals_genericId",
-                        column: x => x.genericId,
-                        principalTable: "GenericProfessionals",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Glazier",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Glazier", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Glazier_GenericProfessionalProfessionalType_ProfessionalTypeId",
-                        column: x => x.ProfessionalTypeId,
-                        principalTable: "GenericProfessionalProfessionalType",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "HydraulicEngineer",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_HydraulicEngineer", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_HydraulicEngineer_GenericProfessionalProfessionalType_ProfessionalTypeId",
-                        column: x => x.ProfessionalTypeId,
-                        principalTable: "GenericProfessionalProfessionalType",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "InteriorDesigner",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_InteriorDesigner", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_InteriorDesigner_GenericProfessionalProfessionalType_ProfessionalTypeId",
-                        column: x => x.ProfessionalTypeId,
-                        principalTable: "GenericProfessionalProfessionalType",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Landscaper",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Landscaper", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Landscaper_GenericProfessionalProfessionalType_ProfessionalTypeId",
-                        column: x => x.ProfessionalTypeId,
-                        principalTable: "GenericProfessionalProfessionalType",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "MarbleWorker",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MarbleWorker", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_MarbleWorker_GenericProfessionalProfessionalType_ProfessionalTypeId",
-                        column: x => x.ProfessionalTypeId,
-                        principalTable: "GenericProfessionalProfessionalType",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Mason",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Mason", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Mason_GenericProfessionalProfessionalType_ProfessionalTypeId",
-                        column: x => x.ProfessionalTypeId,
-                        principalTable: "GenericProfessionalProfessionalType",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Metalworker",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Metalworker", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Metalworker_GenericProfessionalProfessionalType_ProfessionalTypeId",
-                        column: x => x.ProfessionalTypeId,
-                        principalTable: "GenericProfessionalProfessionalType",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Painter",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Painter", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Painter_GenericProfessionalProfessionalType_ProfessionalTypeId",
-                        column: x => x.ProfessionalTypeId,
-                        principalTable: "GenericProfessionalProfessionalType",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Plasterer",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Plasterer", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Plasterer_GenericProfessionalProfessionalType_ProfessionalTypeId",
-                        column: x => x.ProfessionalTypeId,
-                        principalTable: "GenericProfessionalProfessionalType",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Plumber",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Plumber", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Plumber_GenericProfessionalProfessionalType_ProfessionalTypeId",
-                        column: x => x.ProfessionalTypeId,
-                        principalTable: "GenericProfessionalProfessionalType",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Roofer",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Roofer", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Roofer_GenericProfessionalProfessionalType_ProfessionalTypeId",
-                        column: x => x.ProfessionalTypeId,
-                        principalTable: "GenericProfessionalProfessionalType",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Surveyor",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Surveyor", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Surveyor_GenericProfessionalProfessionalType_ProfessionalTypeId",
-                        column: x => x.ProfessionalTypeId,
-                        principalTable: "GenericProfessionalProfessionalType",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Tiler",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProfessionalTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tiler", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Tiler_GenericProfessionalProfessionalType_ProfessionalTypeId",
-                        column: x => x.ProfessionalTypeId,
-                        principalTable: "GenericProfessionalProfessionalType",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.InsertData(
-                table: "Architects",
-                columns: new[] { "ArchId", "Especialidade", "ProfessionalTypeId", "RegistroConselho", "genericId" },
-                values: new object[,]
-                {
-                    { new Guid("9876b54c-7952-4f52-a170-ed3036394792"), "Residencial", new Guid("00000000-0000-0000-0000-000000000000"), "123456", 1 },
-                    { new Guid("a05cf0e7-d957-44ba-9e2a-313def7408ba"), "Comercial", new Guid("00000000-0000-0000-0000-000000000000"), "654321", 6 },
-                    { new Guid("c151318e-3c52-4120-a0c1-b47b35ce07d1"), "Industrial", new Guid("00000000-0000-0000-0000-000000000000"), "112233", 12 }
-                });
-
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "Address", "CPF", "City", "ConcurrencyStamp", "CreatedDate", "Email", "EmailConfirmed", "Gender", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "PostalCode", "RG", "Role", "SecurityStamp", "State", "TwoFactorEnabled", "UpdatedDate", "UserName", "UserType" },
                 values: new object[,]
                 {
-                    { "user1", 0, "Rua A, 123", "12345678901", "São Paulo", "2f1b5b2e-723c-43a3-8615-07391efe34d8", new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9557), "carlos.silva@example.com", false, "M", false, null, null, null, null, null, false, "01000-000", "1234567", null, "f2bc2f93-c2fe-48dc-b9bd-8c39098dfe0e", "SP", false, new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9560), "Carlos Silva", "Client" },
-                    { "user10", 0, "Rua J, 707", "01234567890", "Manaus", "f4860936-1165-475e-b957-2bdd94f8cbb2", new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9803), "claudia.rodrigues@example.com", false, "F", false, null, null, null, null, null, false, "69000-000", "0123456", null, "444f9402-e069-445a-ae1c-feeb33a9f39c", "AM", false, new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9803), "Claudia Rodrigues", "Client" },
-                    { "user11", 0, "Rua K, 808", "12345678901", "São Luís", "16ff764d-9e40-438f-b6b7-d4c526add32a", new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9860), "fernando.oliveira@example.com", false, "M", false, null, null, null, null, null, false, "65000-000", "1234567", null, "9ea96628-1a1c-440f-95f5-b40a730b8110", "MA", false, new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9860), "Fernando Oliveira", "Client" },
-                    { "user12", 0, "Rua L, 909", "23456789012", "São José de Ribamar", "122a501c-5aec-4323-b45f-c921b423f044", new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9872), "luciana.pereira@example.com", false, "F", false, null, null, null, null, null, false, "65100-000", "2345678", null, "514c8667-6e92-4a71-a197-dd1137513cd1", "MA", false, new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9872), "Luciana Pereira", "Client" },
-                    { "user13", 0, "Rua M, 1010", "34567890123", "Teresina", "d1f03018-a791-4275-b7f9-992106649cff", new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9883), "eduardo.costa@example.com", false, "M", false, null, null, null, null, null, false, "64000-000", "3456789", null, "5b56df92-d354-40fe-a84c-54a283b94ebe", "PI", false, new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9884), "Eduardo Costa", "Client" },
-                    { "user14", 0, "Rua N, 1111", "45678901234", "Maceió", "4f603cf4-9cb5-49b4-9f35-e7dc5c8db822", new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9896), "renata.almeida@example.com", false, "F", false, null, null, null, null, null, false, "57000-000", "4567890", null, "bb5a948f-2ee8-47e2-81aa-12c93c22e6d6", "AL", false, new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9896), "Renata Almeida", "Client" },
-                    { "user15", 0, "Rua O, 1212", "56789012345", "João Pessoa", "421969d6-8667-4848-8c47-0c42696a752c", new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9907), "carlos.eduardo@example.com", false, "M", false, null, null, null, null, null, false, "58000-000", "5678901", null, "06aa0e14-334b-4650-91a2-85dea1f4e7c2", "PB", false, new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9911), "Carlos Eduardo", "Client" },
-                    { "user16", 0, "Rua P, 1313", "67890123456", "São Paulo", "03a4b7ca-b3e9-4de7-821a-1b784066326a", new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9935), "lucas.oliveira@example.com", false, "M", false, null, null, null, null, null, false, "01001-000", "6789012", null, "60654242-a94d-4b00-a711-d71a29f07d2e", "SP", false, new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9935), "Lucas Oliveira", "Professional" },
-                    { "user17", 0, "Rua Q, 1414", "78901234567", "Rio de Janeiro", "f01a239f-5599-46c2-be03-a5439fc26316", new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9947), "mariana.silva@example.com", false, "F", false, null, null, null, null, null, false, "20001-000", "7890123", null, "fe2b28af-8bb3-49b3-98c1-fa24ee170c0f", "RJ", false, new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9948), "Mariana Silva", "Professional" },
-                    { "user18", 0, "Rua R, 1515", "89012345678", "Belo Horizonte", "e7bba4f4-bffd-487e-970d-c779eab286e4", new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9973), "gabriel.santos@example.com", false, "M", false, null, null, null, null, null, false, "30001-000", "8901234", null, "30a6ce5b-d20b-4186-8516-dc0f49b9f58a", "MG", false, new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9973), "Gabriel Santos", "Professional" },
-                    { "user19", 0, "Rua S, 1616", "90123456789", "Salvador", "c1a714d7-caea-4eb6-9f9c-532e36253c48", new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9984), "juliana.costa@example.com", false, "F", false, null, null, null, null, null, false, "40001-000", "9012345", null, "5a75a069-98ee-4dfc-9bb9-183586593745", "BA", false, new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9985), "Juliana Costa", "Professional" },
-                    { "user2", 0, "Rua B, 456", "23456789012", "Rio de Janeiro", "fdd7f274-a7b7-4936-84b5-f0fc558ff9de", new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9676), "ana.souza@example.com", false, "F", false, null, null, null, null, null, false, "20000-000", "2345678", null, "56c50c99-232c-42d2-adc5-13f91bfc4b76", "RJ", false, new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9676), "Ana Souza", "Client" },
-                    { "user20", 0, "Rua T, 1717", "01234567890", "Fortaleza", "10ae124d-9d51-4514-b4e6-9cc791a7630b", new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9997), "roberto.almeida@example.com", false, "M", false, null, null, null, null, null, false, "60001-000", "0123456", null, "8acaa2e0-9626-428f-98a0-0903060fee49", "CE", false, new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9997), "Roberto Almeida", "Professional" },
-                    { "user21", 0, "Rua U, 1818", "12345678901", "Curitiba", "06982ebf-17d9-4750-a761-bcb6cd9160c8", new DateTime(2024, 11, 20, 12, 39, 32, 562, DateTimeKind.Utc).AddTicks(8), "patricia.martins@example.com", false, "F", false, null, null, null, null, null, false, "80001-000", "1234567", null, "97940f63-f74c-4c06-82ce-09b28f397c1c", "PR", false, new DateTime(2024, 11, 20, 12, 39, 32, 562, DateTimeKind.Utc).AddTicks(8), "Patricia Martins", "Professional" },
-                    { "user22", 0, "Rua V, 1919", "23456789012", "Porto Alegre", "48c088ea-40ea-4ca8-86ac-de9daa7be9c7", new DateTime(2024, 11, 20, 12, 39, 32, 562, DateTimeKind.Utc).AddTicks(21), "ricardo.lima@example.com", false, "M", false, null, null, null, null, null, false, "90001-000", "2345678", null, "94c484f4-1624-430c-9afa-ecdf1e7902db", "RS", false, new DateTime(2024, 11, 20, 12, 39, 32, 562, DateTimeKind.Utc).AddTicks(21), "Ricardo Lima", "Professional" },
-                    { "user23", 0, "Rua W, 2020", "34567890123", "São Luís", "99b57c3d-a946-4c9d-8ada-b14536631e2b", new DateTime(2024, 11, 20, 12, 39, 32, 562, DateTimeKind.Utc).AddTicks(32), "claudia.souza@example.com", false, "F", false, null, null, null, null, null, false, "65001-000", "3456789", null, "4172101d-6296-4ba7-8718-af32c3184109", "MA", false, new DateTime(2024, 11, 20, 12, 39, 32, 562, DateTimeKind.Utc).AddTicks(32), "Claudia Souza", "Professional" },
-                    { "user24", 0, "Rua X, 2121", "45678901234", "Teresina", "650bcc51-cb03-4e47-ab5f-48828e2cd259", new DateTime(2024, 11, 20, 12, 39, 32, 562, DateTimeKind.Utc).AddTicks(42), "fernando.santos@example.com", false, "M", false, null, null, null, null, null, false, "64001-000", "4567890", null, "1c2b6808-0386-4402-be80-d03d8151f9ab", "PI", false, new DateTime(2024, 11, 20, 12, 39, 32, 562, DateTimeKind.Utc).AddTicks(43), "Fernando Santos", "Professional" },
-                    { "user25", 0, "Rua Y, 2222", "56789012345", "Maceió", "58517fff-8ed5-4bb1-9467-68fe042e05e3", new DateTime(2024, 11, 20, 12, 39, 32, 562, DateTimeKind.Utc).AddTicks(55), "juliana.lima@example.com", false, "F", false, null, null, null, null, null, false, "57001-000", "5678901", null, "a5306a45-233d-42d5-a357-4a7affe9afe6", "AL", false, new DateTime(2024, 11, 20, 12, 39, 32, 562, DateTimeKind.Utc).AddTicks(55), "Juliana Lima", "Professional" },
-                    { "user26", 0, "Rua Z, 2323", "67890123456", "João Pessoa", "c93f7ae3-ecec-45d3-9a21-7411b9acb2da", new DateTime(2024, 11, 20, 12, 39, 32, 562, DateTimeKind.Utc).AddTicks(66), "ricardo.costa@example.com", false, "M", false, null, null, null, null, null, false, "58001-000", "6789012", null, "fc3f055f-6a25-406d-9b3a-8c3523ef832b", "PB", false, new DateTime(2024, 11, 20, 12, 39, 32, 562, DateTimeKind.Utc).AddTicks(66), "Ricardo Costa", "Professional" },
-                    { "user27", 0, "Rua AA, 2424", "78901234567", "São Paulo", "259f02b6-8c3b-4ab9-b3cf-2d5ceaae96e8", new DateTime(2024, 11, 20, 12, 39, 32, 562, DateTimeKind.Utc).AddTicks(76), "mariana.almeida@example.com", false, "F", false, null, null, null, null, null, false, "01002-000", "7890123", null, "d4b959b8-feb8-4b1d-95c9-39ed2bc99666", "SP", false, new DateTime(2024, 11, 20, 12, 39, 32, 562, DateTimeKind.Utc).AddTicks(77), "Mariana Almeida", "Professional" },
-                    { "user28", 0, "Rua BB, 2525", "89012345678", "Rio de Janeiro", "417bd387-0ecd-49d2-be58-7c1d854407cc", new DateTime(2024, 11, 20, 12, 39, 32, 562, DateTimeKind.Utc).AddTicks(88), "gabriel.souza@example.com", false, "M", false, null, null, null, null, null, false, "20002-000", "8901234", null, "eb7bb4fc-7511-4d98-b254-6b7ea96596a8", "RJ", false, new DateTime(2024, 11, 20, 12, 39, 32, 562, DateTimeKind.Utc).AddTicks(89), "Gabriel Souza", "Professional" },
-                    { "user29", 0, "Rua CC, 2626", "90123456789", "Belo Horizonte", "bc7cf018-f91a-463e-965c-6d6cfa4e4c1e", new DateTime(2024, 11, 20, 12, 39, 32, 562, DateTimeKind.Utc).AddTicks(99), "juliana.rodrigues@example.com", false, "F", false, null, null, null, null, null, false, "30002-000", "9012345", null, "93876010-bac5-4f59-becf-cf38ee96d8b3", "MG", false, new DateTime(2024, 11, 20, 12, 39, 32, 562, DateTimeKind.Utc).AddTicks(100), "Juliana Rodrigues", "Professional" },
-                    { "user3", 0, "Rua C, 789", "34567890123", "Belo Horizonte", "66473c83-85ad-4278-b44a-2ae4a2cdd0cd", new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9691), "joao.oliveira@example.com", false, "M", false, null, null, null, null, null, false, "30000-000", "3456789", null, "61c51088-5c3b-4364-984a-ee9d4eb00ef5", "MG", false, new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9691), "João Oliveira", "Client" },
-                    { "user30", 0, "Rua DD, 2727", "01234567890", "Salvador", "eb1ac71f-9540-450e-bd17-9f9ebc1a023f", new DateTime(2024, 11, 20, 12, 39, 32, 562, DateTimeKind.Utc).AddTicks(112), "roberto.fernandes@example.com", false, "M", false, null, null, null, null, null, false, "40002-000", "0123456", null, "4a982498-573e-4c23-a1b7-093fd63dc104", "BA", false, new DateTime(2024, 11, 20, 12, 39, 32, 562, DateTimeKind.Utc).AddTicks(112), "Roberto Fernandes", "Professional" },
-                    { "user4", 0, "Rua D, 101", "45678901234", "Salvador", "2066b76b-f780-47de-9d4f-600e2480d2f8", new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9713), "maria.santos@example.com", false, "F", false, null, null, null, null, null, false, "40000-000", "4567890", null, "c2aaef83-76d7-4839-9659-9f44550852c2", "BA", false, new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9714), "Maria Santos", "Client" },
-                    { "user5", 0, "Rua E, 202", "56789012345", "Fortaleza", "f11d99ed-5224-4b1c-b013-1a34eff79e33", new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9728), "pedro.almeida@example.com", false, "M", false, null, null, null, null, null, false, "60000-000", "5678901", null, "92357639-57ff-406c-a5b4-f2a10e1673a7", "CE", false, new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9729), "Pedro Almeida", "Client" },
-                    { "user6", 0, "Rua F, 303", "67890123456", "Curitiba", "22977428-08c2-4c41-a945-ba6cc6ea687c", new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9755), "juliana.costa@example.com", false, "F", false, null, null, null, null, null, false, "80000-000", "6789012", null, "e4fc0ba9-75ea-495c-b9d3-9d6d6139ae80", "PR", false, new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9755), "Juliana Costa", "Client" },
-                    { "user7", 0, "Rua G, 404", "78901234567", "Porto Alegre", "96ce392a-7a38-4040-9a5c-81ed45b8302c", new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9768), "roberto.lima@example.com", false, "M", false, null, null, null, null, null, false, "90000-000", "7890123", null, "8cb648f7-da50-4818-9abf-0e79fbab079b", "RS", false, new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9768), "Roberto Lima", "Client" },
-                    { "user8", 0, "Rua H, 505", "89012345678", "Recife", "3509db5a-560a-41db-b1e2-15bca0018895", new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9779), "patricia.martins@example.com", false, "F", false, null, null, null, null, null, false, "50000-000", "8901234", null, "8aa19832-1d93-4d1a-a0f8-67a17df29dd0", "PE", false, new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9779), "Patricia Martins", "Client" },
-                    { "user9", 0, "Rua I, 606", "90123456789", "Belém", "a8c05dc0-e641-4bac-8992-70867b28d49e", new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9792), "ricardo.fernandes@example.com", false, "M", false, null, null, null, null, null, false, "66000-000", "9012345", null, "bb85cc3c-15a7-4361-a0d0-07dece399445", "PA", false, new DateTime(2024, 11, 20, 12, 39, 32, 561, DateTimeKind.Utc).AddTicks(9792), "Ricardo Fernandes", "Client" }
+                    { "user1", 0, "Rua A, 123", "12345678901", "São Paulo", "5c4e3a8c-ab56-47bb-80d8-b6bf66446d33", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4210), "carlos.silva@example.com", false, "M", false, null, null, null, null, null, false, "01000-000", "1234567", null, "50c7c4f3-3401-47ef-a802-4b9d804eac45", "SP", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4217), "Carlos Silva", "Client" },
+                    { "user10", 0, "Rua J, 707", "01234567890", "Manaus", "80735f40-4424-48da-a437-1d7107f5b621", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4432), "claudia.rodrigues@example.com", false, "F", false, null, null, null, null, null, false, "69000-000", "0123456", null, "bf84080c-0e3e-4a61-bf2a-458aa898eddf", "AM", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4433), "Claudia Rodrigues", "Client" },
+                    { "user11", 0, "Rua K, 808", "12345678901", "São Luís", "b1bddcda-b4cb-401e-aabc-883b947ca57d", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4496), "fernando.oliveira@example.com", false, "M", false, null, null, null, null, null, false, "65000-000", "1234567", null, "93d45840-dc17-4c36-9b25-9b7ab1e604ed", "MA", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4497), "Fernando Oliveira", "Client" },
+                    { "user12", 0, "Rua L, 909", "23456789012", "São José de Ribamar", "27ee90c1-4b4a-4f2c-b1d0-a22ac08cd6b6", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4512), "luciana.pereira@example.com", false, "F", false, null, null, null, null, null, false, "65100-000", "2345678", null, "33fab2ba-08f3-4c3b-9075-a5c848c473a3", "MA", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4512), "Luciana Pereira", "Client" },
+                    { "user13", 0, "Rua M, 1010", "34567890123", "Teresina", "8a9cbeb3-adbf-4149-b026-bcaae2f5e9aa", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4525), "eduardo.costa@example.com", false, "M", false, null, null, null, null, null, false, "64000-000", "3456789", null, "9946c509-a669-4503-8e79-e6d9e6cf0682", "PI", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4525), "Eduardo Costa", "Client" },
+                    { "user14", 0, "Rua N, 1111", "45678901234", "Maceió", "80eaa52a-4ee9-4474-8183-8a089cd56dea", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4577), "renata.almeida@example.com", false, "F", false, null, null, null, null, null, false, "57000-000", "4567890", null, "c3e1d18b-2cb2-42a6-a87b-91d458d5cfdd", "AL", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4578), "Renata Almeida", "Client" },
+                    { "user15", 0, "Rua O, 1212", "56789012345", "João Pessoa", "e30670b1-7390-48f2-b146-da12fac3ca4e", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4590), "carlos.eduardo@example.com", false, "M", false, null, null, null, null, null, false, "58000-000", "5678901", null, "036f9636-e148-4e80-9bc9-7e6107595410", "PB", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4596), "Carlos Eduardo", "Client" },
+                    { "user16", 0, "Rua P, 1313", "67890123456", "São Paulo", "a62ce7a0-ffe2-40b7-bde7-4aff24c8f786", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4611), "lucas.oliveira@example.com", false, "M", false, null, null, null, null, null, false, "01001-000", "6789012", null, "7535c856-c66b-4bcd-b942-9584dcb51022", "SP", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4611), "Lucas Oliveira", "Professional" },
+                    { "user17", 0, "Rua Q, 1414", "78901234567", "Rio de Janeiro", "10ef07cc-beda-4c97-bd8d-d0e1abd171ed", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4624), "mariana.silva@example.com", false, "F", false, null, null, null, null, null, false, "20001-000", "7890123", null, "6121940a-df27-41d4-b696-b672a6609526", "RJ", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4625), "Mariana Silva", "Professional" },
+                    { "user18", 0, "Rua R, 1515", "89012345678", "Belo Horizonte", "e1bbcde1-b347-4e94-afae-217f031ab466", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4637), "gabriel.santos@example.com", false, "M", false, null, null, null, null, null, false, "30001-000", "8901234", null, "2acb079a-2222-4cb1-8a36-bd707b3f76ee", "MG", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4637), "Gabriel Santos", "Professional" },
+                    { "user19", 0, "Rua S, 1616", "90123456789", "Salvador", "39750548-cf0d-4c50-ad4c-a556bcd524ce", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4650), "juliana.costa@example.com", false, "F", false, null, null, null, null, null, false, "40001-000", "9012345", null, "5cd12804-754b-4cb4-8a30-2d5118aa51ae", "BA", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4650), "Juliana Costa", "Professional" },
+                    { "user2", 0, "Rua B, 456", "23456789012", "Rio de Janeiro", "972f3cba-30bc-41fa-81de-9ed8e3389273", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4315), "ana.souza@example.com", false, "F", false, null, null, null, null, null, false, "20000-000", "2345678", null, "e736f281-770c-4106-acc5-59aa7bff32e1", "RJ", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4315), "Ana Souza", "Client" },
+                    { "user20", 0, "Rua T, 1717", "01234567890", "Fortaleza", "5adfa864-4523-450c-93dd-0d98860dd510", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4662), "roberto.almeida@example.com", false, "M", false, null, null, null, null, null, false, "60001-000", "0123456", null, "b261bf70-bfba-46d9-b561-c55a74bfcde9", "CE", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4663), "Roberto Almeida", "Professional" },
+                    { "user21", 0, "Rua U, 1818", "12345678901", "Curitiba", "c5405670-2067-4617-bad7-104db915d1e6", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4675), "patricia.martins@example.com", false, "F", false, null, null, null, null, null, false, "80001-000", "1234567", null, "4e7daa8e-1c4f-4d71-ae97-10843199e859", "PR", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4675), "Patricia Martins", "Professional" },
+                    { "user22", 0, "Rua V, 1919", "23456789012", "Porto Alegre", "690d71bd-f3db-41dc-8f59-a58430fd5f5e", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4687), "ricardo.lima@example.com", false, "M", false, null, null, null, null, null, false, "90001-000", "2345678", null, "9f19370a-b349-478f-b656-cd4bcf22b37a", "RS", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4688), "Ricardo Lima", "Professional" },
+                    { "user23", 0, "Rua W, 2020", "34567890123", "São Luís", "27039a20-0fe6-4e70-9ed2-dd6d349b8afb", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4700), "claudia.souza@example.com", false, "F", false, null, null, null, null, null, false, "65001-000", "3456789", null, "a3fdb452-a8a0-4480-81cb-78ec3262d2ba", "MA", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4700), "Claudia Souza", "Professional" },
+                    { "user24", 0, "Rua X, 2121", "45678901234", "Teresina", "bfa2808d-663e-4365-a554-f8803a176f4a", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4712), "fernando.santos@example.com", false, "M", false, null, null, null, null, null, false, "64001-000", "4567890", null, "8ff690c9-6b94-486f-b596-85b83041bf20", "PI", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4712), "Fernando Santos", "Professional" },
+                    { "user25", 0, "Rua Y, 2222", "56789012345", "Maceió", "ea9bbfe4-2ac3-4081-892a-4057d5366225", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4725), "juliana.lima@example.com", false, "F", false, null, null, null, null, null, false, "57001-000", "5678901", null, "05458eed-c754-4094-92dd-15e0d228b171", "AL", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4725), "Juliana Lima", "Professional" },
+                    { "user26", 0, "Rua Z, 2323", "67890123456", "João Pessoa", "ea30ff7c-7ef1-4ab4-b229-36d7ea58e927", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4736), "ricardo.costa@example.com", false, "M", false, null, null, null, null, null, false, "58001-000", "6789012", null, "7565edb8-3cd7-46ba-8f4a-fad5d0af7d61", "PB", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4737), "Ricardo Costa", "Professional" },
+                    { "user27", 0, "Rua AA, 2424", "78901234567", "São Paulo", "e67e306c-2b83-4bf3-a150-a365596e44fb", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4748), "mariana.almeida@example.com", false, "F", false, null, null, null, null, null, false, "01002-000", "7890123", null, "334dda0f-4a88-4f7b-b7fa-86ae6dd9cdcd", "SP", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4748), "Mariana Almeida", "Professional" },
+                    { "user28", 0, "Rua BB, 2525", "89012345678", "Rio de Janeiro", "99c21e7e-7bd6-4f5c-b739-be8e38d364d5", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4761), "gabriel.souza@example.com", false, "M", false, null, null, null, null, null, false, "20002-000", "8901234", null, "cd52d830-ab16-4235-9d19-090629f4161b", "RJ", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4761), "Gabriel Souza", "Professional" },
+                    { "user29", 0, "Rua CC, 2626", "90123456789", "Belo Horizonte", "3633e3b5-4490-476d-ba83-070b1cf9ed9f", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4772), "juliana.rodrigues@example.com", false, "F", false, null, null, null, null, null, false, "30002-000", "9012345", null, "0a311d5c-0ff8-46f1-9857-9c4133e988eb", "MG", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4772), "Juliana Rodrigues", "Professional" },
+                    { "user3", 0, "Rua C, 789", "34567890123", "Belo Horizonte", "6b4592ca-42ae-474d-96d0-ec10431e2123", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4329), "joao.oliveira@example.com", false, "M", false, null, null, null, null, null, false, "30000-000", "3456789", null, "7ff75d98-cd23-43f7-8d6f-25c7825756f5", "MG", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4329), "João Oliveira", "Client" },
+                    { "user30", 0, "Rua DD, 2727", "01234567890", "Salvador", "38014bef-2a91-4485-9e19-fec3a4b0e8f1", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4819), "roberto.fernandes@example.com", false, "M", false, null, null, null, null, null, false, "40002-000", "0123456", null, "3daca538-9bdd-4fba-9618-25be314623d2", "BA", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4819), "Roberto Fernandes", "Professional" },
+                    { "user4", 0, "Rua D, 101", "45678901234", "Salvador", "0158f8b5-dd29-4df7-90c9-805ef89d5db2", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4349), "maria.santos@example.com", false, "F", false, null, null, null, null, null, false, "40000-000", "4567890", null, "9d2fe591-a445-40f4-967f-eb13de3f39c3", "BA", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4349), "Maria Santos", "Client" },
+                    { "user5", 0, "Rua E, 202", "56789012345", "Fortaleza", "7d4a7e3b-b64c-4673-8e85-faadcba203a3", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4361), "pedro.almeida@example.com", false, "M", false, null, null, null, null, null, false, "60000-000", "5678901", null, "73f38916-bfa8-440a-9d70-9465e03c1844", "CE", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4362), "Pedro Almeida", "Client" },
+                    { "user6", 0, "Rua F, 303", "67890123456", "Curitiba", "20a96aba-5e46-4ef4-9780-18976975d5a0", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4383), "juliana.costa@example.com", false, "F", false, null, null, null, null, null, false, "80000-000", "6789012", null, "24d022b5-86ff-4846-a775-ecc4385bdcfe", "PR", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4383), "Juliana Costa", "Client" },
+                    { "user7", 0, "Rua G, 404", "78901234567", "Porto Alegre", "fad71f3e-1ea0-4dfa-b1a7-959ddb34b88d", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4395), "roberto.lima@example.com", false, "M", false, null, null, null, null, null, false, "90000-000", "7890123", null, "665e9003-95f0-4fc5-b9f0-38d3259043fe", "RS", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4395), "Roberto Lima", "Client" },
+                    { "user8", 0, "Rua H, 505", "89012345678", "Recife", "c893e552-a96e-4041-ae2c-38656df5ec36", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4407), "patricia.martins@example.com", false, "F", false, null, null, null, null, null, false, "50000-000", "8901234", null, "4613c974-c6c2-43b0-8e46-8f2fa2feed3b", "PE", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4407), "Patricia Martins", "Client" },
+                    { "user9", 0, "Rua I, 606", "90123456789", "Belém", "15d3de78-1262-4435-8032-030e1d882122", new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4421), "ricardo.fernandes@example.com", false, "M", false, null, null, null, null, null, false, "66000-000", "9012345", null, "72991d0d-de53-4593-84ab-15298b3e2193", "PA", false, new DateTime(2024, 11, 20, 18, 21, 44, 638, DateTimeKind.Utc).AddTicks(4421), "Ricardo Fernandes", "Client" }
                 });
 
             migrationBuilder.InsertData(
@@ -948,24 +915,24 @@ namespace WebAthenPs.API.Migrations
 
             migrationBuilder.InsertData(
                 table: "GenericProfessionals",
-                columns: new[] { "Id", "ArchId", "ClientId", "ProfessionalTypes", "UserId" },
+                columns: new[] { "Id", "ClientId", "EspecializationsId", "ProfessionalTypes", "UserId" },
                 values: new object[,]
                 {
-                    { 1, new Guid("9876b54c-7952-4f52-a170-ed3036394792"), 1, "[\"Arquiteto\"]", "user16" },
-                    { 2, null, 2, "[\"Eletricista\"]", "user17" },
-                    { 3, null, 3, "[\"Engenheiro\"]", "user18" },
-                    { 4, null, 4, "[\"Pedreiro\"]", "user19" },
-                    { 5, null, 5, "[\"Encanador\"]", "user20" },
-                    { 6, new Guid("a05cf0e7-d957-44ba-9e2a-313def7408ba"), 6, "[\"Arquiteto\"]", "user21" },
-                    { 7, null, 7, "[\"Eletricista\"]", "user22" },
-                    { 8, null, 8, "[\"Engenheiro\"]", "user23" },
-                    { 9, null, 9, "[\"Pedreiro\"]", "user24" },
-                    { 10, null, 10, "[\"Encanador\"]", "user25" },
-                    { 11, null, 11, "[\"Eletricista\"]", "user26" },
-                    { 12, new Guid("c151318e-3c52-4120-a0c1-b47b35ce07d1"), 12, "[\"Arquiteto\"]", "user27" },
-                    { 13, null, 13, "[\"Engenheiro\"]", "user28" },
-                    { 14, null, 14, "[\"Pedreiro\"]", "user29" },
-                    { 15, null, 15, "[\"Encanador\"]", "user30" }
+                    { 1, 1, null, "[\"Arquiteto\"]", "user16" },
+                    { 2, 2, null, "[\"Eletricista\"]", "user17" },
+                    { 3, 3, null, "[\"Engenheiro\"]", "user18" },
+                    { 4, 4, null, "[\"Pedreiro\"]", "user19" },
+                    { 5, 5, null, "[\"Encanador\"]", "user20" },
+                    { 6, 6, null, "[\"Arquiteto\"]", "user21" },
+                    { 7, 7, null, "[\"Eletricista\"]", "user22" },
+                    { 8, 8, null, "[\"Engenheiro\"]", "user23" },
+                    { 9, 9, null, "[\"Pedreiro\"]", "user24" },
+                    { 10, 10, null, "[\"Encanador\"]", "user25" },
+                    { 11, 11, null, "[\"Eletricista\"]", "user26" },
+                    { 12, 12, null, "[\"Arquiteto\"]", "user27" },
+                    { 13, 13, null, "[\"Engenheiro\"]", "user28" },
+                    { 14, 14, null, "[\"Pedreiro\"]", "user29" },
+                    { 15, 15, null, "[\"Encanador\"]", "user30" }
                 });
 
             migrationBuilder.InsertData(
@@ -1257,16 +1224,14 @@ namespace WebAthenPs.API.Migrations
                 column: "ProjectsProjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GenericProfessionals_ArchId",
-                table: "GenericProfessionals",
-                column: "ArchId",
-                unique: true,
-                filter: "[ArchId] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_GenericProfessionals_ClientId",
                 table: "GenericProfessionals",
                 column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GenericProfessionals_EspecializationsId",
+                table: "GenericProfessionals",
+                column: "EspecializationsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_GenericProfessionals_UserId",
@@ -1378,64 +1343,63 @@ namespace WebAthenPs.API.Migrations
                 table: "Architects",
                 column: "ProfessionalTypeId",
                 principalTable: "GenericProfessionalProfessionalType",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Cabinetmaker_GenericProfessionalProfessionalType_ProfessionalTypeId",
                 table: "Cabinetmaker",
                 column: "ProfessionalTypeId",
                 principalTable: "GenericProfessionalProfessionalType",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Carpenter_GenericProfessionalProfessionalType_ProfessionalTypeId",
                 table: "Carpenter",
                 column: "ProfessionalTypeId",
                 principalTable: "GenericProfessionalProfessionalType",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_CivilEngineer_GenericProfessionalProfessionalType_ProfessionalTypeId",
                 table: "CivilEngineer",
                 column: "ProfessionalTypeId",
                 principalTable: "GenericProfessionalProfessionalType",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Decorator_GenericProfessionalProfessionalType_ProfessionalTypeId",
                 table: "Decorator",
                 column: "ProfessionalTypeId",
                 principalTable: "GenericProfessionalProfessionalType",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_ElectricalEngineer_GenericProfessionalProfessionalType_ProfessionalTypeId",
                 table: "ElectricalEngineer",
                 column: "ProfessionalTypeId",
                 principalTable: "GenericProfessionalProfessionalType",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Electrician_GenericProfessionalProfessionalType_ProfessionalTypeId",
                 table: "Electrician",
                 column: "ProfessionalTypeId",
                 principalTable: "GenericProfessionalProfessionalType",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Foreman_GenericProfessionalProfessionalType_ProfessionalTypeId",
                 table: "Foreman",
                 column: "ProfessionalTypeId",
                 principalTable: "GenericProfessionalProfessionalType",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "Id");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_GenericProfessionalProfessionalType_GenericProfessionals_genericId",
+                table: "GenericProfessionalProfessionalType",
+                column: "genericId",
+                principalTable: "GenericProfessionals",
+                principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_GenericProfessionalProfessionalType_Glazier_GlazierId",
@@ -1565,6 +1529,10 @@ namespace WebAthenPs.API.Migrations
                 table: "Foreman");
 
             migrationBuilder.DropForeignKey(
+                name: "FK_GenericProfessionals_GenericProfessionalProfessionalType_EspecializationsId",
+                table: "GenericProfessionals");
+
+            migrationBuilder.DropForeignKey(
                 name: "FK_Glazier_GenericProfessionalProfessionalType_ProfessionalTypeId",
                 table: "Glazier");
 
@@ -1665,6 +1633,9 @@ namespace WebAthenPs.API.Migrations
                 name: "GenericProfessionalProfessionalType");
 
             migrationBuilder.DropTable(
+                name: "Architects");
+
+            migrationBuilder.DropTable(
                 name: "Cabinetmaker");
 
             migrationBuilder.DropTable(
@@ -1726,9 +1697,6 @@ namespace WebAthenPs.API.Migrations
 
             migrationBuilder.DropTable(
                 name: "Tiler");
-
-            migrationBuilder.DropTable(
-                name: "Architects");
 
             migrationBuilder.DropTable(
                 name: "Clients");

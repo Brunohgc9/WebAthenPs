@@ -4,10 +4,8 @@ using WebAthenPs.API.Entities.Project;
 using WebAthenPs.API.Entities.Professional;
 using WebAthenPs.Models.DTOs.Professional;
 using WebAthenPs.Models.DTOs.Project;
-using WebAthenPs.Models.DTOs.Professional.ProfessionalTypes.Architect;
 using WebAthenPs.Models.DTOs.Client;
 using WebAthenPs.Models.DTOs.Components;
-using WebAthenPs.API.Entities.Professional.ProfessionalTypes;
 using WebAthenPs.API.Entities;
 using WebAthenPs.API.Data;
 
@@ -47,13 +45,13 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                     PhoneNumber = p.User?.PhoneNumber,
                     Email = p.User?.Email,
                     ProfessionalTypes = p.ProfessionalTypes,
-                    GeneralArchitect = p.Architect != null ? new GeneralArchitectDTO
-                    {
-                        genericId = p.Id, // Corrigido para corresponder à propriedade correta
-                        ArchId = p.Architect.ArchId,
-                        RegistroConselho = p.Architect.RegistroConselho,
-                        Especialidade = p.Architect.Especialidade
-                    } : null
+                    //GeneralArchitect = p.Architect != null ? new GeneralArchitectDTO
+                    //{
+                    //    genericId = p.Id, // Corrigido para corresponder à propriedade correta
+                    //    ArchId = p.Architect.ArchId,
+                    //    RegistroConselho = p.Architect.RegistroConselho,
+                    //    Especialidade = p.Architect.Especialidade
+                    //} : null
                 }).ToList() ?? new List<GenericProfessionalDTO>(),
                 ProjectProfessionals = item.ProjectProfessionals?.Select(pp => new ProjectProfessionalDTO
                 {
@@ -67,13 +65,13 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                         PhoneNumber = pp.Professional.User?.PhoneNumber,
                         Email = pp.Professional.User?.Email,
                         ProfessionalTypes = pp.Professional.ProfessionalTypes,
-                        GeneralArchitect = pp.Professional.Architect != null ? new GeneralArchitectDTO
-                        {
-                            genericId = pp.Professional.Id,
-                            ArchId = pp.Professional.Architect.ArchId,
-                            RegistroConselho = pp.Professional.Architect.RegistroConselho,
-                            Especialidade = pp.Professional.Architect.Especialidade
-                        } : null
+                        //GeneralArchitect = pp.Professional.Architect != null ? new GeneralArchitectDTO
+                        //{
+                        //    genericId = pp.Professional.Id,
+                        //    ArchId = pp.Professional.Architect.ArchId,
+                        //    RegistroConselho = pp.Professional.Architect.RegistroConselho,
+                        //    Especialidade = pp.Professional.Architect.Especialidade
+                        //} : null
                     } : null
                 }).ToList() ?? new List<ProjectProfessionalDTO>(),
                 ProjectProposals = item.ProjectProposals?.Select(proposal => new ProposalDTO
@@ -134,13 +132,13 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                     PhoneNumber = p.User?.PhoneNumber,
                     Email = p.User?.Email,
                     ProfessionalTypes = p.ProfessionalTypes ?? new List<string>(),
-                    GeneralArchitect = p.Architect != null ? new GeneralArchitectDTO
-                    {
-                        genericId = p.Id,
-                        ArchId = p.Architect.ArchId,
-                        RegistroConselho = p.Architect.RegistroConselho,
-                        Especialidade = p.Architect.Especialidade
-                    } : null
+                    //GeneralArchitect = p.Architect != null ? new GeneralArchitectDTO
+                    //{
+                    //    genericId = p.Id,
+                    //    ArchId = p.Architect.ArchId,
+                    //    RegistroConselho = p.Architect.RegistroConselho,
+                    //    Especialidade = p.Architect.Especialidade
+                    //} : null
                 }).ToList() ?? new List<GenericProfessionalDTO>(),
 
                 ProjectProfessionals = project.ProjectProfessionals?.Select(pp => new ProjectProfessionalDTO
@@ -155,13 +153,13 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                         PhoneNumber = pp.Professional.User?.PhoneNumber,
                         Email = pp.Professional.User?.Email,
                         ProfessionalTypes = pp.Professional.ProfessionalTypes ?? new List<string>(),
-                        GeneralArchitect = pp.Professional.Architect != null ? new GeneralArchitectDTO
-                        {
-                            genericId = pp.Professional.Id,
-                            ArchId = pp.Professional.Architect.ArchId,
-                            RegistroConselho = pp.Professional.Architect.RegistroConselho,
-                            Especialidade = pp.Professional.Architect.Especialidade
-                        } : null
+                        //GeneralArchitect = pp.Professional.Architect != null ? new GeneralArchitectDTO
+                        //{
+                        //    genericId = pp.Professional.Id,
+                        //    ArchId = pp.Professional.Architect.ArchId,
+                        //    RegistroConselho = pp.Professional.Architect.RegistroConselho,
+                        //    Especialidade = pp.Professional.Architect.Especialidade
+                        //} : null
                     } : null
                 }).ToList() ?? new List<ProjectProfessionalDTO>(),
 
@@ -247,12 +245,12 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                     Id = projectProfessionalDTO.Professional.Id,
                     UserId = projectProfessionalDTO.Professional.UserId,
                     ProfessionalTypes = projectProfessionalDTO.Professional.ProfessionalTypes,
-                    Architect = projectProfessionalDTO.Professional.GeneralArchitect != null ? new Architect
-                    {
-                        ArchId = projectProfessionalDTO.Professional.GeneralArchitect.ArchId,
-                        RegistroConselho = projectProfessionalDTO.Professional.GeneralArchitect.RegistroConselho,
-                        Especialidade = projectProfessionalDTO.Professional.GeneralArchitect.Especialidade
-                    } : null
+                    //Architect = projectProfessionalDTO.Professional.GeneralArchitect != null ? new Architect
+                    //{
+                    //    ArchId = projectProfessionalDTO.Professional.GeneralArchitect.ArchId,
+                    //    RegistroConselho = projectProfessionalDTO.Professional.GeneralArchitect.RegistroConselho,
+                    //    Especialidade = projectProfessionalDTO.Professional.GeneralArchitect.Especialidade
+                    //} : null
                 } : null
             };
         }
@@ -273,13 +271,13 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                     PhoneNumber = projectProfessional.Professional.User?.PhoneNumber,
                     Email = projectProfessional.Professional.User?.Email,
                     ProfessionalTypes = projectProfessional.Professional.ProfessionalTypes,
-                    GeneralArchitect = projectProfessional.Professional.Architect != null ? new GeneralArchitectDTO
-                    {
-                        genericId = projectProfessional.Professional.Id,
-                        ArchId = projectProfessional.Professional.Architect.ArchId,
-                        RegistroConselho = projectProfessional.Professional.Architect.RegistroConselho,
-                        Especialidade = projectProfessional.Professional.Architect.Especialidade
-                    } : null
+                    //GeneralArchitect = projectProfessional.Professional.Architect != null ? new GeneralArchitectDTO
+                    //{
+                    //    genericId = projectProfessional.Professional.Id,
+                    //    ArchId = projectProfessional.Professional.Architect.ArchId,
+                    //    RegistroConselho = projectProfessional.Professional.Architect.RegistroConselho,
+                    //    Especialidade = projectProfessional.Professional.Architect.Especialidade
+                    //} : null
                 } : null
             };
         }

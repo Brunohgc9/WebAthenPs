@@ -34,6 +34,7 @@
 
   <ItemGroup>
     <Folder Include="Services\Implementation\Chats\" />
+    <Folder Include="Services\Implementation\Professional\ProfessionalTypes\" />
     <Folder Include="Services\Interfaces\Chats\" />
   </ItemGroup>
 

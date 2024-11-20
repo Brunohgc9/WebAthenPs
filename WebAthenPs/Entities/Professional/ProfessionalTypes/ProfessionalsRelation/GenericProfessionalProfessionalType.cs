@@ -6,11 +6,10 @@ namespace WebAthenPs.API.Entities.Professional.ProfessionalTypes.ProfessionalsRe
     {
         public Guid Id { get; set; }
 
+        public int? genericId { get; set; }
 
         [ForeignKey("genericId")]
-        public GenericProfessional Professional { get; set; }
-
-        public int genericId { get; set; }
+        public GenericProfessional? Professional { get; set; }
 
 
         [ForeignKey("ArchitectId")]

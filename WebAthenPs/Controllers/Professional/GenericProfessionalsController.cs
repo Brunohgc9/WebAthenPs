@@ -23,16 +23,13 @@ using WebAthenPs.Models.DTOs.Client;
         {
         private readonly IGenericProfessionlRepository _repository;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IArchitectRepository _architectRepository; // Adicione esta linha para acessar o repositório de arquitetos
 
         public GenericProfessionalController(
             IGenericProfessionlRepository repository,
-            UserManager<ApplicationUser> userManager,
-            IArchitectRepository architectRepository) // Adicione esta linha no construtor
+            UserManager<ApplicationUser> userManager) // Adicione esta linha no construtor
         {
             _repository = repository;
             _userManager = userManager;
-            _architectRepository = architectRepository; // Inicialize o repositório de arquitetos
         }
 
 
@@ -50,35 +47,35 @@ using WebAthenPs.Models.DTOs.Client;
                 await _repository.CreateAsync(genericProfessional);
 
                 // Verifica se o tipo de profissional inclui "Arquiteto"
-                if (genericProfessional.ProfessionalTypes.Contains("Arquiteto"))
-                {
-                    // Verifica se o Arquiteto já foi criado e atribui o ArchId
-                    if (model.ArchitectId.HasValue)
-                    {
-                        var architect = await _architectRepository.GetByIdAsync(model.ArchitectId.Value);
+                //if (genericProfessional.ProfessionalTypes.Contains("Arquiteto"))
+                //{
+                //    // Verifica se o Arquiteto já foi criado e atribui o ArchId
+                //    if (model.ArchitectId.HasValue)
+                //    {
+                //        var architect = await _architectRepository.GetByIdAsync(model.ArchitectId.Value);
 
-                        if (architect == null)
-                            return NotFound("Arquiteto não encontrado.");
+                //        if (architect == null)
+                //            return NotFound("Arquiteto não encontrado.");
 
-                        genericProfessional.ArchId = architect.ArchId; // Atribui o ArchId do arquiteto
-                    }
-                    else
-                    {
-                        // Caso não exista um ArchitectId, cria um novo arquiteto
-                        var architect = new Architect
-                        {
-                            genericId = genericProfessional.Id, // Relaciona o arquiteto ao profissional genérico
-                        };
+                //        genericProfessional.ArchId = architect.ArchId; // Atribui o ArchId do arquiteto
+                //    }
+                //    else
+                //    {
+                //        // Caso não exista um ArchitectId, cria um novo arquiteto
+                //        var architect = new Architect
+                //        {
+                //            genericId = genericProfessional.Id, // Relaciona o arquiteto ao profissional genérico
+                //        };
 
-                        await _architectRepository.CreateAsync(architect);
+                //        await _architectRepository.CreateAsync(architect);
 
-                        // Atribui o ArchId do novo arquiteto ao profissional genérico
-                        genericProfessional.ArchId = architect.ArchId;
+                //        // Atribui o ArchId do novo arquiteto ao profissional genérico
+                //        genericProfessional.ArchId = architect.ArchId;
 
-                        // Atualiza o GenericProfessional com o novo ArchId
-                        await _repository.UpdateAsync(genericProfessional);
-                    }
-                }
+                //        // Atualiza o GenericProfessional com o novo ArchId
+                //        await _repository.UpdateAsync(genericProfessional);
+                //    }
+                //}
 
                 var createdDto = genericProfessional.ConverterProfessionalParaDTO();
                 return CreatedAtAction(nameof(GetById), new { id = createdDto.Id }, createdDto);

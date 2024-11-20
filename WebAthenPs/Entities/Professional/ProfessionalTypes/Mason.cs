@@ -3,12 +3,9 @@ using WebAthenPs.API.Entities.Professional.ProfessionalTypes.ProfessionalsRelati
 
 namespace WebAthenPs.API.Entities.Professional.ProfessionalTypes
 {
-    public class Mason
-    {
-        public Guid Id { get; set; }
 
-        [ForeignKey("ProfessionalTypeId")]
-        public GenericProfessionalProfessionalType ProfessionalType { get; set; }
-        public Guid ProfessionalTypeId { get; set; }
+    public class Mason : ProfessionalGeneral
+    {
+ 
     }
 }

@@ -28,17 +28,14 @@ namespace WebAthenPs.API.Entities.Professional
 
         public ICollection<Projecty> Projects { get; set; } = new List<Projecty>();
 
-        public Guid? ArchId { get; set; }
-
-        [ForeignKey("ArchId")]
-        public Architect? Architect { get; set; }
 
         public ICollection<ProjectProfessional> ProjectProfessionals { get; set; } = new List<ProjectProfessional>();
-
+            
         public ICollection<Proposal>? Proposals { get; set; } = new List<Proposal>(); // NÃO MEXE NESSA PORRA TA BUGANDO TODO O SISTEMA
 
-        public ICollection<GenericProfessionalProfessionalType> ProfessionalEspecilizations { get; set; } = new List<GenericProfessionalProfessionalType>();
-
+        [ForeignKey("EspecializationsId")]
+        public GenericProfessionalProfessionalType? GenericProfessionalType { get; set; }
+        public Guid? EspecializationsId { get; set; }
 
     }
 }

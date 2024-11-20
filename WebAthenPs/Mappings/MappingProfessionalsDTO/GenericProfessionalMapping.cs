@@ -3,7 +3,6 @@ using System.Linq;
 using WebAthenPs.API.Entities.Professional;
 using WebAthenPs.Models.DTOs.Components;
 using WebAthenPs.Models.DTOs.Professional;
-using WebAthenPs.Models.DTOs.Professional.ProfessionalTypes.Architect;
 
 namespace WebAthenPs.API.Mappings.MappingProfessionalsDTO
 {
@@ -28,15 +27,15 @@ namespace WebAthenPs.API.Mappings.MappingProfessionalsDTO
                                 ProfessionalId = pp.ProfessionalId,
                                 ProjectId = pp.ProjectId,
                             }).ToList(),
-                        GeneralArchitect = professional.Architect != null ? new GeneralArchitectDTO
-                        {
-                            ArchId = professional.Architect.ArchId,
-                            RegistroConselho = professional.Architect.RegistroConselho,
-                            Especialidade = professional.Architect.Especialidade,
-                            genericId = professional.Architect.genericId,
-                            name = professional.User?.UserName,
-                            email = professional.User?.Email
-                        } : null,
+                        //GeneralArchitect = professional.Architect != null ? new GeneralArchitectDTO
+                        //{
+                        //    ArchId = professional.Architect.ArchId,
+                        //    RegistroConselho = professional.Architect.RegistroConselho,
+                        //    Especialidade = professional.Architect.Especialidade,
+                        //    genericId = professional.Architect.genericId,
+                        //    name = professional.User?.UserName,
+                        //    email = professional.User?.Email
+                        //} : null,
                         Proposals = professional.Proposals
                 .Select(pp => new ProposalDTO
                 {
@@ -63,15 +62,15 @@ namespace WebAthenPs.API.Mappings.MappingProfessionalsDTO
                         ProfessionalId = pp.ProfessionalId,
                         ProjectId = pp.ProjectId,
                     }).ToList(),
-                GeneralArchitect = professional.Architect != null ? new GeneralArchitectDTO
-                {
-                    ArchId = professional.Architect.ArchId,
-                    RegistroConselho = professional.Architect.RegistroConselho,
-                    Especialidade = professional.Architect.Especialidade,
-                    genericId = professional.Architect.genericId,
-                    name = professional.User?.UserName,
-                    email = professional.User?.Email
-                } : null,
+                //GeneralArchitect = professional.Architect != null ? new GeneralArchitectDTO
+                //{
+                //    ArchId = professional.Architect.ArchId,
+                //    RegistroConselho = professional.Architect.RegistroConselho,
+                //    Especialidade = professional.Architect.Especialidade,
+                //    genericId = professional.Architect.genericId,
+                //    name = professional.User?.UserName,
+                //    email = professional.User?.Email
+                //} : null,
                 Proposals = professional.Proposals
                 .Select(pp => new ProposalDTO
                 {

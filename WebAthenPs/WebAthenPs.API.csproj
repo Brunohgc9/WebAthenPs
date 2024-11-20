@@ -38,7 +38,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Controllers\Professional\ProfessionalTypes\" />
     <Folder Include="Mappings\MappingComponentDTO\Chats\" />
+    <Folder Include="Mappings\MappingProfessionalsDTO\MappingProfessionalTypes\" />
     <Folder Include="Migrations\" />
     <Folder Include="Repositories\Implementations\ChatImplementation\" />
     <Folder Include="Repositories\Interfaces\ChatInteface\" />

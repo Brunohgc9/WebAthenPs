@@ -193,7 +193,7 @@ else
             </ul>
         </div>
 
-        <!-- Detalhes Específicos de Arquitetos -->
+@*         <!-- Detalhes Específicos de Arquitetos -->
         @if (_professional.ProfessionalTypes.Contains("Arquiteto") && _professional.GeneralArchitect != null)
         {
             <div class="architect-info">
@@ -203,7 +203,7 @@ else
                 <p><strong>Registro no Conselho:</strong> @(_professional.GeneralArchitect.RegistroConselho ?? "Registro não disponível")</p>
                 <p><strong>Especialidade:</strong> @(_professional.GeneralArchitect.Especialidade ?? "Especialidade não disponível")</p>
             </div>
-        }
+        } *@
 
         <!-- Listagem de Projetos -->
         @if (_projects.Any())

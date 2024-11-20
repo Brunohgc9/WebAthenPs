@@ -22,7 +22,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSignalR(); // Adicionado para suporte ao SignalR
 builder.Services.AddScoped<IProposalRepository, ProposalRepository>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
-builder.Services.AddScoped<IArchitectRepository, ArchitectRepository>();
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
