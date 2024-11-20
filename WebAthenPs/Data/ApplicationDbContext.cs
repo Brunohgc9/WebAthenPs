@@ -158,6 +158,7 @@ namespace WebAthenPs.API.Data
 
 
 
+
             modelBuilder.Entity<ApplicationUser>().HasData(
                 // 15 Clients
                 new ApplicationUser { Id = "user1", UserName = "Carlos Silva", Email = "carlos.silva@example.com", UserType = "Client", CPF = "12345678901", RG = "1234567", Gender = "M", Address = "Rua A, 123", City = "São Paulo", State = "SP", PostalCode = "01000-000" },
@@ -216,126 +217,176 @@ namespace WebAthenPs.API.Data
             );
 
 
-            //modelBuilder.Entity<Architect>().HasData(
+            modelBuilder.Entity<Architect>().HasData(
 
-            //    new Architect { Id = Guid.Parse("c9d2a9f8-1f7a-4b47-b550-84e73c3b72b1"), ProfessionalTypeId = Guid.Parse("c9d2a9f8-1f7a-4b47-b550-84e73c3b72b1") },
-            //    new Architect { Id = Guid.Parse("f13423a1-8b12-4d58-bcc1-2b29f41148c8"), ProfessionalTypeId = Guid.Parse("f13423a1-8b12-4d58-bcc1-2b29f41148c8") },
-            //    new Architect { Id = Guid.Parse("76e63219-25e6-40f1-9a75-9486d4d478a9"), ProfessionalTypeId = Guid.Parse("76e63219-25e6-40f1-9a75-9486d4d478a9") },
-            //    new Architect { Id = Guid.Parse("7f3b2d86-4d3c-498b-928c-5f8c3b7425d2"), ProfessionalTypeId = Guid.Parse("7f3b2d86-4d3c-498b-928c-5f8c3b7425d2") },
-            //    new Architect { Id = Guid.Parse("3b948d76-b45e-4f9c-a37b-4d2b3e5c9a8e"), ProfessionalTypeId = Guid.Parse("3b948d76-b45e-4f9c-a37b-4d2b3e5c9a8e") }
-            //    );
+                new Architect { Id = Guid.Parse("c9d2a9f8-1f7a-4b47-b550-84e73c3b72b1"), ProfessionalTypeId = Guid.Parse("c9d2a9f8-1f7a-4b47-b550-84e73c3b72b1") },
+                new Architect { Id = Guid.Parse("f13423a1-8b12-4d58-bcc1-2b29f41148c8"), ProfessionalTypeId = Guid.Parse("f13423a1-8b12-4d58-bcc1-2b29f41148c8") },
+                new Architect { Id = Guid.Parse("76e63219-25e6-40f1-9a75-9486d4d478a9"), ProfessionalTypeId = Guid.Parse("76e63219-25e6-40f1-9a75-9486d4d478a9") },
+                new Architect { Id = Guid.Parse("7f3b2d86-4d3c-498b-928c-5f8c3b7425d2"), ProfessionalTypeId = Guid.Parse("7f3b2d86-4d3c-498b-928c-5f8c3b7425d2") },
+                new Architect { Id = Guid.Parse("3b948d76-b45e-4f9c-a37b-4d2b3e5c9a8e"), ProfessionalTypeId = Guid.Parse("3b948d76-b45e-4f9c-a37b-4d2b3e5c9a8e") }
+                );
 
-            //modelBuilder.Entity<CivilEngineer>().HasData(
-            //    new CivilEngineer { Id = Guid.Parse("c9d2a9f8-1f7a-4b47-b550-84e73c3b72b1"), ProfessionalTypeId = Guid.Parse("c9d2a9f8-1f7a-4b47-b550-84e73c3b72b1") },
-            //    new CivilEngineer { Id = Guid.Parse("f13423a1-8b12-4d58-bcc1-2b29f41148c8"), ProfessionalTypeId = Guid.Parse("f13423a1-8b12-4d58-bcc1-2b29f41148c8") },
-            //    new CivilEngineer { Id = Guid.Parse("7f3b2d86-4d3c-498b-928c-5f8c3b7425d2"), ProfessionalTypeId = Guid.Parse("7f3b2d86-4d3c-498b-928c-5f8c3b7425d2") },
-            //    new CivilEngineer { Id = Guid.Parse("84e9327f-9c8a-41b3-84e6-2c548c29b8e3"), ProfessionalTypeId = Guid.Parse("84e9327f-9c8a-41b3-84e6-2c548c29b8e3") },
-            //    new CivilEngineer { Id = Guid.Parse("d59c8723-c8a6-44b8-85d4-b72e93c24851"), ProfessionalTypeId = Guid.Parse("d59c8723-c8a6-44b8-85d4-b72e93c24851") }
-            //    );
+            modelBuilder.Entity<CivilEngineer>().HasData(
+                new CivilEngineer { Id = Guid.Parse("c9d2a9f8-1f7a-4b47-b550-84e73c3b72b1"), ProfessionalTypeId = Guid.Parse("c9d2a9f8-1f7a-4b47-b550-84e73c3b72b1") },
+                new CivilEngineer { Id = Guid.Parse("f13423a1-8b12-4d58-bcc1-2b29f41148c8"), ProfessionalTypeId = Guid.Parse("f13423a1-8b12-4d58-bcc1-2b29f41148c8") },
+                new CivilEngineer { Id = Guid.Parse("7f3b2d86-4d3c-498b-928c-5f8c3b7425d2"), ProfessionalTypeId = Guid.Parse("7f3b2d86-4d3c-498b-928c-5f8c3b7425d2") },
+                new CivilEngineer { Id = Guid.Parse("84e9327f-9c8a-41b3-84e6-2c548c29b8e3"), ProfessionalTypeId = Guid.Parse("84e9327f-9c8a-41b3-84e6-2c548c29b8e3") },
+                new CivilEngineer { Id = Guid.Parse("d59c8723-c8a6-44b8-85d4-b72e93c24851"), ProfessionalTypeId = Guid.Parse("d59c8723-c8a6-44b8-85d4-b72e93c24851") }
+                );
 
-            //modelBuilder.Entity<Electrician>().HasData(
+            modelBuilder.Entity<Electrician>().HasData(
 
-            //    new Electrician { Id = Guid.Parse("a1f3b7e4-d3c2-4596-b5c3-620fc2c41648"), ProfessionalTypeId = Guid.Parse("a1f3b7e4-d3c2-4596-b5c3-620fc2c41648") },
-            //    new Electrician { Id = Guid.Parse("b8a7e539-8f3c-40d3-8a29-19edca7d65b4"), ProfessionalTypeId = Guid.Parse("b8a7e539-8f3c-40d3-8a29-19edca7d65b4") },
-            //    new Electrician { Id = Guid.Parse("239bcae5-0c39-4bb2-8a9e-eebf92e4cd84"), ProfessionalTypeId = Guid.Parse("239bcae5-0c39-4bb2-8a9e-eebf92e4cd84") },
-            //    new Electrician { Id = Guid.Parse("23d8a69f-bf42-4518-bcd9-e75a29e5c4d6"), ProfessionalTypeId = Guid.Parse("23d8a69f-bf42-4518-bcd9-e75a29e5c4d6") },
-            //    new Electrician { Id = Guid.Parse("d59c8723-c8a6-44b8-85d4-b72e93c24851"), ProfessionalTypeId = Guid.Parse("d59c8723-c8a6-44b8-85d4-b72e93c24851") }
+                new Electrician { Id = Guid.Parse("a1f3b7e4-d3c2-4596-b5c3-620fc2c41648"), ProfessionalTypeId = Guid.Parse("a1f3b7e4-d3c2-4596-b5c3-620fc2c41648") },
+                new Electrician { Id = Guid.Parse("b8a7e539-8f3c-40d3-8a29-19edca7d65b4"), ProfessionalTypeId = Guid.Parse("b8a7e539-8f3c-40d3-8a29-19edca7d65b4") },
+                new Electrician { Id = Guid.Parse("239bcae5-0c39-4bb2-8a9e-eebf92e4cd84"), ProfessionalTypeId = Guid.Parse("239bcae5-0c39-4bb2-8a9e-eebf92e4cd84") },
+                new Electrician { Id = Guid.Parse("23d8a69f-bf42-4518-bcd9-e75a29e5c4d6"), ProfessionalTypeId = Guid.Parse("23d8a69f-bf42-4518-bcd9-e75a29e5c4d6") },
+                new Electrician { Id = Guid.Parse("d59c8723-c8a6-44b8-85d4-b72e93c24851"), ProfessionalTypeId = Guid.Parse("d59c8723-c8a6-44b8-85d4-b72e93c24851") }
 
-            //    );
+                );
+
+            modelBuilder.Entity<Mason>().HasData(
+
+                new Mason { Id = Guid.Parse("a1f3b7e4-d3c2-4596-b5c3-620fc2c41648"), ProfessionalTypeId = Guid.Parse("a1f3b7e4-d3c2-4596-b5c3-620fc2c41648") },
+                new Mason { Id = Guid.Parse("93bd828b-2b6e-42a6-92e3-248f01438d34"), ProfessionalTypeId = Guid.Parse("93bd828b-2b6e-42a6-92e3-248f01438d34") },
+                new Mason { Id = Guid.Parse("84e9327f-9c8a-41b3-84e6-2c548c29b8e3"), ProfessionalTypeId = Guid.Parse("84e9327f-9c8a-41b3-84e6-2c548c29b8e3") },
+                new Mason { Id = Guid.Parse("d59c8723-c8a6-44b8-85d4-b72e93c24851"), ProfessionalTypeId = Guid.Parse("d59c8723-c8a6-44b8-85d4-b72e93c24851") },
+                new Mason { Id = Guid.Parse("36f41695-bc6e-4a3f-a7e9-d41643b81245"), ProfessionalTypeId = Guid.Parse("36f41695-bc6e-4a3f-a7e9-d41643b81245") }
+
+                );
+
+            modelBuilder.Entity<Plumber>().HasData(
+                new Plumber { Id = Guid.Parse("f13423a1-8b12-4d58-bcc1-2b29f41148c8"), ProfessionalTypeId = Guid.Parse("f13423a1-8b12-4d58-bcc1-2b29f41148c8") },
+                new Plumber { Id = Guid.Parse("b8a7e539-8f3c-40d3-8a29-19edca7d65b4"), ProfessionalTypeId = Guid.Parse("b8a7e539-8f3c-40d3-8a29-19edca7d65b4") },
+                new Plumber { Id = Guid.Parse("eea39b7d-8f13-49bc-8c45-c8e293d64829"), ProfessionalTypeId = Guid.Parse("eea39b7d-8f13-49bc-8c45-c8e293d64829") }
+                );
+
+
+            modelBuilder.Entity<Carpenter>().HasData(
+                new Carpenter { Id = Guid.Parse("93bd828b-2b6e-42a6-92e3-248f01438d34"), ProfessionalTypeId = Guid.Parse("93bd828b-2b6e-42a6-92e3-248f01438d34") },
+                new Carpenter { Id = Guid.Parse("eea39b7d-8f13-49bc-8c45-c8e293d64829"), ProfessionalTypeId = Guid.Parse("eea39b7d-8f13-49bc-8c45-c8e293d64829") }
+                );
+            modelBuilder.Entity<Painter>().HasData(
+                new Painter { Id = Guid.Parse("76e63219-25e6-40f1-9a75-9486d4d478a9"), ProfessionalTypeId = Guid.Parse("76e63219-25e6-40f1-9a75-9486d4d478a9") },
+                new Painter { Id = Guid.Parse("7f3b2d86-4d3c-498b-928c-5f8c3b7425d2"), ProfessionalTypeId = Guid.Parse("7f3b2d86-4d3c-498b-928c-5f8c3b7425d2") }
+                );
+            modelBuilder.Entity<Glazier>().HasData(
+                new Glazier { Id = Guid.Parse("239bcae5-0c39-4bb2-8a9e-eebf92e4cd84"), ProfessionalTypeId = Guid.Parse("239bcae5-0c39-4bb2-8a9e-eebf92e4cd84") }
+            );
+            modelBuilder.Entity<Metalworker>().HasData(
+                new Metalworker { Id = Guid.Parse("5b6e1f3d-5d8a-4143-9e18-748cb5c06d27"), ProfessionalTypeId = Guid.Parse("5b6e1f3d-5d8a-4143-9e18-748cb5c06d27") }
+                );
+            modelBuilder.Entity<Decorator>().HasData(
+                new Decorator { Id = Guid.Parse("3b948d76-b45e-4f9c-a37b-4d2b3e5c9a8e"), ProfessionalTypeId = Guid.Parse("3b948d76-b45e-4f9c-a37b-4d2b3e5c9a8e") }
+            );
 
 
             modelBuilder.Entity<GenericProfessionalProfessionalType>().HasData(
-               new GenericProfessionalProfessionalType
-               {
-                   Id = Guid.Parse("c9d2a9f8-1f7a-4b47-b550-84e73c3b72b1"),
-                   genericId = 1,
-                   //ArchitectId = Guid.Parse("c9d2a9f8-1f7a-4b47-b550-84e73c3b72b1"),
-                   //CivilEngineerId = Guid.Parse("c9d2a9f8-1f7a-4b47-b550-84e73c3b72b1")
-               },
-               new GenericProfessionalProfessionalType
-               {
-                   Id = Guid.Parse("a1f3b7e4-d3c2-4596-b5c3-620fc2c41648"),
-                   genericId = 2,
-                   //ElectricianId = Guid.Parse("a1f3b7e4-d3c2-4596-b5c3-620fc2c41648"),
-               },
-               new GenericProfessionalProfessionalType
-               {
-                   Id = Guid.Parse("f13423a1-8b12-4d58-bcc1-2b29f41148c8"),
-                   genericId = 3,
-                   //ArchitectId = Guid.Parse("f13423a1-8b12-4d58-bcc1-2b29f41148c8"),
-                   //CivilEngineerId = Guid.Parse("f13423a1-8b12-4d58-bcc1-2b29f41148c8")
-               },
-               new GenericProfessionalProfessionalType
-               {
-                   Id = Guid.Parse("93bd828b-2b6e-42a6-92e3-248f01438d34"),
-                   genericId = 4
-               },
-               new GenericProfessionalProfessionalType
-               {
-                   Id = Guid.Parse("b8a7e539-8f3c-40d3-8a29-19edca7d65b4"),
-                   genericId = 5,
-                   //ElectricianId = Guid.Parse("b8a7e539-8f3c-40d3-8a29-19edca7d65b4")
-               },
-               new GenericProfessionalProfessionalType
-               {
-                   Id = Guid.Parse("76e63219-25e6-40f1-9a75-9486d4d478a9"),
-                   genericId = 6,
-                   //ArchitectId = Guid.Parse("76e63219-25e6-40f1-9a75-9486d4d478a9")
-               },
-               new GenericProfessionalProfessionalType
-               {
-                   Id = Guid.Parse("239bcae5-0c39-4bb2-8a9e-eebf92e4cd84"),
-                   genericId = 7,
-                   //ElectricianId  = Guid.Parse("239bcae5-0c39-4bb2-8a9e-eebf92e4cd84")
-               },
-               new GenericProfessionalProfessionalType
-               {
-                   Id = Guid.Parse("5b6e1f3d-5d8a-4143-9e18-748cb5c06d27"),
-                   genericId = 8
-               },
-               new GenericProfessionalProfessionalType
-               {
-                   Id = Guid.Parse("36f41695-bc6e-4a3f-a7e9-d41643b81245"),
-                   genericId = 9
-               },
-               new GenericProfessionalProfessionalType
-               {
-                   Id = Guid.Parse("eea39b7d-8f13-49bc-8c45-c8e293d64829"),
-                   genericId = 10
-               },
-               new GenericProfessionalProfessionalType
-               {
-                   Id = Guid.Parse("7f3b2d86-4d3c-498b-928c-5f8c3b7425d2"),
-                   genericId = 11,
-                   //ArchitectId = Guid.Parse("7f3b2d86-4d3c-498b-928c-5f8c3b7425d2"),
-                   //CivilEngineerId = Guid.Parse("7f3b2d86-4d3c-498b-928c-5f8c3b7425d2"),
-               },
-               new GenericProfessionalProfessionalType
-               {
-                   Id = Guid.Parse("23d8a69f-bf42-4518-bcd9-e75a29e5c4d6"),
-                   genericId = 12,
-                   //ElectricianId = Guid.Parse("23d8a69f-bf42-4518-bcd9-e75a29e5c4d6")
-               },
-               new GenericProfessionalProfessionalType
-               {
-                   Id = Guid.Parse("84e9327f-9c8a-41b3-84e6-2c548c29b8e3"),
-                   genericId = 13,
-                   //CivilEngineerId = Guid.Parse("84e9327f-9c8a-41b3-84e6-2c548c29b8e3"),
-               },
-               new GenericProfessionalProfessionalType
-               {
-                   Id = Guid.Parse("3b948d76-b45e-4f9c-a37b-4d2b3e5c9a8e"),
-                   genericId = 14,
-                   //ArchitectId = Guid.Parse("3b948d76-b45e-4f9c-a37b-4d2b3e5c9a8e")
-               },
-               new GenericProfessionalProfessionalType
-               {
-                   Id = Guid.Parse("d59c8723-c8a6-44b8-85d4-b72e93c24851"),
-                   genericId = 15,
-                   //CivilEngineerId = Guid.Parse("d59c8723-c8a6-44b8-85d4-b72e93c24851"),
-                   //ElectricianId = Guid.Parse("d59c8723-c8a6-44b8-85d4-b72e93c24851")
-               }
-           );
+                new GenericProfessionalProfessionalType
+                {
+                    Id = Guid.Parse("c9d2a9f8-1f7a-4b47-b550-84e73c3b72b1"),
+                    genericId = 1,
+                    ArchitectId = Guid.Parse("c9d2a9f8-1f7a-4b47-b550-84e73c3b72b1"),
+                    CivilEngineerId = Guid.Parse("c9d2a9f8-1f7a-4b47-b550-84e73c3b72b1")
+                },
+                new GenericProfessionalProfessionalType
+                {
+                    Id = Guid.Parse("a1f3b7e4-d3c2-4596-b5c3-620fc2c41648"),
+                    genericId = 2,
+                    ElectricianId = Guid.Parse("a1f3b7e4-d3c2-4596-b5c3-620fc2c41648"),
+                    MasonId = Guid.Parse("a1f3b7e4-d3c2-4596-b5c3-620fc2c41648")
+                },
+                new GenericProfessionalProfessionalType
+                {
+                    Id = Guid.Parse("f13423a1-8b12-4d58-bcc1-2b29f41148c8"),
+                    genericId = 3,
+                    ArchitectId = Guid.Parse("f13423a1-8b12-4d58-bcc1-2b29f41148c8"),
+                    CivilEngineerId = Guid.Parse("f13423a1-8b12-4d58-bcc1-2b29f41148c8"),
+                    PlumberId = Guid.Parse("f13423a1-8b12-4d58-bcc1-2b29f41148c8"),
+                },
+                new GenericProfessionalProfessionalType
+                {
+                    Id = Guid.Parse("93bd828b-2b6e-42a6-92e3-248f01438d34"),
+                    genericId = 4,
+                    MasonId = Guid.Parse("93bd828b-2b6e-42a6-92e3-248f01438d34"),
+                    CarpenterId = Guid.Parse("93bd828b-2b6e-42a6-92e3-248f01438d34"),
+                },
+                new GenericProfessionalProfessionalType
+                {
+                    Id = Guid.Parse("b8a7e539-8f3c-40d3-8a29-19edca7d65b4"),
+                    genericId = 5,
+                    ElectricianId = Guid.Parse("b8a7e539-8f3c-40d3-8a29-19edca7d65b4"),
+                    PlumberId = Guid.Parse("b8a7e539-8f3c-40d3-8a29-19edca7d65b4"),
+                },
+                new GenericProfessionalProfessionalType
+                {
+                    Id = Guid.Parse("76e63219-25e6-40f1-9a75-9486d4d478a9"),
+                    genericId = 6,
+                    ArchitectId = Guid.Parse("76e63219-25e6-40f1-9a75-9486d4d478a9"),
+                    PainterId = Guid.Parse("76e63219-25e6-40f1-9a75-9486d4d478a9"),
+                },
+                new GenericProfessionalProfessionalType
+                {
+                    Id = Guid.Parse("239bcae5-0c39-4bb2-8a9e-eebf92e4cd84"),
+                    genericId = 7,
+                    ElectricianId = Guid.Parse("239bcae5-0c39-4bb2-8a9e-eebf92e4cd84"),
+                },
+                new GenericProfessionalProfessionalType
+                {
+                    Id = Guid.Parse("5b6e1f3d-5d8a-4143-9e18-748cb5c06d27"),
+                    genericId = 8,
+                    MetalworkerId = Guid.Parse("5b6e1f3d-5d8a-4143-9e18-748cb5c06d27")
+                },
+                new GenericProfessionalProfessionalType
+                {
+                    Id = Guid.Parse("36f41695-bc6e-4a3f-a7e9-d41643b81245"),
+                    genericId = 9,
+                    MasonId = Guid.Parse("36f41695-bc6e-4a3f-a7e9-d41643b81245")
+                },
+                new GenericProfessionalProfessionalType
+                {
+                    Id = Guid.Parse("eea39b7d-8f13-49bc-8c45-c8e293d64829"),
+                    genericId = 10,
+                    PlumberId = Guid.Parse("eea39b7d-8f13-49bc-8c45-c8e293d64829"),
+                    CarpenterId = Guid.Parse("eea39b7d-8f13-49bc-8c45-c8e293d64829")
+                },
+                new GenericProfessionalProfessionalType
+                {
+                    Id = Guid.Parse("7f3b2d86-4d3c-498b-928c-5f8c3b7425d2"),
+                    genericId = 11,
+                    ArchitectId = Guid.Parse("7f3b2d86-4d3c-498b-928c-5f8c3b7425d2"),
+                    CivilEngineerId = Guid.Parse("7f3b2d86-4d3c-498b-928c-5f8c3b7425d2"),
+                    PainterId = Guid.Parse("7f3b2d86-4d3c-498b-928c-5f8c3b7425d2")
+                },
+                new GenericProfessionalProfessionalType
+                {
+                    Id = Guid.Parse("23d8a69f-bf42-4518-bcd9-e75a29e5c4d6"),
+                    genericId = 12,
+                    ElectricianId = Guid.Parse("23d8a69f-bf42-4518-bcd9-e75a29e5c4d6")
+                },
+                new GenericProfessionalProfessionalType
+                {
+                    Id = Guid.Parse("84e9327f-9c8a-41b3-84e6-2c548c29b8e3"),
+                    genericId = 13,
+                    CivilEngineerId = Guid.Parse("84e9327f-9c8a-41b3-84e6-2c548c29b8e3"),
+                    MasonId = Guid.Parse("84e9327f-9c8a-41b3-84e6-2c548c29b8e3"),
+                },
+                new GenericProfessionalProfessionalType
+                {
+                    Id = Guid.Parse("3b948d76-b45e-4f9c-a37b-4d2b3e5c9a8e"),
+                    genericId = 14,
+                    ArchitectId = Guid.Parse("3b948d76-b45e-4f9c-a37b-4d2b3e5c9a8e"),
+                    DecoratorId = Guid.Parse("3b948d76-b45e-4f9c-a37b-4d2b3e5c9a8e")
+                },
+                new GenericProfessionalProfessionalType
+                {
+                    Id = Guid.Parse("d59c8723-c8a6-44b8-85d4-b72e93c24851"),
+                    genericId = 15,
+                    CivilEngineerId = Guid.Parse("d59c8723-c8a6-44b8-85d4-b72e93c24851"),
+                    ElectricianId = Guid.Parse("d59c8723-c8a6-44b8-85d4-b72e93c24851"),
+                    MasonId = Guid.Parse("d59c8723-c8a6-44b8-85d4-b72e93c24851"),
+                }
+            );
+
 
 
             modelBuilder.Entity<GenericProfessional>().HasData(
