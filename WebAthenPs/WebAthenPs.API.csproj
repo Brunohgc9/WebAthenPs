@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Entities\Professional\ProfessionPool\**" />
+    <Content Remove="Entities\Professional\ProfessionPool\**" />
+    <EmbeddedResource Remove="Entities\Professional\ProfessionPool\**" />
+    <None Remove="Entities\Professional\ProfessionPool\**" />
+  </ItemGroup>
+
+  <ItemGroup>
 	  <PackageReference Include="AutoMapper" Version="13.0.1" />
 	  <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
 	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.7" />
@@ -31,7 +38,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Entities\Professional\ProfessionPool\" />
     <Folder Include="Mappings\MappingComponentDTO\Chats\" />
     <Folder Include="Migrations\" />
     <Folder Include="Repositories\Implementations\ChatImplementation\" />
