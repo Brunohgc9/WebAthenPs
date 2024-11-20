@@ -14,89 +14,89 @@ namespace WebAthenPs.API.Entities.Professional.ProfessionalTypes.ProfessionalsRe
 
 
         [ForeignKey("ArchitectId")]
-        public Architect Architect { get; set; }
-        public int? ArchitectId { get; set; }
+        public Architect? Architect { get; set; }
+        public Guid? ArchitectId { get; set; }
 
 
         [ForeignKey("CivilEngineerId")]
-        public CivilEngineer CivilEngineer { get; set; }
-        public int? CivilEngineerId { get; set; }
+        public CivilEngineer? CivilEngineer { get; set; }
+        public Guid? CivilEngineerId { get; set; }
 
         [ForeignKey("ElectricalEngineerId")]
-        public ElectricalEngineer ElectricalEngineer { get; set; }
-        public int? ElectricalEngineerId { get; set; }
+        public ElectricalEngineer? ElectricalEngineer { get; set; }
+        public Guid? ElectricalEngineerId { get; set; }
 
         [ForeignKey("HydraulicEngineerId")]
-        public HydraulicEngineer HydraulicEngineer { get; set; }
-        public int? HydraulicEngineerId { get; set; }
+        public HydraulicEngineer? HydraulicEngineer { get; set; }
+        public Guid? HydraulicEngineerId { get; set; }
 
         [ForeignKey("SurveyorId")]
-        public Surveyor Surveyor { get; set; }
-        public int? SurveyorId { get; set; }
+        public Surveyor? Surveyor { get; set; }
+        public Guid? SurveyorId { get; set; }
 
         [ForeignKey("ForemanId")]
-        public Foreman Foreman { get; set; }
-        public int? ForemanId { get; set; }
+        public Foreman? Foreman { get; set; }
+        public Guid? ForemanId { get; set; }
 
         [ForeignKey("MasonId")]
-        public Mason Mason { get; set; }
-        public int? MasonId { get; set; }
+        public Mason? Mason { get; set; }
+        public Guid? MasonId { get; set; }
 
         [ForeignKey("PlumberId")]
-        public Plumber Plumber { get; set; }
-        public int? PlumberId { get; set; }
+        public Plumber? Plumber { get; set; }
+        public Guid? PlumberId { get; set; }
 
         [ForeignKey("ElectricianId")]
-        public Electrician Electrician { get; set; }
-        public int? ElectricianId { get; set; }
+        public Electrician? Electrician { get; set; }
+        public Guid? ElectricianId { get; set; }
 
         [ForeignKey("CarpenterId")]
-        public Carpenter Carpenter { get; set; }
-        public int? CarpenterId { get; set; }
+        public Carpenter? Carpenter { get; set; }
+        public Guid? CarpenterId { get; set; }
 
         [ForeignKey("RooferId")]
-        public Roofer Roofer { get; set; }
-        public int? RooferId { get; set; }
+        public Roofer? Roofer { get; set; }
+        public Guid? RooferId { get; set; }
 
         [ForeignKey("PlastererId")]
-        public Plasterer Plasterer { get; set; }
-        public int? PlastererId { get; set; }
+        public Plasterer? Plasterer { get; set; }
+        public Guid? PlastererId { get; set; }
 
         [ForeignKey("TilerId")]
-        public Tiler Tiler { get; set; }
-        public int? TilerId { get; set; }
+        public Tiler? Tiler { get; set; }
+        public Guid? TilerId { get; set; }
 
         [ForeignKey("PainterId")]
-        public Painter Painter { get; set; }
-        public int? PainterId { get; set; }
+        public Painter? Painter { get; set; }
+        public Guid? PainterId { get; set; }
 
         [ForeignKey("MetalworkerId")]
-        public Metalworker Metalworker { get; set; }
-        public int? MetalworkerId { get; set; }
+        public Metalworker? Metalworker { get; set; }
+        public Guid? MetalworkerId { get; set; }
 
         [ForeignKey("GlazierId")]
-        public Glazier Glazier { get; set; }
-        public int? GlazierId { get; set; }
+        public Glazier? Glazier { get; set; }
+        public Guid? GlazierId { get; set; }
 
         [ForeignKey("MarbleWorkerId")]
-        public MarbleWorker MarbleWorker { get; set; }
-        public int? MarbleWorkerId { get; set; }
+        public MarbleWorker? MarbleWorker { get; set; }
+        public Guid? MarbleWorkerId { get; set; }
 
         [ForeignKey("LandscaperId")]
-        public Landscaper Landscaper { get; set; }
-        public int? LandscaperId { get; set; }
+        public Landscaper? Landscaper { get; set; }
+        public Guid? LandscaperId { get; set; }
 
         [ForeignKey("CabinetmakerId")]
-        public Cabinetmaker Cabinetmaker { get; set; }
-        public int? CabinetmakerId { get; set; }
+        public Cabinetmaker? Cabinetmaker { get; set; }
+        public Guid? CabinetmakerId { get; set; }
 
         [ForeignKey("InteriorDesignerId")]
-        public InteriorDesigner InteriorDesigner { get; set; }
-        public int? InteriorDesignerId { get; set; }
+        public InteriorDesigner? InteriorDesigner { get; set; }
+        public Guid? InteriorDesignerId { get; set; }
 
         [ForeignKey("DecoratorId")]
-        public Decorator Decorator { get; set; }
-        public int? DecoratorId { get; set; }
+        public Decorator? Decorator { get; set; }
+        public Guid? DecoratorId { get; set; }
 
 
 

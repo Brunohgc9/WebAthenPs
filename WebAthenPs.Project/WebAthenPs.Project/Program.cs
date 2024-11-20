@@ -15,7 +15,6 @@ using WebAthenPs.Project.Services.Interfaces.Professional;
 using WebAthenPs.Project.Services.Interfaces.Project;
 using WebAthenPs.Project.Services.Interfaces.User;
 using WebAthenPs.Services.Implementation.Comments;
-using WebOllamaChat.Client.SignalConnections;
 
 var builder = WebApplication.CreateBuilder(args);
 

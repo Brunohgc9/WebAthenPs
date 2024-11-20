@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WebAthenPs.API.Entities.Professional.ProfessionalTypes.ProfessionalsRelation;
 using WebAthenPs.API.Entities.Project;
 using WebAthenPs.Project.Components.Pages;
 
@@ -19,7 +20,9 @@ namespace WebAthenPs.API.Entities.Professional.ProfessionalTypes
 
         public string? Especialidade { get; set; }
 
-
+        [ForeignKey("ProfessionalTypeId")]
+        public GenericProfessionalProfessionalType ProfessionalType { get; set; }
+        public Guid ProfessionalTypeId { get; set; }
 
 
     }
