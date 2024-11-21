@@ -52,20 +52,16 @@ namespace WebAthenPs.API.Repositories.Implementations
                 genericId = genericProfessional.Id
             };
 
-
-            
             // Adiciona a entrada na tabela intermediária
             _context.GenericProfessionalProfessionalTypes.Add(professionalTypeEntry);
             await _context.SaveChangesAsync();
 
-            var teste = professionalTypeEntry.Id;
-
-
+            // Itera sobre os tipos de profissionais e cria uma instância para cada tipo
             foreach (var typeName in professionalTypeNames)
             {
                 if (typeName.Equals("Architect", StringComparison.OrdinalIgnoreCase))
                 {
-                    // Cria um novo Arquiteto e atribui o ID da tabela intermediária (professionalTypeEntry.Id) ao campo ProfessionalTypeId
+                    // Cria um novo Arquiteto
                     var architect = new Architect
                     {
                         Id = Guid.NewGuid(),
@@ -78,17 +74,263 @@ namespace WebAthenPs.API.Repositories.Implementations
                 }
                 else if (typeName.Equals("CivilEngineer", StringComparison.OrdinalIgnoreCase))
                 {
-                    // Cria um novo Engenheiro Civil e atribui o ID da tabela intermediária (professionalTypeEntry.Id) ao campo ProfessionalTypeId
+                    // Cria um novo Engenheiro Civil
                     var civilEngineer = new CivilEngineer
                     {
                         Id = Guid.NewGuid(),
                         ProfessionalTypeId = professionalTypeEntry.Id
-
                     };
                     _context.CivilEngineers.Add(civilEngineer);
                     await _context.SaveChangesAsync();
 
                     professionalTypeEntry.CivilEngineerId = civilEngineer.Id;
+                }
+                else if (typeName.Equals("ElectricalEngineer", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Cria um novo Engenheiro Eletricista
+                    var electricalEngineer = new ElectricalEngineer
+                    {
+                        Id = Guid.NewGuid(),
+                        ProfessionalTypeId = professionalTypeEntry.Id
+                    };
+                    _context.ElectricalEngineers.Add(electricalEngineer);
+                    await _context.SaveChangesAsync();
+
+                    professionalTypeEntry.ElectricalEngineerId = electricalEngineer.Id;
+                }
+                else if (typeName.Equals("HydraulicEngineer", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Cria um novo Engenheiro Hidráulico
+                    var hydraulicEngineer = new HydraulicEngineer
+                    {
+                        Id = Guid.NewGuid(),
+                        ProfessionalTypeId = professionalTypeEntry.Id
+                    };
+                    _context.HydraulicEngineers.Add(hydraulicEngineer);
+                    await _context.SaveChangesAsync();
+
+                    professionalTypeEntry.HydraulicEngineerId = hydraulicEngineer.Id;
+                }
+                else if (typeName.Equals("Surveyor", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Cria um novo Agrimensor
+                    var surveyor = new Surveyor
+                    {
+                        Id = Guid.NewGuid(),
+                        ProfessionalTypeId = professionalTypeEntry.Id
+                    };
+                    _context.Surveyors.Add(surveyor);
+                    await _context.SaveChangesAsync();
+
+                    professionalTypeEntry.SurveyorId = surveyor.Id;
+                }
+                else if (typeName.Equals("Foreman", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Cria um novo Mestre de Obras
+                    var foreman = new Foreman
+                    {
+                        Id = Guid.NewGuid(),
+                        ProfessionalTypeId = professionalTypeEntry.Id
+                    };
+                    _context.Foremen.Add(foreman);
+                    await _context.SaveChangesAsync();
+
+                    professionalTypeEntry.ForemanId = foreman.Id;
+                }
+                else if (typeName.Equals("Mason", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Cria um novo Pedreiro
+                    var mason = new Mason
+                    {
+                        Id = Guid.NewGuid(),
+                        ProfessionalTypeId = professionalTypeEntry.Id
+                    };
+                    _context.Masons.Add(mason);
+                    await _context.SaveChangesAsync();
+
+                    professionalTypeEntry.MasonId = mason.Id;
+                }
+                else if (typeName.Equals("Plumber", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Cria um novo Encanador
+                    var plumber = new Plumber
+                    {
+                        Id = Guid.NewGuid(),
+                        ProfessionalTypeId = professionalTypeEntry.Id
+                    };
+                    _context.Plumbers.Add(plumber);
+                    await _context.SaveChangesAsync();
+
+                    professionalTypeEntry.PlumberId = plumber.Id;
+                }
+                else if (typeName.Equals("Electrician", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Cria um novo Eletricista
+                    var electrician = new Electrician
+                    {
+                        Id = Guid.NewGuid(),
+                        ProfessionalTypeId = professionalTypeEntry.Id
+                    };
+                    _context.Electricians.Add(electrician);
+                    await _context.SaveChangesAsync();
+
+                    professionalTypeEntry.ElectricianId = electrician.Id;
+                }
+                else if (typeName.Equals("Carpenter", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Cria um novo Carpinteiro
+                    var carpenter = new Carpenter
+                    {
+                        Id = Guid.NewGuid(),
+                        ProfessionalTypeId = professionalTypeEntry.Id
+                    };
+                    _context.Carpenters.Add(carpenter);
+                    await _context.SaveChangesAsync();
+
+                    professionalTypeEntry.CarpenterId = carpenter.Id;
+                }
+                else if (typeName.Equals("Roofer", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Cria um novo Telhadista
+                    var roofer = new Roofer
+                    {
+                        Id = Guid.NewGuid(),
+                        ProfessionalTypeId = professionalTypeEntry.Id
+                    };
+                    _context.Roofers.Add(roofer);
+                    await _context.SaveChangesAsync();
+
+                    professionalTypeEntry.RooferId = roofer.Id;
+                }
+                else if (typeName.Equals("Plasterer", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Cria um novo Gesseiro
+                    var plasterer = new Plasterer
+                    {
+                        Id = Guid.NewGuid(),
+                        ProfessionalTypeId = professionalTypeEntry.Id
+                    };
+                    _context.Plasterers.Add(plasterer);
+                    await _context.SaveChangesAsync();
+
+                    professionalTypeEntry.PlastererId = plasterer.Id;
+                }
+                else if (typeName.Equals("Tiler", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Cria um novo Azulejista
+                    var tiler = new Tiler
+                    {
+                        Id = Guid.NewGuid(),
+                        ProfessionalTypeId = professionalTypeEntry.Id
+                    };
+                    _context.Tilers.Add(tiler);
+                    await _context.SaveChangesAsync();
+
+                    professionalTypeEntry.TilerId = tiler.Id;
+                }
+                else if (typeName.Equals("Painter", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Cria um novo Pintor
+                    var painter = new Painter
+                    {
+                        Id = Guid.NewGuid(),
+                        ProfessionalTypeId = professionalTypeEntry.Id
+                    };
+                    _context.Painters.Add(painter);
+                    await _context.SaveChangesAsync();
+
+                    professionalTypeEntry.PainterId = painter.Id;
+                }
+                else if (typeName.Equals("Metalworker", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Cria um novo Serralheiro
+                    var metalworker = new Metalworker
+                    {
+                        Id = Guid.NewGuid(),
+                        ProfessionalTypeId = professionalTypeEntry.Id
+                    };
+                    _context.Metalworkers.Add(metalworker);
+                    await _context.SaveChangesAsync();
+
+                    professionalTypeEntry.MetalworkerId = metalworker.Id;
+                }
+                else if (typeName.Equals("Glazier", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Cria um novo Vidraceiro
+                    var glazier = new Glazier
+                    {
+                        Id = Guid.NewGuid(),
+                        ProfessionalTypeId = professionalTypeEntry.Id
+                    };
+                    _context.Glaziers.Add(glazier);
+                    await _context.SaveChangesAsync();
+
+                    professionalTypeEntry.GlazierId = glazier.Id;
+                }
+                else if (typeName.Equals("MarbleWorker", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Cria um novo Trabalhador de Mármore
+                    var marbleWorker = new MarbleWorker
+                    {
+                        Id = Guid.NewGuid(),
+                        ProfessionalTypeId = professionalTypeEntry.Id
+                    };
+                    _context.MarbleWorkers.Add(marbleWorker);
+                    await _context.SaveChangesAsync();
+
+                    professionalTypeEntry.MarbleWorkerId = marbleWorker.Id;
+                }
+                else if (typeName.Equals("Landscaper", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Cria um novo Paisagista
+                    var landscaper = new Landscaper
+                    {
+                        Id = Guid.NewGuid(),
+                        ProfessionalTypeId = professionalTypeEntry.Id
+                    };
+                    _context.Landscapers.Add(landscaper);
+                    await _context.SaveChangesAsync();
+
+                    professionalTypeEntry.LandscaperId = landscaper.Id;
+                }
+                else if (typeName.Equals("Cabinetmaker", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Cria um novo Marceneiro
+                    var cabinetmaker = new Cabinetmaker
+                    {
+                        Id = Guid.NewGuid(),
+                        ProfessionalTypeId = professionalTypeEntry.Id
+                    };
+                    _context.Cabinetmakers.Add(cabinetmaker);
+                    await _context.SaveChangesAsync();
+
+                    professionalTypeEntry.CabinetmakerId = cabinetmaker.Id;
+                }
+                else if (typeName.Equals("InteriorDesigner", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Cria um novo Designer de Interiores
+                    var interiorDesigner = new InteriorDesigner
+                    {
+                        Id = Guid.NewGuid(),
+                        ProfessionalTypeId = professionalTypeEntry.Id
+                    };
+                    _context.InteriorDesigners.Add(interiorDesigner);
+                    await _context.SaveChangesAsync();
+
+                    professionalTypeEntry.InteriorDesignerId = interiorDesigner.Id;
+                }
+                else if (typeName.Equals("Decorator", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Cria um novo Decorador
+                    var decorator = new Decorator
+                    {
+                        Id = Guid.NewGuid(),
+                        ProfessionalTypeId = professionalTypeEntry.Id
+                    };
+                    _context.Decorators.Add(decorator);
+                    await _context.SaveChangesAsync();
+
+                    professionalTypeEntry.DecoratorId = decorator.Id;
                 }
                 else
                 {
@@ -97,10 +339,10 @@ namespace WebAthenPs.API.Repositories.Implementations
                 }
             }
 
-
             // Retorna o ID da especialização criada
             return professionalTypeEntry.Id;
         }
+
 
 
 
