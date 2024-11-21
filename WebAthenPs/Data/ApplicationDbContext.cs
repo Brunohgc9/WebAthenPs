@@ -16,7 +16,6 @@ namespace WebAthenPs.API.Data
         public DbSet<Projecty> Projects { get; set; }
         public DbSet<GenericProfessional> GenericProfessionals { get; set; }
         public DbSet<Client> Clients { get; set; }
-        public DbSet<Architect> Architects { get; set; }
         public DbSet<ProjectProfessional> ProjectProfessionals { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<Comment> Comments { get; set; }
@@ -24,7 +23,31 @@ namespace WebAthenPs.API.Data
         public DbSet<Chats> Chats { get; set; }
         public DbSet<ChatAndUsers> ChatAndUsers { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
+        // DbSet para o relacionamento entre os profissionais genéricos e outros tipos de profissionais
+        public DbSet<GenericProfessionalProfessionalType> GenericProfessionalProfessionalTypes { get; set; }
 
+        // DbSet para tipos de profissionais específicos
+        public DbSet<Architect> Architects { get; set; }
+        public DbSet<CivilEngineer> CivilEngineers { get; set; }
+        public DbSet<ElectricalEngineer> ElectricalEngineers { get; set; }
+        public DbSet<HydraulicEngineer> HydraulicEngineers { get; set; }
+        public DbSet<Surveyor> Surveyors { get; set; }
+        public DbSet<Foreman> Foremen { get; set; }
+        public DbSet<Mason> Masons { get; set; }
+        public DbSet<Plumber> Plumbers { get; set; }
+        public DbSet<Electrician> Electricians { get; set; }
+        public DbSet<Carpenter> Carpenters { get; set; }
+        public DbSet<Roofer> Roofers { get; set; }
+        public DbSet<Plasterer> Plasterers { get; set; }
+        public DbSet<Tiler> Tilers { get; set; }
+        public DbSet<Painter> Painters { get; set; }
+        public DbSet<Metalworker> Metalworkers { get; set; }
+        public DbSet<Glazier> Glaziers { get; set; }
+        public DbSet<MarbleWorker> MarbleWorkers { get; set; }
+        public DbSet<Landscaper> Landscapers { get; set; }
+        public DbSet<Cabinetmaker> Cabinetmakers { get; set; }
+        public DbSet<InteriorDesigner> InteriorDesigners { get; set; }
+        public DbSet<Decorator> Decorators { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

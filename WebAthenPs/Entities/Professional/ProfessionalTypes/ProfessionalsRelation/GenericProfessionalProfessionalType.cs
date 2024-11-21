@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using WebAthenPs.Models.DTOs.Professional.ProfessionalTypes;
 
 namespace WebAthenPs.API.Entities.Professional.ProfessionalTypes.ProfessionalsRelation
 {
@@ -97,8 +98,6 @@ namespace WebAthenPs.API.Entities.Professional.ProfessionalTypes.ProfessionalsRe
         [ForeignKey("DecoratorId")]
         public Decorator? Decorator { get; set; }
         public Guid? DecoratorId { get; set; }
-
-
 
 
     }

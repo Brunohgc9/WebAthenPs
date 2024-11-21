@@ -14,6 +14,7 @@ using WebAthenPs.API.Entities.Professional.ProfessionalTypes;
 using Microsoft.AspNetCore.Authorization;
 using WebAthenPs.API.Repositories;
 using WebAthenPs.Models.DTOs.Client;
+using NuGet.Protocol.Core.Types;
 
     namespace WebAthenPs.API.Controllers.Professional
     {
@@ -39,43 +40,11 @@ using WebAthenPs.Models.DTOs.Client;
             if (model == null || !ModelState.IsValid)
                 return BadRequest("Dados inválidos.");
 
-            var genericProfessional = model.CriarProfessionalEmDTO();
-
             try
             {
-                // Cria o profissional genérico
-                await _repository.CreateAsync(genericProfessional);
+                var genericProfessional = model.CriarProfessionalEmDTO();
 
-                // Verifica se o tipo de profissional inclui "Arquiteto"
-                //if (genericProfessional.ProfessionalTypes.Contains("Arquiteto"))
-                //{
-                //    // Verifica se o Arquiteto já foi criado e atribui o ArchId
-                //    if (model.ArchitectId.HasValue)
-                //    {
-                //        var architect = await _architectRepository.GetByIdAsync(model.ArchitectId.Value);
-
-                //        if (architect == null)
-                //            return NotFound("Arquiteto não encontrado.");
-
-                //        genericProfessional.ArchId = architect.ArchId; // Atribui o ArchId do arquiteto
-                //    }
-                //    else
-                //    {
-                //        // Caso não exista um ArchitectId, cria um novo arquiteto
-                //        var architect = new Architect
-                //        {
-                //            genericId = genericProfessional.Id, // Relaciona o arquiteto ao profissional genérico
-                //        };
-
-                //        await _architectRepository.CreateAsync(architect);
-
-                //        // Atribui o ArchId do novo arquiteto ao profissional genérico
-                //        genericProfessional.ArchId = architect.ArchId;
-
-                //        // Atualiza o GenericProfessional com o novo ArchId
-                //        await _repository.UpdateAsync(genericProfessional);
-                //    }
-                //}
+                await _repository.CreateAsync(genericProfessional, model.ProfessionalTypes);
 
                 var createdDto = genericProfessional.ConverterProfessionalParaDTO();
                 return CreatedAtAction(nameof(GetById), new { id = createdDto.Id }, createdDto);
