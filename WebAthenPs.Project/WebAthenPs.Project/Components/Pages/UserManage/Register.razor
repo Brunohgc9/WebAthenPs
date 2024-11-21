@@ -107,7 +107,7 @@
                     <div class="form-group mt-2">
                         <label>Professional Types</label>
                         @foreach (var type in professionalTypeOptions)
-                            {
+                        {
                             <div class="form-check">
                                 <InputCheckbox @bind-Value="additionalInfo.ProfessionalTypes[type]" class="form-check-input" />
                                 <label class="form-check-label">@type</label>
@@ -130,12 +130,19 @@
     private bool ShowErrors;
     private string Error = string.Empty;
 
-    private List<string> professionalTypeOptions = new List<string> { "Arquiteto", "Pedreiro", "Engenheiro" };
+    private List<string> professionalTypeOptions = new List<string>
+{
+    "Architect", "Civil Engineer", "Electrical Engineer", "Hydraulic Engineer",
+    "Surveyor", "Construction Manager", "Bricklayer", "Plumber", "Electrician", "Carpenter",
+    "Roofer", "Plasterer", "Tiler", "Painter", "Metalworker", "Glazier",
+    "Stonemason", "Gardener", "Joiner", "Interior Designer", "Decorator"
+};
+
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        // Inicialize o dicionário com as chaves padrão e valores falsos
+        // Inicializa o dicionário com as chaves padrão e valores falsos
         professionalTypeOptions.ForEach(type =>
             additionalInfo.ProfessionalTypes[type] = false);
     }
@@ -215,32 +222,6 @@
                         ShowErrors = true;
                         return;
                     }
-
-                    // if (additionalInfo.ProfessionalTypes.ContainsKey("Arquiteto") && additionalInfo.ProfessionalTypes["Arquiteto"])
-                    // {
-                    //     var architectModel = new RegisterArchitectModel
-                    //         {
-                    //             genericId = professionalCreationResult.Id
-                    //         };
-
-                    //     try
-                    //     {
-                    //         var architectCreationResult = await ArchitectService.CreateAsync(architectModel);
-                    //         if (architectCreationResult == null)
-                    //         {
-                    //             Error = "Failed to register architect.";
-                    //             ShowErrors = true;
-                    //             return;
-                    //         }
-                    //     }
-                    //     catch (Exception ex)
-                    //     {
-                    //         var innerExceptionMessage = ex.InnerException?.Message ?? ex.Message;
-                    //         Error = $"Erro ao registrar o arquiteto: {innerExceptionMessage}";
-                    //         ShowErrors = true;
-                    //         return;
-                    //     }
-                    // }
                 }
 
                 NavigationManager.NavigateTo("/login");
@@ -260,21 +241,16 @@
 
     public class BasicInfoModel
     {
-        [Required, EmailAddress]
-        public string Email { get; set; }
-        [Required]
-        public string Password { get; set; }
-        [Required]
-        public string ConfirmPassword { get; set; }
+        [Required] public string Email { get; set; }
+        [Required] public string Password { get; set; }
+        [Required] public string ConfirmPassword { get; set; }
     }
 
     public class AdditionalInfoModel
     {
         public string Role { get; set; }
         public string UserType { get; set; }
-        [Required]
         public string CPF { get; set; }
-        [Required]
         public string RG { get; set; }
         public string Gender { get; set; }
         public string Address { get; set; }

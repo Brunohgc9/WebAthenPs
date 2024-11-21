@@ -72,7 +72,7 @@ namespace WebAthenPs.API.Repositories.Implementations
 
                     professionalTypeEntry.ArchitectId = architect.Id;
                 }
-                else if (typeName.Equals("CivilEngineer", StringComparison.OrdinalIgnoreCase))
+                else if (typeName.Equals("Civil Engineer", StringComparison.OrdinalIgnoreCase))
                 {
                     // Cria um novo Engenheiro Civil
                     var civilEngineer = new CivilEngineer
@@ -85,7 +85,7 @@ namespace WebAthenPs.API.Repositories.Implementations
 
                     professionalTypeEntry.CivilEngineerId = civilEngineer.Id;
                 }
-                else if (typeName.Equals("ElectricalEngineer", StringComparison.OrdinalIgnoreCase))
+                else if (typeName.Equals("Electrical Engineer", StringComparison.OrdinalIgnoreCase))
                 {
                     // Cria um novo Engenheiro Eletricista
                     var electricalEngineer = new ElectricalEngineer
@@ -98,7 +98,7 @@ namespace WebAthenPs.API.Repositories.Implementations
 
                     professionalTypeEntry.ElectricalEngineerId = electricalEngineer.Id;
                 }
-                else if (typeName.Equals("HydraulicEngineer", StringComparison.OrdinalIgnoreCase))
+                else if (typeName.Equals("Hydraulic Engineer", StringComparison.OrdinalIgnoreCase))
                 {
                     // Cria um novo Engenheiro Hidráulico
                     var hydraulicEngineer = new HydraulicEngineer
