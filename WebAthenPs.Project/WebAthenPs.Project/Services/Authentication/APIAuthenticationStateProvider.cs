@@ -92,13 +92,28 @@ namespace WebAthenPs.Project.Services.Authentication
 
             try
             {
-                return Encoding.UTF8.GetString(Convert.FromBase64String(encryptedData));
+                // Verifica se o formato de entrada está em Base64
+                if (IsBase64String(encryptedData))
+                {
+                    return Encoding.UTF8.GetString(Convert.FromBase64String(encryptedData));
+                }
+                else
+                {
+                    Console.WriteLine("O dado fornecido não está no formato Base64 correto.");
+                    return string.Empty; // Ou outra lógica de erro, se necessário
+                }
             }
-            catch (FormatException)
+            catch (FormatException ex)
             {
-                Console.WriteLine("O dado fornecido não está no formato Base64 correto.");
-                throw; // Lança novamente a exceção ou trate de outra maneira
+                Console.WriteLine($"Erro ao tentar decodificar o Base64: {ex.Message}");
+                return string.Empty; // Ou outra lógica de erro, se necessário
             }
+        }
+
+        private bool IsBase64String(string str)
+        {
+            Span<byte> buffer = new Span<byte>(new byte[str.Length]);
+            return Convert.TryFromBase64String(str, buffer, out int bytesParsed);
         }
 
 
