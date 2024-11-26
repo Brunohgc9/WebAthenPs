@@ -12,8 +12,7 @@ namespace WebAthenPs.Models.DTOs.Professional
         public int ProjectId { get; set; } // ID do Projeto
         public GenericProfessionalDTO? Professional { get; set; } // Detalhes do Profissional
         public List<string> ContractedAs { get; set; } = new List<string>();
-
-
+        public decimal? Salary { get; set; }
     }
 
 }

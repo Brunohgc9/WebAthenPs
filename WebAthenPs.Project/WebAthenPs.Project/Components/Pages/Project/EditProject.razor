@@ -3,6 +3,7 @@
 @using WebAthenPs.Models.DTOs.Project
 @using WebAthenPs.Project.Services.Interfaces.Professional
 @using WebAthenPs.Project.Services.Interfaces.Project
+@using WebAthenPs.Project.Components.Components
 @inject IProjectService ProjectService
 @inject IGenericProfessionalService ProfessionalService
 @inject NavigationManager NavigationManager
@@ -13,100 +14,57 @@
     public int ProjectId { get; set; }
 
     private ProjectsDTO project;
-    private IEnumerable<GenericProfessionalDTO> allProfessionals;
-    private Dictionary<string, List<GenericProfessionalDTO>> professionalsByType = new();
-    private HashSet<int> selectedProfessionalIds = new HashSet<int>();
+    private List<GenericProfessionalDTO> professionals = new(); // Lista de profissionais associados ao projeto
+    private string statusMessage;
 
-    private List<GenericProfessionalDTO> contractedProfessionals = new();
-    private List<GenericProfessionalDTO> availableProfessionals = new();
+    private Guid currentChatId;
+    private string chatTitle;
 
     protected override async Task OnInitializedAsync()
     {
-        // Obter detalhes do projeto
-        project = await ProjectService.GetById(ProjectId);
-
-        // Obter todos os profissionais
-        allProfessionals = await ProfessionalService.GetAllAsync(string.Empty);
-
-        // Separar profissionais contratados e disponíveis
-        if (project != null && project.ProjectProfessionals != null)
+        try
         {
-            var contractedIds = project.ProjectProfessionals.Select(p => p.ProfessionalId).ToHashSet();
-            contractedProfessionals = allProfessionals.Where(p => contractedIds.Contains(p.Id)).ToList();
-            availableProfessionals = allProfessionals.Where(p => !contractedIds.Contains(p.Id)).ToList();
+            // Obter detalhes do projeto
+            project = await ProjectService.GetById(ProjectId);
 
-            // Preencher os IDs dos profissionais selecionados
-            selectedProfessionalIds = new HashSet<int>(contractedIds);
-        }
-        else
-        {
-            // Se não houver profissionais no projeto, todos são disponíveis
-            availableProfessionals = allProfessionals.ToList();
-        }
-
-        // Agrupar profissionais disponíveis por tipo
-        GroupProfessionalsByType();
-    }
-
-    private void GroupProfessionalsByType()
-    {
-        professionalsByType = availableProfessionals
-            .SelectMany(p => p.ProfessionalTypes ?? Enumerable.Empty<string>(),
-                        (professional, type) => new { Professional = professional, Type = type })
-            .GroupBy(pt => pt.Type) // Agrupa pelo tipo de profissional
-            .ToDictionary(g => g.Key, g => g.Select(pt => pt.Professional).ToList()); // Constrói o dicionário
-    }
-
-    private void ToggleProfessionalSelection(int professionalId)
-    {
-        if (selectedProfessionalIds.Contains(professionalId))
-        {
-            selectedProfessionalIds.Remove(professionalId);
-        }
-        else
-        {
-            selectedProfessionalIds.Add(professionalId);
-        }
-    }
-
-    private async Task AddProfessionalsToProject()
-    {
-        if (project != null)
-        {
-            var projectProfessionals = new List<ProjectProfessionalDTO>();
-
-            foreach (var professionalId in selectedProfessionalIds)
+            if (project == null)
             {
-                // Encontrar o profissional pelo ID
-                var professional = availableProfessionals.FirstOrDefault(p => p.Id == professionalId);
-
-                if (professional != null)
-                {
-                    projectProfessionals.Add(new ProjectProfessionalDTO
-                        {
-                            ProfessionalId = professional.Id,
-                            ProjectId = project.ProjectId,
-                            Professional = professional
-                        });
-                }
-                else
-                {
-                    Logger.LogWarning($"Profissional com ID {professionalId} não encontrado.");
-                }
+                Logger.LogWarning("Projeto não encontrado.");
+                return;
             }
 
-            // Associar os profissionais ao projeto
-            project.ProjectProfessionals = projectProfessionals;
+            // Obter os profissionais associados ao projeto
+            professionals = (await ProjectService.GetProfessionalsByProject(ProjectId)).ToList();
 
-            // Atualizar o projeto
-            var updatedProject = await ProjectService.UpdateProject(ProjectId, project);
+            // Verificar se há arquitetos associados ao projeto
+            var architect = professionals
+                .FirstOrDefault(pp => pp.GenericProfessionalTypeDTO?.ArchitectId != null);
 
-            // Navegação para os detalhes do projeto se a atualização foi bem-sucedida
-            if (updatedProject != null)
+            if (architect != null)
             {
-                NavigationManager.NavigateTo($"/project-details/{ProjectId}");
+                statusMessage = $"Arquiteto associado: {architect.UserName}";
+                project.Step = "Etapa 2"; // Avançar para a etapa 2
+                await ProjectService.UpdateProject(ProjectId, project); // Atualize o projeto no servidor
+
+                // Definir o ID do chat
+                currentChatId = architect.GenericProfessionalTypeDTO.ArchitectId.Value; // Exemplo de como associar o chat com o arquiteto
+                chatTitle = $"Chat com o Arquiteto {architect.UserName}";
+            }
+            else
+            {
+                statusMessage = "Nenhum arquiteto associado ao projeto. Por favor, selecione um arquiteto para avançar.";
             }
         }
+        catch (Exception ex)
+        {
+            Logger.LogError($"Erro ao inicializar a página: {ex.Message}");
+            statusMessage = "Erro ao carregar os detalhes do projeto.";
+        }
+    }
+
+    private void NavigateToArchitectSelection()
+    {
+        NavigationManager.NavigateTo($"/select-architects/{ProjectId}");
     }
 }
 
@@ -118,124 +76,24 @@
         <div class="project-details">
             <h4>@project.ProjectName</h4>
 
-            <div class="form-group">
-                <label for="projectName">Nome do Projeto:</label>
-                <input type="text" id="projectName" @bind="project.ProjectName" />
-            </div>
-
-            <div class="form-group">
-                <label for="status">Status:</label>
-                <input type="text" id="status" @bind="project.Status" />
-            </div>
-
-            <div class="form-group">
-                <label for="description">Descrição:</label>
-                <textarea id="description" @bind="project.Description"></textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="address">Endereço:</label>
-                <input type="text" id="address" @bind="project.Address" />
-            </div>
-
-            <div class="form-group">
-                <label for="neighborhood">Bairro:</label>
-                <input type="text" id="neighborhood" @bind="project.Neighborhood" />
-            </div>
-
-            <div class="form-group">
-                <label for="city">Cidade:</label>
-                <input type="text" id="city" @bind="project.City" />
-            </div>
-
-            <div class="form-group">
-                <label for="state">Estado:</label>
-                <input type="text" id="state" @bind="project.State" />
-            </div>
-
-            <div class="form-group">
-                <label for="postalCode">Código Postal:</label>
-                <input type="text" id="postalCode" @bind="project.PostalCode" />
-            </div>
-
-            <div class="form-group">
-                <label for="country">País:</label>
-                <input type="text" id="country" @bind="project.Country" />
-            </div>
-
-            <div class="form-group">
-                <label for="totalArea">Área Total:</label>
-                <input type="number" id="totalArea" @bind="project.TotalArea" />
-            </div>
-
-            <div class="form-group">
-                <label for="numberOfRooms">Número de Quartos:</label>
-                <input type="number" id="numberOfRooms" @bind="project.NumberOfRooms" />
-            </div>
-
-            <div class="form-group">
-                <label for="numberOfBathrooms">Número de Banheiros:</label>
-                <input type="number" id="numberOfBathrooms" @bind="project.NumberOfBathrooms" />
-            </div>
-
-            <div class="form-group">
-                <label for="budget">Orçamento:</label>
-                <input type="number" id="budget" @bind="project.Budget" />
-            </div>
-
-            <div class="form-group">
-                <label for="startDate">Data de Início:</label>
-                <input type="date" id="startDate" @bind="project.StartDate" />
-            </div>
-
-            <div class="form-group">
-                <label for="endDate">Data de Término:</label>
-                <input type="date" id="endDate" @bind="project.EndDate" />
-            </div>
-
-            <div class="form-group">
-                <label for="constructionType">Tipo de Construção:</label>
-                <input type="text" id="constructionType" @bind="project.ConstructionType" />
-            </div>
-
-            <div class="form-group">
-                <label for="step">Etapa:</label>
-                <input type="text" id="step" @bind="project.Step" />
-            </div>
-
-            <h5>Profissionais Já Contratados</h5>
-            <ul>
-                @if (contractedProfessionals.Any())
-                {
-                    @foreach (var professional in contractedProfessionals)
-                    {
-                        <li>@professional.UserName - @professional.Email (Função: @string.Join(", ", professional.ProfessionalTypes ?? new List<string>()))</li>
-                    }
-                }
-                else
-                {
-                    <li>Nenhum profissional contratado ainda.</li>
-                }
-            </ul>
-
-            <h5>Adicionar Profissionais ao Projeto</h5>
-            @foreach (var type in professionalsByType.Keys)
+            @if (!string.IsNullOrEmpty(statusMessage))
             {
-                <h6>@type</h6>
-                <ul>
-                    @foreach (var professional in professionalsByType[type])
-                    {
-                        <li>
-                            <input type="checkbox"
-                                   @onchange="(e) => ToggleProfessionalSelection(professional.Id)"
-                                   checked="@selectedProfessionalIds.Contains(professional.Id)" />
-                            @professional.UserName - @professional.Email (Função: @string.Join(", ", professional.ProfessionalTypes ?? new List<string>()))
-                        </li>
-                    }
-                </ul>
+                <div class="status-message">@statusMessage</div>
             }
 
-            <button @onclick="AddProfessionalsToProject">Adicionar Profissionais</button>
+            <div class="form-group">
+                <label for="step">Etapa Atual:</label>
+                <input type="text" id="step" value="@project.Step" disabled />
+            </div>
+
+            @if (project.Step == "Etapa 1")
+            {
+                <button @onclick="NavigateToArchitectSelection">Selecionar Arquiteto</button>
+            }
+            else if (project.Step == "Etapa 2" && currentChatId != Guid.Empty)
+            {
+                <ChatComponent ChatId="currentChatId" CurrentChatTitle="chatTitle" />
+            }
         </div>
     }
     else
@@ -245,57 +103,14 @@
 </div>
 
 <style>
-    .project-details {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-    }
-
-    .project-info {
-        display: grid;
-        grid-template-columns: 1fr 2fr;
-        gap: 8px;
-    }
-
-    .project-info label {
-        font-weight: bold;
-    }
-
-    .project-info input,
-    .project-info textarea {
-        width: 100%;
-        padding: 8px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-    }
-
-    .project-info textarea {
-        resize: vertical;
-        min-height: 100px;
-    }
-
-    .contracted-professionals,
-    .available-professionals {
-        margin-top: 20px;
-    }
-
-    .contracted-professionals h5,
-    .available-professionals h5 {
-        font-size: 1.2em;
-        margin-bottom: 10px;
-    }
-
-    .available-professionals ul {
-        list-style-type: none;
-        padding: 0;
-    }
-
-    .available-professionals li {
-        margin-bottom: 8px;
-    }
-
-    .available-professionals input[type="checkbox"] {
-        margin-right: 8px;
+    .status-message {
+        background-color: #ffebcc;
+        color: #856404;
+        padding: 10px;
+        border: 1px solid #ffeeba;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        font-size: 1em;
     }
 
     button {
@@ -309,38 +124,7 @@
         cursor: pointer;
     }
 
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        button:disabled {
-            background-color: #d6d6d6;
-            cursor: not-allowed;
-        }
-
-    .project-info input[type="number"] {
-        -moz-appearance: textfield; /* Remove os botões up/down do número no Firefox */
-        appearance: textfield; /* Remove os botões up/down no Chrome, Safari, etc. */
+    button:hover {
+        background-color: #0056b3;
     }
-
-        .project-info input[type="number"]::-webkit-inner-spin-button,
-        .project-info input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none; /* Remove os botões up/down no Chrome, Safari, etc. */
-            margin: 0; /* Remove o espaçamento */
-        }
-
-    .available-professionals input[type="checkbox"] {
-        transform: scale(1.2); /* Aumenta o tamanho do checkbox */
-    }
-
-    .contracted-professionals li {
-        font-size: 1em;
-        line-height: 1.5;
-    }
-
-    .available-professionals li {
-        font-size: 1em;
-        line-height: 1.5;
-    }
-
 </style>

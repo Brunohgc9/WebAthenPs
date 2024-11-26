@@ -1,0 +1,76 @@
+﻿@using Microsoft.AspNetCore.SignalR.Client
+@using WebAthenPs.Models.DTOs.Components.Chats
+@inject SignalRConnection signalRConnection
+@inject IJSRuntime js
+
+<div class="card">
+    <div class="card-header display-1 fs-5 text-success">@CurrentChatTitle</div>
+    <div class="card-body">
+        @if (ChatMessages != null && ChatMessages.Count > 0)
+        {
+            @foreach (var message in ChatMessages)
+            {
+                <div class="message">
+                    @((MarkupString)message)
+                </div>
+            }
+        }
+        else
+        {
+            <em>Nenhuma mensagem encontrada</em>
+        }
+    </div>
+    <div class="card-footer">
+        <textarea cols="5" @bind="Message" class="form-control mb-3" placeholder="Digite sua mensagem..."></textarea>
+        <button class="btn btn-success float-end" @onclick="SendMessage">Enviar Mensagem</button>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Guid ChatId { get; set; } // Identificador do chat
+    [Parameter] public string CurrentChatTitle { get; set; } // Título do chat
+
+    private string Message = string.Empty;
+    private List<string> ChatMessages = new List<string>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Iniciar conexão com o SignalR
+        await Connect();
+        await LoadChatMessages();
+        SubscribeToMessages();
+    }
+
+    private void SubscribeToMessages()
+    {
+        // Inscreve-se para receber mensagens em tempo real
+        signalRConnection.ReceiveMessage((userId, message) =>
+        {
+            ChatMessages.Add($"{userId}: {message}");
+            InvokeAsync(StateHasChanged); // Atualiza a UI instantaneamente
+        });
+    }
+
+    private async Task LoadChatMessages()
+    {
+        var messages = await signalRConnection.GetChatMessages(ChatId);
+        ChatMessages = messages.Select(m => $"{m.UserId}: {m.Message}").ToList();
+    }
+
+    private async Task SendMessage()
+    {
+        if (string.IsNullOrEmpty(Message) || ChatId == Guid.Empty)
+            return;
+
+        await signalRConnection.SendMessage(ChatId, Message);
+        ChatMessages.Add($"Eu: {Message}");
+        Message = string.Empty;
+        StateHasChanged();
+    }
+
+    private async Task Connect()
+    {
+        await signalRConnection.StartConnection();
+        await signalRConnection.JoinChat(ChatId);
+    }
+}

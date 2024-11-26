@@ -14,4 +14,6 @@ public class ProjectProfessional
     public GenericProfessional? Professional { get; set; }
 
     public List<string> ContractedAs { get; set; } = new List<string>();
+
+    public decimal? Salary { get; set; }
 }

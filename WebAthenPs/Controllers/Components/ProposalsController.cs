@@ -150,5 +150,9 @@ namespace WebAthenPs.API.Controllers.Components
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao acessar o banco de dados: {ex.Message}");
             }
         }
+
+
+
     }
+
 }

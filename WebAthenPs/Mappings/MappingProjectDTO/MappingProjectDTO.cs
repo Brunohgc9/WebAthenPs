@@ -8,6 +8,8 @@ using WebAthenPs.Models.DTOs.Client;
 using WebAthenPs.Models.DTOs.Components;
 using WebAthenPs.API.Entities;
 using WebAthenPs.API.Data;
+using WebAthenPs.Models.DTOs.Professional.ProfessionalTypes;
+using WebAthenPs.API.Entities.Professional.ProfessionalTypes.ProfessionalsRelation;
 
 namespace WebAthenPs.API.Mappings.MappingProjectDTO
 {
@@ -45,6 +47,10 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                     PhoneNumber = p.User?.PhoneNumber,
                     Email = p.User?.Email,
                     ProfessionalTypes = p.ProfessionalTypes,
+                    GenericProfessionalTypeDTO = p.GenericProfessionalType != null ? new GenericProfessionalProfessionalTypeDTO
+                    {
+                        Id = p.GenericProfessionalType.Id,
+                    } : null,
                     //GeneralArchitect = p.Architect != null ? new GeneralArchitectDTO
                     //{
                     //    genericId = p.Id, // Corrigido para corresponder à propriedade correta
@@ -57,6 +63,7 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                 {
                     ProfessionalId = pp.ProfessionalId,
                     ProjectId = pp.ProjectId,
+                    Salary = pp.Salary,
                     Professional = pp.Professional != null ? new GenericProfessionalDTO
                     {
                         Id = pp.Professional.Id,
@@ -145,6 +152,7 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                 {
                     ProfessionalId = pp.ProfessionalId,
                     ProjectId = pp.ProjectId,
+                    Salary = pp.Salary,
                     Professional = pp.Professional != null ? new GenericProfessionalDTO
                     {
                         Id = pp.Professional.Id,
@@ -153,6 +161,10 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                         PhoneNumber = pp.Professional.User?.PhoneNumber,
                         Email = pp.Professional.User?.Email,
                         ProfessionalTypes = pp.Professional.ProfessionalTypes ?? new List<string>(),
+                        GenericProfessionalTypeDTO = pp.Professional.GenericProfessionalType != null ? new GenericProfessionalProfessionalTypeDTO
+                        {
+                            Id = pp.Professional.GenericProfessionalType.Id,
+                        } : null,
                         //GeneralArchitect = pp.Professional.Architect != null ? new GeneralArchitectDTO
                         //{
                         //    genericId = pp.Professional.Id,
@@ -183,6 +195,10 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                         UserId = proposal.Professional.UserId,
                         UserName = proposal.Professional.User?.UserName ?? string.Empty,
                         Email = proposal.Professional.User?.Email ?? string.Empty,
+                        GenericProfessionalTypeDTO = proposal.Professional.GenericProfessionalType != null ? new GenericProfessionalProfessionalTypeDTO
+                        {
+                            Id = proposal.Professional.GenericProfessionalType.Id,
+                        } : null,
                     } : null
                 }).ToList() ?? new List<ProposalDTO>()
             };
@@ -240,11 +256,16 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                 ProfessionalId = projectProfessionalDTO.ProfessionalId,
                 ProjectId = projectProfessionalDTO.ProjectId,
                 ContractedAs = projectProfessionalDTO.ContractedAs ?? new List<string>(),
+                Salary = projectProfessionalDTO.Salary,
                 Professional = projectProfessionalDTO.Professional != null ? new GenericProfessional
                 {
                     Id = projectProfessionalDTO.Professional.Id,
                     UserId = projectProfessionalDTO.Professional.UserId,
                     ProfessionalTypes = projectProfessionalDTO.Professional.ProfessionalTypes,
+                    GenericProfessionalType = projectProfessionalDTO.Professional.GenericProfessionalTypeDTO != null ? new GenericProfessionalProfessionalType
+                    {
+                        Id = projectProfessionalDTO.Professional.GenericProfessionalTypeDTO.Id,
+                    } : null,
                     //Architect = projectProfessionalDTO.Professional.GeneralArchitect != null ? new Architect
                     //{
                     //    ArchId = projectProfessionalDTO.Professional.GeneralArchitect.ArchId,
@@ -262,6 +283,7 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
             {
                 ProfessionalId = projectProfessional.ProfessionalId,
                 ProjectId = projectProfessional.ProjectId,
+                Salary = projectProfessional.Salary,
                 ContractedAs = projectProfessional.ContractedAs ?? new List<string>(),
                 Professional = projectProfessional.Professional != null ? new GenericProfessionalDTO
                 {
@@ -271,6 +293,10 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                     PhoneNumber = projectProfessional.Professional.User?.PhoneNumber,
                     Email = projectProfessional.Professional.User?.Email,
                     ProfessionalTypes = projectProfessional.Professional.ProfessionalTypes,
+                    GenericProfessionalTypeDTO = projectProfessional.Professional.GenericProfessionalType != null ? new GenericProfessionalProfessionalTypeDTO
+                    {
+                        Id = projectProfessional.Professional.GenericProfessionalType.Id,
+                    } : null,
                     //GeneralArchitect = projectProfessional.Professional.Architect != null ? new GeneralArchitectDTO
                     //{
                     //    genericId = projectProfessional.Professional.Id,

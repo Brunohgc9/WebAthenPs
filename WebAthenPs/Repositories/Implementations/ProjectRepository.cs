@@ -2,6 +2,8 @@
 using WebAthenPs.API.Data;
 using WebAthenPs.API.Entities.Project;
 using WebAthenPs.API.Repositories.Interfaces;
+using WebAthenPs.Models.DTOs.Professional;
+using WebAthenPs.Models.DTOs.Professional.ProfessionalTypes;
 
 public class ProjectRepository : IProjectRepository
 {
@@ -165,6 +167,69 @@ public class ProjectRepository : IProjectRepository
     }
 
 
+
+    public async Task<IEnumerable<GenericProfessionalDTO>> GetProfessionalsByProject(int projectId)
+    {
+        var projectProfessionals = await _context.ProjectProfessionals
+            .Where(pp => pp.ProjectId == projectId)
+            .Include(pp => pp.Professional)  // Inclui o profissional associado
+                .ThenInclude(prof => prof.User)  // Inclui o usuário associado ao profissional
+            .Include(pp => pp.Professional.GenericProfessionalType)  // Inclui o tipo de profissional
+            .ToListAsync();
+
+        // Mapeia para um DTO que combina todas as informações
+        return projectProfessionals.Select(pp => new GenericProfessionalDTO
+        {
+            Id = pp.Professional.Id,
+            UserId = pp.Professional.UserId,
+            UserName = pp.Professional.User?.UserName ?? string.Empty,
+            PhoneNumber = pp.Professional.User?.PhoneNumber,
+            Email = pp.Professional.User?.Email,
+            ProfessionalTypes = pp.Professional.ProfessionalTypes,
+
+
+             GenericProfessionalTypeDTO = pp.Professional.GenericProfessionalType != null
+          ? new GenericProfessionalProfessionalTypeDTO
+          {
+              Id = pp.Professional.GenericProfessionalType.Id,
+              GenericId = pp.Professional.GenericProfessionalType.genericId,
+
+              ArchitectId = pp.Professional.GenericProfessionalType.ArchitectId,
+              CivilEngineerId = pp.Professional.GenericProfessionalType.CivilEngineerId,
+              ElectricalEngineerId = pp.Professional.GenericProfessionalType.ElectricalEngineerId,
+              HydraulicEngineerId = pp.Professional.GenericProfessionalType.HydraulicEngineerId,
+              SurveyorId = pp.Professional.GenericProfessionalType.SurveyorId,
+              ForemanId = pp.Professional.GenericProfessionalType.ForemanId,
+              MasonId = pp.Professional.GenericProfessionalType.MasonId,
+              PlumberId = pp.Professional.GenericProfessionalType.PlumberId,
+              ElectricianId = pp.Professional.GenericProfessionalType.ElectricianId,
+              CarpenterId = pp.Professional.GenericProfessionalType.CarpenterId,
+              RooferId = pp.Professional.GenericProfessionalType.RooferId,
+              PlastererId = pp.Professional.GenericProfessionalType.PlastererId,
+              TilerId = pp.Professional.GenericProfessionalType.TilerId,
+              PainterId = pp.Professional.GenericProfessionalType.PainterId,
+              MetalworkerId = pp.Professional.GenericProfessionalType.MetalworkerId,
+              GlazierId = pp.Professional.GenericProfessionalType.GlazierId,
+              MarbleWorkerId = pp.Professional.GenericProfessionalType.MarbleWorkerId,
+              LandscaperId = pp.Professional.GenericProfessionalType.LandscaperId,
+              CabinetmakerId = pp.Professional.GenericProfessionalType.CabinetmakerId,
+              InteriorDesignerId = pp.Professional.GenericProfessionalType.InteriorDesignerId,
+              DecoratorId = pp.Professional.GenericProfessionalType.DecoratorId
+          }
+          : null,
+            // Atribuindo um único ProjectProfessionalDTO
+            ProjectProfessionals = pp.Professional.ProjectProfessionals?.Select(p => new ProjectProfessionalDTO
+            {
+                Salary = p.Salary,
+                ContractedAs = p.ContractedAs,
+            }).ToList() // Convertendo a seleção em uma lista
+
+
+
+
+        }).ToList();
+
+    }
 
 
 }

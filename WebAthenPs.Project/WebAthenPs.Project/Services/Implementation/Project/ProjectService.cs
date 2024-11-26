@@ -330,6 +330,30 @@ namespace WebAthenPs.Project.Services.Implementation.Project
             }
         }
 
+        public async Task<IEnumerable<GenericProfessionalDTO>> GetProfessionalsByProject(int projectId)
+        {
+            try
+            {
+                var httpClient = await CreateAuthorizedClientAsync();
+                var professionalsDto = await httpClient.GetFromJsonAsync<IEnumerable<GenericProfessionalDTO>>($"api/Projects/{projectId}/professionals");
+
+                if (professionalsDto == null || !professionalsDto.Any())
+                {
+                    _logger.LogWarning($"Nenhum profissional encontrado para o projeto com ID {projectId}.");
+                }
+                return professionalsDto;
+            }
+            catch (HttpRequestException httpEx)
+            {
+                _logger.LogError(httpEx, $"Erro ao acessar a API para obter os profissionais do projeto com ID {projectId}. URL: api/Projects/{projectId}/professionals");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Erro inesperado ao acessar a API para obter os profissionais do projeto com ID {projectId}.");
+                throw;
+            }
+        }
 
 
 

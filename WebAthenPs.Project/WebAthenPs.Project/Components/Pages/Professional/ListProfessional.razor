@@ -12,6 +12,10 @@ else
 {
     <div class="filter-section">
         <input type="text" @bind="_professionalTypeFilter" placeholder="Filtrar por tipo" class="filter-input" />
+        <select @bind="_architectFilter" class="filter-input">
+            <option value="">Todos os Arquitetos</option>
+            <option value="true">Somente Arquitetos</option>
+        </select>
         <button @onclick="FilterProfessionals" class="filter-button">Filtrar</button>
     </div>
 
@@ -39,6 +43,7 @@ else
     private IEnumerable<GenericProfessionalDTO> _professionals;
     private bool _isLoading = true;
     private string _professionalTypeFilter = string.Empty;
+    private string _architectFilter = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -50,6 +55,13 @@ else
         try
         {
             _professionals = await ProfessionalService.GetAllAsync(_professionalTypeFilter);
+
+            // Filtro adicional para Arquitetos
+            if (_architectFilter == "true")
+            {
+                // Verifique se o GenericProfessionalTypeDTO não é nulo antes de acessar ArchitectId
+                _professionals = _professionals.Where(p => p.GenericProfessionalTypeDTO != null && p.GenericProfessionalTypeDTO.ArchitectId != null);
+            }
         }
         catch (Exception ex)
         {

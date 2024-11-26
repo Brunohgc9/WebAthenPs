@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using WebAthenPs.API.Entities.Project;
+using WebAthenPs.Models.DTOs.Professional;
 
 namespace WebAthenPs.API.Repositories.Interfaces
 {
@@ -14,6 +15,8 @@ namespace WebAthenPs.API.Repositories.Interfaces
         Task DeleteProject(int id);
         Task<IEnumerable<Projecty>> GetByClientId(int clientId);
         Task AddProfessionalToProject(ProjectProfessional projectProfessional);
-    
+        Task<IEnumerable<GenericProfessionalDTO>> GetProfessionalsByProject(int projectId);
+
+
     }
 }

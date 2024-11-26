@@ -306,5 +306,25 @@ namespace WebAthenPs.API.Controllers.Projects
                 return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao deletar o projeto. Detalhes: " + ex.Message);
             }
         }
+
+        [HttpGet("{projectId:int}/professionals")]
+        public async Task<ActionResult<IEnumerable<GenericProfessionalDTO>>> GetProfessionalsByProject(int projectId)
+        {
+            try
+            {
+                var professionals = await _projectRepository.GetProfessionalsByProject(projectId);
+
+                if (professionals == null || !professionals.Any())
+                {
+                    return NotFound("Nenhum profissional encontrado para o projeto.");
+                }
+
+                return Ok(professionals);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao acessar os profissionais do projeto: {ex.Message}");
+            }
+        }
     }
 }

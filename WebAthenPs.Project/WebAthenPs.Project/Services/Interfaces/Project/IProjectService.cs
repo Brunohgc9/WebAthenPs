@@ -15,5 +15,6 @@ namespace WebAthenPs.Project.Services.Interfaces.Project
         Task<IEnumerable<ProjectsDTO>> GetProjectsByLoggedInUser();
         Task<ProjectsDTO> UpdateProject(int id, ProjectsDTO dto);
         Task<bool> AddProfessional(ProjectProfessionalDTO projectProfessionalDTO, ProposalDTO proposal);
+        Task<IEnumerable<GenericProfessionalDTO>> GetProfessionalsByProject(int projectId);
     }
 }

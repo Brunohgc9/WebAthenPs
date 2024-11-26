@@ -29,6 +29,7 @@ namespace WebAthenPs.API.Mappings.MappingProfessionalsDTO
                             {
                                 ProfessionalId = pp.ProfessionalId,
                                 ProjectId = pp.ProjectId,
+                                Salary = pp.Salary,
                             }).ToList(),
 
                         Proposals = professional.Proposals
@@ -213,6 +214,8 @@ namespace WebAthenPs.API.Mappings.MappingProfessionalsDTO
                     {
                         ProfessionalId = pp.ProfessionalId,
                         ProjectId = pp.ProjectId,
+                        Salary = pp.Salary,
+
                     }).ToList(),
                 GenericProfessionalTypeDTO = professional.GenericProfessionalType != null
                     ? new GenericProfessionalProfessionalTypeDTO
