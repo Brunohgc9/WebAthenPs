@@ -63,46 +63,46 @@
                 return Ok(chats);
             }
 
-        [HttpPost("AddProfessionalToProject")]
-        public async Task<IActionResult> AddProfessionalToProject(int projectId, string professionalId)
-        {
-            var project = _context.Projects.FirstOrDefault(p => p.Id == projectId);
-            if (project == null)
-                return NotFound("Projeto não encontrado.");
+        //[HttpPost("AddProfessionalToProject")]
+        //public async Task<IActionResult> AddProfessionalToProject(int projectId, string professionalId)
+        //{
+        //    var project = _context.Projects.FirstOrDefault(p => p.Id == projectId);
+        //    if (project == null)
+        //        return NotFound("Projeto não encontrado.");
 
-            // Adiciona o profissional ao projeto
-            var projectProfessional = new ProjectProfessional
-            {
-                Id = Guid.NewGuid(),
-                ProjectId = projectId,
-                ProfessionalId = professionalId
-            };
+        //    // Adiciona o profissional ao projeto
+        //    var projectProfessional = new ProjectProfessional
+        //    {
+        //        Id = Guid.NewGuid(),
+        //        ProjectId = projectId,
+        //        ProfessionalId = professionalId
+        //    };
 
-            _context.ProjectProfessionals.Add(projectProfessional);
+        //    _context.ProjectProfessionals.Add(projectProfessional);
 
-            // Recupera o cliente associado ao projeto
-            var clientId = project.ClientId;
-            if (string.IsNullOrEmpty(clientId))
-                return BadRequest("Cliente associado ao projeto não encontrado.");
+        //    // Recupera o cliente associado ao projeto
+        //    var clientId = project.ClientId;
+        //    if (string.IsNullOrEmpty(clientId))
+        //        return BadRequest("Cliente associado ao projeto não encontrado.");
 
-            // Criar chat individual entre cliente e profissional
-            var individualChatId = await _hubService.CreateChatAsync(clientId);
-            await _hubService.AddUserToChatAsync(professionalId, individualChatId);
+        //    // Criar chat individual entre cliente e profissional
+        //    var individualChatId = await _hubService.CreateChatAsync(clientId);
+        //    await _hubService.AddUserToChatAsync(professionalId, individualChatId);
 
-            // Adicionar o profissional ao chat geral do projeto
-            if (project.GeneralChatId == null)
-            {
-                // Cria o chat geral caso não exista
-                var generalChatId = await _hubService.CreateChatAsync(clientId);
-                project.GeneralChatId = generalChatId;
-            }
+        //    // Adicionar o profissional ao chat geral do projeto
+        //    if (project.GeneralChatId == null)
+        //    {
+        //        // Cria o chat geral caso não exista
+        //        var generalChatId = await _hubService.CreateChatAsync(clientId);
+        //        project.GeneralChatId = generalChatId;
+        //    }
 
-            await _hubService.AddUserToChatAsync(professionalId, project.GeneralChatId.Value);
+        //    await _hubService.AddUserToChatAsync(professionalId, project.GeneralChatId.Value);
 
-            // Salvar alterações no banco
-            await _context.SaveChangesAsync();
-            return Ok("Profissional adicionado ao projeto e chats atualizados.");
-        }
+        //    // Salvar alterações no banco
+        //    await _context.SaveChangesAsync();
+        //    return Ok("Profissional adicionado ao projeto e chats atualizados.");
+        //}
 
     }
 
