@@ -42,37 +42,51 @@ public class SignalRConnection
         GetConnectionState();
     }
 
+    private async Task EnsureConnectionAsync()
+    {
+        // Garante que a conexão está ativa antes de invocar métodos
+        if (hubConnection.State != HubConnectionState.Connected)
+        {
+            await StartConnection();
+        }
+    }
+
     public async Task<List<ChatDto>> GetUserChats()
     {
+        await EnsureConnectionAsync();  // Garante que a conexão está ativa
         var userId = await authService.GetUserIdFromToken();
         return await hubConnection.InvokeAsync<List<ChatDto>>("GetUserChats", userId); // Obtém todos os chats relacionados ao usuário
     }
 
     public async Task AddUserToChat(Guid chatId, string userId)
     {
+        await EnsureConnectionAsync();  // Garante que a conexão está ativa
         await hubConnection.InvokeAsync("AddUserToChat", chatId, userId);
     }
 
     public async Task<Guid> CreateChat()
     {
+        await EnsureConnectionAsync();  // Garante que a conexão está ativa
         var userId = await authService.GetUserIdFromToken();
         return await hubConnection.InvokeAsync<Guid>("CreateChat", userId);
     }
 
     public async Task SendMessage(Guid chatId, string message)
     {
+        await EnsureConnectionAsync();  // Garante que a conexão está ativa
         var userId = await authService.GetUserIdFromToken();
         await hubConnection.InvokeAsync("SendMessage", userId, chatId, message);
     }
 
     public async Task<string> GetUserConnectionId()
     {
+        await EnsureConnectionAsync();  // Garante que a conexão está ativa
         return await hubConnection.InvokeAsync<string>("GetConnectionId");
     }
 
-
     public async Task JoinChat(Guid chatId)
     {
+        await EnsureConnectionAsync();  // Garante que a conexão está ativa
         // Associa o cliente ao grupo do chat
         await hubConnection.InvokeAsync("JoinChat", chatId);
     }
@@ -88,6 +102,7 @@ public class SignalRConnection
 
     public async Task<List<ChatMessageDto>> GetChatMessages(Guid chatId)
     {
+        await EnsureConnectionAsync();  // Garante que a conexão está ativa
         var userId = await authService.GetUserIdFromToken();
         return await hubConnection.InvokeAsync<List<ChatMessageDto>>("GetChatMessages", userId, chatId);
     }

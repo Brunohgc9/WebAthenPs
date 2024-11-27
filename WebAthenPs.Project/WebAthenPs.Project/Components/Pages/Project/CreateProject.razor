@@ -82,6 +82,7 @@
         try
         {
             // Chame o serviço para criar o projeto
+            newProject.ActStep = "Etapa 1";
             var result = await ProjectService.CreateProject(newProject);
             if (result != null)
             {

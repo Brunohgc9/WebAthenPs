@@ -1,0 +1,58 @@
+﻿@using WebAthenPs.Models.DTOs.Project
+@using WebAthenPs.Models.DTOs.Professional
+@using WebAthenPs.Project.Components.Components
+@using WebAthenPs.Project.Services.Interfaces.Project
+@inject IProjectService ProjectService
+@inject NavigationManager NavigationManager
+
+@if (Project != null)
+{
+    <div>
+        <h4>Projeto: @Project.ProjectName</h4>
+        @if (Architect != null)
+        {
+            <p>Arquiteto associado: @Architect.UserName</p>
+            <ChatComponent ChatId="@ChatId" CurrentChatTitle="@ChatTitle" />
+        }
+        else
+        {
+            <p>Nenhum arquiteto associado ao projeto. Por favor, selecione um arquiteto para avançar.</p>
+        }
+    </div>
+}
+else
+{
+    <p>Carregando projeto...</p>
+}
+
+@code {
+    [Parameter] public ProjectsDTO Project { get; set; }
+    [Parameter] public int ProjectId { get; set; }
+
+    private GenericProfessionalDTO Architect { get; set; }
+    private Guid ChatId { get; set; }
+    private string ChatTitle { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Buscar os profissionais associados ao projeto
+            var professionals = await ProjectService.GetProfessionalsByProject(ProjectId);
+
+            // Verificar se há um arquiteto associado
+            Architect = professionals.FirstOrDefault(p => p.GenericProfessionalTypeDTO?.ArchitectId != null);
+
+            if (Architect != null)
+            {
+                // Configurar chat
+                ChatId = Architect.GenericProfessionalTypeDTO.ArchitectId.Value;
+                ChatTitle = $"Chat com o Arquiteto {Architect.UserName}";
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao carregar dados do projeto: {ex.Message}");
+        }
+    }
+}

@@ -1,106 +1,56 @@
 ﻿@page "/update-project/{ProjectId:int}"
-@using WebAthenPs.Models.DTOs.Professional
 @using WebAthenPs.Models.DTOs.Project
-@using WebAthenPs.Project.Services.Interfaces.Professional
+@using WebAthenPs.Project.Components.Pages.Project.Etapas
 @using WebAthenPs.Project.Services.Interfaces.Project
-@using WebAthenPs.Project.Components.Components
 @inject IProjectService ProjectService
-@inject IGenericProfessionalService ProfessionalService
 @inject NavigationManager NavigationManager
 @inject ILogger<EditProject> Logger
 
+<h3>Detalhes do Projeto</h3>
+
+@if (Project != null)
+{
+    <div>
+        <h4>@Project.ProjectName</h4>
+
+        @if (Project.ActStep == "Etapa 1")
+        {
+            <StepOneComponent Project="Project" ProjectId="ProjectId" />
+        }
+        else if (Project.ActStep == "Etapa 2")
+        {
+            <StepTwoComponent Project="Project" ProjectId="ProjectId" />
+        }
+    </div>
+}
+else
+{
+    <p>Carregando detalhes do projeto...</p>
+}
+
 @code {
-    [Parameter]
-    public int ProjectId { get; set; }
-
-    private ProjectsDTO project;
-    private List<GenericProfessionalDTO> professionals = new(); // Lista de profissionais associados ao projeto
-    private string statusMessage;
-
-    private Guid currentChatId;
-    private string chatTitle;
+    [Parameter] public int ProjectId { get; set; }
+    private ProjectsDTO Project { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
             // Obter detalhes do projeto
-            project = await ProjectService.GetById(ProjectId);
+            Project = await ProjectService.GetById(ProjectId);
 
-            if (project == null)
+            if (Project == null)
             {
                 Logger.LogWarning("Projeto não encontrado.");
-                return;
-            }
-
-            // Obter os profissionais associados ao projeto
-            professionals = (await ProjectService.GetProfessionalsByProject(ProjectId)).ToList();
-
-            // Verificar se há arquitetos associados ao projeto
-            var architect = professionals
-                .FirstOrDefault(pp => pp.GenericProfessionalTypeDTO?.ArchitectId != null);
-
-            if (architect != null)
-            {
-                statusMessage = $"Arquiteto associado: {architect.UserName}";
-                project.Step = "Etapa 2"; // Avançar para a etapa 2
-                await ProjectService.UpdateProject(ProjectId, project); // Atualize o projeto no servidor
-
-                // Definir o ID do chat
-                currentChatId = architect.GenericProfessionalTypeDTO.ArchitectId.Value; // Exemplo de como associar o chat com o arquiteto
-                chatTitle = $"Chat com o Arquiteto {architect.UserName}";
-            }
-            else
-            {
-                statusMessage = "Nenhum arquiteto associado ao projeto. Por favor, selecione um arquiteto para avançar.";
             }
         }
         catch (Exception ex)
         {
             Logger.LogError($"Erro ao inicializar a página: {ex.Message}");
-            statusMessage = "Erro ao carregar os detalhes do projeto.";
         }
-    }
-
-    private void NavigateToArchitectSelection()
-    {
-        NavigationManager.NavigateTo($"/select-architects/{ProjectId}");
     }
 }
 
-<div class="dashboard">
-    <h3>Detalhes do Projeto</h3>
-
-    @if (project != null)
-    {
-        <div class="project-details">
-            <h4>@project.ProjectName</h4>
-
-            @if (!string.IsNullOrEmpty(statusMessage))
-            {
-                <div class="status-message">@statusMessage</div>
-            }
-
-            <div class="form-group">
-                <label for="step">Etapa Atual:</label>
-                <input type="text" id="step" value="@project.Step" disabled />
-            </div>
-
-            @if (project.Step == "Etapa 1")
-            {
-                <button @onclick="NavigateToArchitectSelection">Selecionar Arquiteto</button>
-            }
-            else if (project.Step == "Etapa 2" && currentChatId != Guid.Empty)
-            {
-                <ChatComponent ChatId="currentChatId" CurrentChatTitle="chatTitle" />
-            }
-        </div>
-    }
-    else
-    {
-        <p>Carregando detalhes do projeto...</p>
-    }
-</div>
 
 <style>
     .status-message {
@@ -124,7 +74,7 @@
         cursor: pointer;
     }
 
-    button:hover {
-        background-color: #0056b3;
-    }
+        button:hover {
+            background-color: #0056b3;
+        }
 </style>

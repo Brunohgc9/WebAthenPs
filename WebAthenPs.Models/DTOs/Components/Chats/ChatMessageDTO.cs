@@ -15,7 +15,7 @@ namespace WebAthenPs.Models.DTOs.Components.Chats
         public Guid ChatId { get; set; } // ID do chat
         public string Message { get; set; } // Conteúdo da mensagem
         public DateTime SentAt { get; set; } // Data e hora do envio
-        public ApplicationUser User { get; set; }
+        public ApplicationUserDTO User { get; set; }
         public ChatDto Chat { get; set; }
     }
 }

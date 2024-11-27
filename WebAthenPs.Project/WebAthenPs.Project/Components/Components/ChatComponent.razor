@@ -1,43 +1,79 @@
 ﻿@using Microsoft.AspNetCore.SignalR.Client
 @using WebAthenPs.Models.DTOs.Components.Chats
+@using WebAthenPs.Project.Services.Interfaces.Project
 @inject SignalRConnection signalRConnection
 @inject IJSRuntime js
+@inject IProjectService projectService
+@implements IDisposable
 
-<div class="card">
-    <div class="card-header display-1 fs-5 text-success">@CurrentChatTitle</div>
-    <div class="card-body">
-        @if (ChatMessages != null && ChatMessages.Count > 0)
-        {
-            @foreach (var message in ChatMessages)
-            {
-                <div class="message">
-                    @((MarkupString)message)
-                </div>
-            }
-        }
-        else
-        {
-            <em>Nenhuma mensagem encontrada</em>
-        }
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="card">
+            <div class="card-header display-1 fs-4 text-primary">
+                Chats Disponíveis
+            </div>
+            <div class="card-body">
+                @if (AvailableChats != null && AvailableChats.Count > 0)
+                {
+                    <ul class="list-group">
+                        @foreach (var chat in AvailableChats)
+                        {
+                            <li class="list-group-item list-group-item-action" style="cursor: pointer" @onclick="(() => LoadChat(chat.Id))">
+                                @chat.Id
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <em>Nenhum chat disponível</em>
+                }
+            </div>
+        </div>
     </div>
-    <div class="card-footer">
-        <textarea cols="5" @bind="Message" class="form-control mb-3" placeholder="Digite sua mensagem..."></textarea>
-        <button class="btn btn-success float-end" @onclick="SendMessage">Enviar Mensagem</button>
+
+    <div class="col-md-9 mb-4">
+        <div class="card">
+            <div class="card-header display-1 fs-5 text-success">@CurrentChatTitle</div>
+            <div class="card-body">
+                @if (ChatMessages != null && ChatMessages.Count > 0)
+                {
+                    @foreach (var message in ChatMessages)
+                    {
+                        <div class="message">
+                            @((MarkupString)message)
+                        </div>
+                    }
+                }
+                else
+                {
+                    <em>Nenhuma mensagem encontrada</em>
+                }
+            </div>
+            <div class="card-footer">
+                <textarea cols="5" @bind="Message" class="form-control mb-3" placeholder="Digite sua mensagem..."></textarea>
+                <button class="btn btn-success float-end" @onclick="SendMessage">Enviar Mensagem</button>
+            </div>
+        </div>
     </div>
 </div>
 
 @code {
-    [Parameter] public Guid ChatId { get; set; } // Identificador do chat
-    [Parameter] public string CurrentChatTitle { get; set; } // Título do chat
-
+    [Parameter]
+    public Guid CurrentChatId { get; set; }
     private string Message = string.Empty;
+    private string CurrentChatTitle = string.Empty;
+    private List<ChatDto> AvailableChats = new List<ChatDto>();
     private List<string> ChatMessages = new List<string>();
+
+    [Parameter]
+    public EventCallback<Guid> OnChatSelected { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        // Iniciar conexão com o SignalR
+        signalRConnection.ConnectionStateChanged += StateHasChanged;
         await Connect();
-        await LoadChatMessages();
+        await LoadAvailableChats();
         SubscribeToMessages();
     }
 
@@ -51,18 +87,44 @@
         });
     }
 
-    private async Task LoadChatMessages()
+    private async Task LoadAvailableChats()
     {
-        var messages = await signalRConnection.GetChatMessages(ChatId);
+        // Obtém os chats disponíveis utilizando o ProjectService
+        var projects = await projectService.GetAll();
+        if (projects != null)
+        {
+            foreach (var project in projects)
+            {
+                var chatId = await GetChatIdByProjectIdAsync(project.ProjectId);
+                if (chatId != Guid.Empty)
+                {
+                    AvailableChats.Add(new ChatDto { Id = chatId });
+                }
+            }
+        }
+    }
+
+    private async Task LoadChat(Guid chatId)
+    {
+        CurrentChatId = chatId;
+        CurrentChatTitle = $"Chat {chatId}";
+        ChatMessages.Clear();
+
+        var messages = await signalRConnection.GetChatMessages(chatId);
         ChatMessages = messages.Select(m => $"{m.UserId}: {m.Message}").ToList();
+
+        // Ao entrar no chat, une-se ao grupo do SignalR
+        await signalRConnection.JoinChat(chatId);
+
+        StateHasChanged();
     }
 
     private async Task SendMessage()
     {
-        if (string.IsNullOrEmpty(Message) || ChatId == Guid.Empty)
+        if (string.IsNullOrEmpty(Message) || CurrentChatId == Guid.Empty)
             return;
 
-        await signalRConnection.SendMessage(ChatId, Message);
+        await signalRConnection.SendMessage(CurrentChatId, Message);
         ChatMessages.Add($"Eu: {Message}");
         Message = string.Empty;
         StateHasChanged();
@@ -71,6 +133,27 @@
     private async Task Connect()
     {
         await signalRConnection.StartConnection();
-        await signalRConnection.JoinChat(ChatId);
+    }
+
+    public void Dispose()
+    {
+        signalRConnection.ConnectionStateChanged -= StateHasChanged;
+        _ = signalRConnection.CloseConnection();
+    }
+
+    // Método para buscar o ChatId a partir do ID do projeto
+    private async Task<Guid> GetChatIdByProjectIdAsync(int projectId)
+    {
+        try
+        {
+            // Chama o ProjectService para obter o chatId
+            var chatResponse = await projectService.GetChatIdByProjectIdAsync(projectId);
+            return chatResponse != Guid.Empty ? chatResponse : Guid.Empty;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao buscar o ChatId para o projeto {projectId}: {ex.Message}");
+            return Guid.Empty;
+        }
     }
 }

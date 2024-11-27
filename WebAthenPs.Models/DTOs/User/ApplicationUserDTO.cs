@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WebAthenPs.Models.DTOs.User
 {
-    public class ApplicationUser
+    public class ApplicationUserDTO
     {
         public string Id { get; set; }
         public string UserName { get; set; }

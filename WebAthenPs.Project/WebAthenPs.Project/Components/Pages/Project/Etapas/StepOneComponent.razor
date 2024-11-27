@@ -1,0 +1,26 @@
+﻿@using WebAthenPs.Models.DTOs.Project
+@inject NavigationManager NavigationManager
+
+@if (Project != null)
+{
+    <div>
+        <h4>Projeto: @Project.ProjectName</h4>
+        <p>Por favor, selecione um arquiteto para avançar para a Etapa 2.</p>
+        <button @onclick="NavigateToArchitectSelection">Selecionar Arquiteto</button>
+    </div>
+}
+else
+{
+    <p>Carregando projeto...</p>
+}
+
+@code {
+    [Parameter] public ProjectsDTO Project { get; set; }
+    [Parameter] public int ProjectId { get; set; }
+
+    private void NavigateToArchitectSelection()
+    {
+        // Redireciona para a página de seleção de arquitetos com o filtro de arquitetos ativo
+        NavigationManager.NavigateTo($"/professionals?projectId={ProjectId}&isArchitect=true");
+    }
+}

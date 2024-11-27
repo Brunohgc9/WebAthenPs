@@ -103,5 +103,29 @@
                 return chatDtos;
             }
 
+        // Método para obter o ChatId associado ao ProjectId
+        public async Task<Guid?> GetChatByProjectId(int projectId, bool isGeneral)
+        {
+            try
+            {
+                // Tenta obter o chat do serviço HubService
+                var chatId = await _hubService.GetChatIdByProjectIdAsync(projectId, isGeneral);
+
+                // Verifica se o chatId foi encontrado
+                if (chatId == null)
+                {
+                    return null; // Retorna null se o chat não existir
+                }
+
+                return chatId.Value; // Retorna o ChatId encontrado
+            }
+            catch (Exception ex)
+            {
+                // Retorna null ou um erro apropriado se falhar
+                return null;
+            }
         }
+
+
     }
+}

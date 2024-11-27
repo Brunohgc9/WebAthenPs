@@ -37,7 +37,7 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                 Country = item.Country,
                 TotalArea = item.TotalArea,
                 NumberOfRooms = item.NumberOfRooms,
-                Step = item.ActStep,
+                ActStep = item.ActStep,
                 NumberOfBathrooms = item.NumberOfBathrooms,
                 LProfessionals = item.Professionals?.Select(p => new GenericProfessionalDTO
                 {
@@ -129,7 +129,7 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                 TotalArea = project.TotalArea,
                 NumberOfRooms = project.NumberOfRooms,
                 NumberOfBathrooms = project.NumberOfBathrooms,
-                Step = project.ActStep ?? string.Empty,
+                ActStep = project.ActStep ?? string.Empty,
 
                 LProfessionals = project.Professionals?.Select(p => new GenericProfessionalDTO
                 {
@@ -218,7 +218,8 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                 City = registerProjectModel.City,
                 State = registerProjectModel.State,
                 Country = registerProjectModel.Country,
-                Description = registerProjectModel.ClientDescription
+                Description = registerProjectModel.ClientDescription,
+                ActStep = registerProjectModel.ActStep,
             };
         }
 
@@ -285,28 +286,26 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                 ProjectId = projectProfessional.ProjectId,
                 Salary = projectProfessional.Salary,
                 ContractedAs = projectProfessional.ContractedAs ?? new List<string>(),
-                Professional = projectProfessional.Professional != null ? new GenericProfessionalDTO
-                {
-                    Id = projectProfessional.Professional.Id,
-                    UserId = projectProfessional.Professional.User.Id,
-                    UserName = projectProfessional.Professional.User?.UserName ?? string.Empty,
-                    PhoneNumber = projectProfessional.Professional.User?.PhoneNumber,
-                    Email = projectProfessional.Professional.User?.Email,
-                    ProfessionalTypes = projectProfessional.Professional.ProfessionalTypes,
-                    GenericProfessionalTypeDTO = projectProfessional.Professional.GenericProfessionalType != null ? new GenericProfessionalProfessionalTypeDTO
+                Professional = projectProfessional.Professional != null
+                    ? new GenericProfessionalDTO
                     {
-                        Id = projectProfessional.Professional.GenericProfessionalType.Id,
-                    } : null,
-                    //GeneralArchitect = projectProfessional.Professional.Architect != null ? new GeneralArchitectDTO
-                    //{
-                    //    genericId = projectProfessional.Professional.Id,
-                    //    ArchId = projectProfessional.Professional.Architect.ArchId,
-                    //    RegistroConselho = projectProfessional.Professional.Architect.RegistroConselho,
-                    //    Especialidade = projectProfessional.Professional.Architect.Especialidade
-                    //} : null
-                } : null
+                        Id = projectProfessional.Professional.Id,
+                        UserId = projectProfessional.Professional.User?.Id,  // Verificação de User não nulo
+                        UserName = projectProfessional.Professional.User?.UserName ?? string.Empty,  // Verificação de UserName não nulo
+                        PhoneNumber = projectProfessional.Professional.User?.PhoneNumber,
+                        Email = projectProfessional.Professional.User?.Email,
+                        ProfessionalTypes = projectProfessional.Professional.ProfessionalTypes,
+                        GenericProfessionalTypeDTO = projectProfessional.Professional.GenericProfessionalType != null
+                            ? new GenericProfessionalProfessionalTypeDTO
+                            {
+                                Id = projectProfessional.Professional.GenericProfessionalType.Id,
+                            }
+                            : null
+                    }
+                    : null
             };
         }
+
 
 
     }

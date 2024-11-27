@@ -82,6 +82,12 @@ namespace WebAthenPs.API.Data
             //    .WithMany(c => c.ChatMessages)
             //    .HasForeignKey(c => c.ChatId);
 
+            modelBuilder.Entity<Chats>()
+                .HasOne(c => c.Projecty) // Define o relacionamento com o projeto
+                .WithMany(p => p.Chats)  // Um projeto pode ter muitos chats
+                .HasForeignKey(c => c.ProjectId) // Define a chave estrangeira
+                .OnDelete(DeleteBehavior.Cascade);
+
 
             modelBuilder.Entity<Projecty>()
            .HasMany(p => p.ProjectProfessionals)

@@ -25,9 +25,9 @@
     <div class="card-body">
         <h5 class="card-title">Register</h5>
 
-        @if (currentStep == 1)
+        @if (currentActStep == 1)
         {
-            <EditForm Model="basicInfo" OnValidSubmit="GoToStepTwo">
+            <EditForm Model="basicInfo" OnValidSubmit="GoToActStepTwo">
                 <DataAnnotationsValidator />
                 <ValidationSummary />
 
@@ -49,7 +49,7 @@
                 <button type="submit" class="btn btn-primary mt-2">Next</button>
             </EditForm>
         }
-        else if (currentStep == 2)
+        else if (currentActStep == 2)
         {
             <EditForm Model="additionalInfo" OnValidSubmit="HandleSubmit">
                 <DataAnnotationsValidator />
@@ -116,7 +116,7 @@
                     </div>
                 }
 
-                <button type="button" class="btn btn-secondary mt-2" @onclick="GoToStepOne">Back</button>
+                <button type="button" class="btn btn-secondary mt-2" @onclick="GoToActStepOne">Back</button>
                 <button type="submit" class="btn btn-primary mt-2">Submit</button>
             </EditForm>
         }
@@ -124,7 +124,7 @@
 </div>
 
 @code {
-    private int currentStep = 1;
+    private int currentActStep = 1;
     private BasicInfoModel basicInfo = new BasicInfoModel();
     private AdditionalInfoModel additionalInfo = new AdditionalInfoModel();
     private bool ShowErrors;
@@ -147,7 +147,7 @@
             additionalInfo.ProfessionalTypes[type] = false);
     }
 
-    private void GoToStepTwo()
+    private void GoToActStepTwo()
     {
         if (basicInfo.Password != basicInfo.ConfirmPassword)
         {
@@ -156,14 +156,14 @@
         }
         else
         {
-            currentStep = 2;
+            currentActStep = 2;
             ShowErrors = false;
         }
     }
 
-    private void GoToStepOne()
+    private void GoToActStepOne()
     {
-        currentStep = 1;
+        currentActStep = 1;
     }
 
     private async Task HandleSubmit()

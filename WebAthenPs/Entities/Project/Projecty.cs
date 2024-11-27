@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using WebAthenPs.API.Entities.Clients;
 using WebAthenPs.API.Entities.Components;
+using WebAthenPs.API.Entities.Components.ChatEntities;
 using WebAthenPs.API.Entities.Professional;
 
 namespace WebAthenPs.API.Entities.Project
@@ -51,5 +52,8 @@ namespace WebAthenPs.API.Entities.Project
         public ICollection<GenericProfessional>? Professionals { get; set; } = new List<GenericProfessional>();
         public ICollection<ProjectProfessional> ProjectProfessionals { get; set; } = new List<ProjectProfessional>();
         public ICollection<Proposal>? ProjectProposals { get; set; } = new List<Proposal>();
+
+        public ICollection<Chats>? Chats { get; set; } = new List<Chats>();
+
     }
 }

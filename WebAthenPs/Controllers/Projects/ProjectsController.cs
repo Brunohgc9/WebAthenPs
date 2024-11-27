@@ -15,6 +15,8 @@ using WebAthenPs.Models.DTOs.Project;
 using WebAthenPs.API.Entities.Project;
 using WebAthenPs.API.Entities.Professional;
 using WebAthenPs.Models.DTOs.Professional;
+using WebAthenPs.API.Hubs.HubServices;
+using WebAthenPs.Models.DTOs.Components.Chats;
 
 namespace WebAthenPs.API.Controllers.Projects
 {
@@ -26,13 +28,17 @@ namespace WebAthenPs.API.Controllers.Projects
         private readonly IProjectRepository _projectRepository;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _context;
+        private readonly HubService _hubService;
 
-        public ProjectsController(IProjectRepository projectRepository, UserManager<ApplicationUser> userManager, ApplicationDbContext context)
+        public ProjectsController(IProjectRepository projectRepository, UserManager<ApplicationUser> userManager, ApplicationDbContext context, HubService hubService)
         {
             _projectRepository = projectRepository;
             _userManager = userManager;
             _context = context;
+            _hubService = hubService;
         }
+
+
 
         // Atualizar um projeto, incluindo profissionais
         [HttpPut("{id:int}")]
@@ -220,6 +226,8 @@ namespace WebAthenPs.API.Controllers.Projects
             if (model == null || !ModelState.IsValid)
                 return BadRequest("Dados inválidos.");
 
+            model.ActStep = "Etapa 1";
+
             // Obtém o UserId do usuário autenticado
             var userId = _userManager.GetUserId(User);
 
@@ -233,17 +241,28 @@ namespace WebAthenPs.API.Controllers.Projects
 
             try
             {
+                // Cria o projeto no banco
                 await _projectRepository.CreateNewProject(project);
 
-                var createdDto = project.ConverterProjetoParaDTO();
+                // Cria um chat geral para o projeto, passando o ProjectId
+                var chatId = await _hubService.CreateChatAsync(client.UserId, project.ProjectId, isGeneral: true);
 
+                // Retorna o projeto criado
+                var createdDto = project.ConverterProjetoParaDTO();
                 return CreatedAtAction(nameof(GetById), new { id = createdDto.ProjectId }, createdDto);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict($"Erro ao criar chat: {ex.Message}");
             }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao criar projeto: {ex.Message}");
             }
         }
+
+
+
 
         [HttpPost("{projectId:int}/professionals")]
         public async Task<ActionResult<ProjectProfessionalDTO>> AddProfessionalToProject(int projectId, [FromBody] ProjectProfessionalDTO projectProfessionalDTO)
@@ -253,27 +272,52 @@ namespace WebAthenPs.API.Controllers.Projects
 
             try
             {
-                // Verifica se o projeto existe
                 var existingProject = await _projectRepository.GetById(projectId);
                 if (existingProject == null)
                     return NotFound("Projeto não encontrado.");
 
-                // Verifica se o profissional existe
                 var professional = await _context.GenericProfessionals.FindAsync(projectProfessionalDTO.ProfessionalId);
                 if (professional == null)
                     return NotFound("Profissional não encontrado.");
 
-                // Converte DTO para entidade
                 var projectProfessional = projectProfessionalDTO.ConverterDTOParaProjectProfessional();
                 projectProfessional.ProjectId = projectId;
                 projectProfessional.Professional = professional;
 
-                // Adiciona o profissional ao projeto
                 await _projectRepository.AddProfessionalToProject(projectProfessional);
 
-                // Converte a entidade de volta para DTO para retorno
-                var createdDto = projectProfessional.ConverterProjectProfessionalParaDTO();
+                // 1. Adicionar o profissional ao chat geral do projeto
+                var clientUserId = existingProject.Client.UserId;
+                var generalChatId = await _hubService.GetChatIdByProjectIdAsync(projectId, isGeneral: true);
+                if (!generalChatId.HasValue)
+                {
+                    // Se o chat geral não existir, cria o chat geral
+                    generalChatId = await _hubService.CreateChatAsync(clientUserId, projectId, isGeneral: true);
+                }
 
+                // Adiciona o profissional ao chat geral
+                await _hubService.AddUserToChatAsync(professional.UserId, generalChatId.Value, projectId, isGeneralChat: true);
+
+                // 2. Criar um chat entre o cliente e o profissional, se não existir
+                if (!await _hubService.IsUserInChatAsync(clientUserId, professional.UserId, projectId))
+                {
+                    var existingClientProfessionalChatId = await _hubService.GetChatIdByProjectIdAsync(projectId, isGeneral: false);
+
+                    if (!existingClientProfessionalChatId.HasValue)
+                    {
+                        // Cria um novo chat específico entre o cliente e o profissional
+                        var chatId = await _hubService.CreateChatAsync(clientUserId, projectId, isGeneral: false);
+                        await _hubService.AddUserToChatAsync(professional.UserId, chatId, projectId, isGeneralChat: false);
+                    }
+                    else
+                    {
+                        // Se o chat já existir, apenas adiciona o profissional ao chat existente
+                        await _hubService.AddUserToChatAsync(professional.UserId, existingClientProfessionalChatId.Value, projectId, isGeneralChat: false);
+                    }
+                }
+
+                // Converte a entidade para DTO
+                var createdDto = projectProfessional.ConverterProjectProfessionalParaDTO();
                 return CreatedAtAction(nameof(GetById), new { id = createdDto.ProjectId }, createdDto);
             }
             catch (Exception ex)
@@ -281,6 +325,13 @@ namespace WebAthenPs.API.Controllers.Projects
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao adicionar profissional ao projeto: {ex.Message}");
             }
         }
+
+
+
+
+
+
+
 
 
 
@@ -316,7 +367,8 @@ namespace WebAthenPs.API.Controllers.Projects
 
                 if (professionals == null || !professionals.Any())
                 {
-                    return NotFound("Nenhum profissional encontrado para o projeto.");
+                    // Retorna uma lista vazia ao invés de NotFound
+                    return Ok(Enumerable.Empty<GenericProfessionalDTO>());
                 }
 
                 return Ok(professionals);
@@ -326,5 +378,82 @@ namespace WebAthenPs.API.Controllers.Projects
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao acessar os profissionais do projeto: {ex.Message}");
             }
         }
+
+        [HttpGet("{projectId:int}/chat")]
+        public async Task<ActionResult<ChatDto>> GetChatByProjectId(int projectId)
+        {
+            try
+            {
+                // Busca o projeto no banco de dados com o projectId fornecido
+                var existingProject = await _context.Projects
+                    .FirstOrDefaultAsync(p => p.ProjectId == projectId); // Supondo que 'Projects' seja o DbSet de projetos
+
+                if (existingProject == null)
+                {
+                    return NotFound("Projeto não encontrado.");
+                }
+
+                // Tenta obter o chat associado ao projeto com o projectId fornecido
+                var chatId = await _hubService.GetChatIdByProjectIdAsync(existingProject.ProjectId, isGeneral: true);
+
+                // Verifica se o chatId retornado é nulo e substitui por Guid.Empty se necessário
+                if (chatId == null || chatId == Guid.Empty)
+                {
+                    return NotFound("Chat não encontrado para o projeto.");
+                }
+
+                // Cria e retorna o DTO de chat com base no chatId encontrado
+                var chatDto = new ChatDto
+                {
+                    Id = chatId.Value,  // Usa .Value para acessar o valor do Guid? (nulo garantido)
+                    ProjectId = projectId
+                };
+
+                return Ok(chatDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao acessar o chat do projeto: {ex.Message}");
+            }
+        }
+
+        private async Task<ActionResult> StepOne(int projectId, int professionalId)
+        {
+            try
+            {
+                // Verifica se o projeto existe
+                var existingProject = await _projectRepository.GetById(projectId);
+                if (existingProject == null)
+                    return NotFound("Projeto não encontrado.");
+
+                // Verifica se o profissional existe
+                var professional = await _context.GenericProfessionals.FindAsync(professionalId);
+                if (professional == null)
+                    return NotFound("Profissional não encontrado.");
+
+                // Verifica se o profissional é um arquiteto (em português ou inglês)
+                if (!professional.ProfessionalTypes.Contains("Arquiteto") && !professional.ProfessionalTypes.Contains("Architect"))
+                {
+                    return BadRequest("Somente um arquiteto pode ser adicionado a este projeto.");
+                }
+
+                // Verifica se já existe um arquiteto no projeto (em português ou inglês)
+                var existingArchitect = existingProject.ProjectProfessionals
+                    .Any(p => p.ContractedAs.Contains("Arquiteto") || p.ContractedAs.Contains("Architect"));
+
+
+                // Atualiza o ActStep para "Etapa 2" após adicionar um arquiteto
+                existingProject.ActStep = "Etapa 2";
+                await _projectRepository.UpdateProject(existingProject);
+
+                return Ok("Arquitetura verificada e Etapa 2 definida.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao validar o arquiteto e atualizar etapa: {ex.Message}");
+            }
+        }
+
+
     }
 }

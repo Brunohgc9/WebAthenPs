@@ -300,12 +300,12 @@ $.validator.addMethod( "cpfBR", function( value ) {
 		return false;
 	}
 
-	// Step 1 - using first Check Number:
+	// ActStep 1 - using first Check Number:
 	for ( i = 1; i <= 9; i++ ) {
 		sum = sum + parseInt( value.substring( i - 1, i ), 10 ) * ( 11 - i );
 	}
 
-	// If first Check Number (CN) is valid, move to Step 2 - using second Check Number:
+	// If first Check Number (CN) is valid, move to ActStep 2 - using second Check Number:
 	if ( checkResult( sum, firstCN ) ) {
 		sum = 0;
 		for ( i = 1; i <= 10; i++ ) {
@@ -793,10 +793,10 @@ $.validator.addMethod( "nipPL", function( value ) {
 		return false;
 	}
 
-	var arrSteps = [ 6, 5, 7, 2, 3, 4, 5, 6, 7 ];
+	var arrActSteps = [ 6, 5, 7, 2, 3, 4, 5, 6, 7 ];
 	var intSum = 0;
 	for ( var i = 0; i < 9; i++ ) {
-		intSum += arrSteps[ i ] * value[ i ];
+		intSum += arrActSteps[ i ] * value[ i ];
 	}
 	var int2 = intSum % 11;
 	var intControlNr = ( int2 === 10 ) ? 0 : int2;

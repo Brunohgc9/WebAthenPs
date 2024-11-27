@@ -20,6 +20,7 @@ namespace WebAthenPs.Models.DTOs.Project
         public string? State { get; set; }
         public string Country { get; set; }
         public string? ClientDescription { get; set; }
+        public string? ActStep { get; set; }
 
     }
 }

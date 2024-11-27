@@ -49,12 +49,12 @@ namespace WebAthenPs.Project.Services.Implementation.User
             return httpClient;
         }
 
-        public async Task<ApplicationUser> GetUserInfo(string userId)
+        public async Task<ApplicationUserDTO> GetUserInfo(string userId)
         {
             try
             {
                 var httpClient = await CreateAuthorizedClientAsync();
-                var userDto = await httpClient.GetFromJsonAsync<ApplicationUser>($"api/Users/{userId}");
+                var userDto = await httpClient.GetFromJsonAsync<ApplicationUserDTO>($"api/Users/{userId}");
 
                 if (userDto == null)
                 {

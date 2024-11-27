@@ -11,6 +11,9 @@ using WebAthenPs.Project.Services.Interfaces.Project;
 using WebAthenPs.Models.DTOs.Professional;
 using WebAthenPs.Project.Services.Interfaces.User;
 using WebAthenPs.Models.DTOs.Components;
+using Newtonsoft.Json.Linq;
+using WebAthenPs.Project.Services.Interfaces.Professional;
+using WebAthenPs.Models.DTOs.Components.Chats;
 
 namespace WebAthenPs.Project.Services.Implementation.Project
 {
@@ -20,13 +23,17 @@ namespace WebAthenPs.Project.Services.Implementation.Project
         private readonly ILogger<ProjectService> _logger;
         private readonly AuthenticationStateProvider _authenticationStateProvider;
         private readonly IAuthService _authService;
+        private readonly SignalRConnection _signalRConnection;
+        private readonly IGenericProfessionalService _genericProfessionalService;
 
-        public ProjectService(IHttpClientFactory httpClientFactory, ILogger<ProjectService> logger, AuthenticationStateProvider authenticationStateProvider, IAuthService authService)
+        public ProjectService(IHttpClientFactory httpClientFactory, ILogger<ProjectService> logger, AuthenticationStateProvider authenticationStateProvider, IAuthService authService, SignalRConnection signalRConnection, IGenericProfessionalService genericProfessionalService)
         {
             _httpClientFactory = httpClientFactory;
             _logger = logger;
             _authenticationStateProvider = authenticationStateProvider;
             _authService = authService;
+            _signalRConnection = signalRConnection;
+            _genericProfessionalService = genericProfessionalService;
         }
 
         private async Task<HttpClient> CreateAuthorizedClientAsync()
@@ -288,6 +295,8 @@ namespace WebAthenPs.Project.Services.Implementation.Project
                 throw;
             }
         }
+
+
         public async Task<bool> AddProfessional(ProjectProfessionalDTO projectProfessionalDTO, ProposalDTO proposal)
         {
             // Validação do DTO do profissional
@@ -305,30 +314,86 @@ namespace WebAthenPs.Project.Services.Implementation.Project
 
             try
             {
+                // 1. Adiciona o profissional ao projeto
                 var httpClient = await CreateAuthorizedClientAsync();
                 var response = await httpClient.PostAsJsonAsync($"api/Projects/{projectProfessionalDTO.ProjectId}/professionals", projectProfessionalDTO);
 
-                if (response.IsSuccessStatusCode)
+                if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogInformation($"Profissional com ID {projectProfessionalDTO.ProfessionalId} adicionado ao projeto com ID {projectProfessionalDTO.ProjectId} com sucesso.");
-                    return true;
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogError($"Erro ao adicionar o profissional ao projeto. StatusCode: {response.StatusCode}, Conteúdo: {errorContent}");
+                    return false;
                 }
 
-                var errorContent = await response.Content.ReadAsStringAsync();
-                _logger.LogError($"Erro ao adicionar o profissional ao projeto. StatusCode: {response.StatusCode}, Conteúdo: {errorContent}");
-                return false;
+                // 2. Após adicionar ao projeto, obtemos o UserId do profissional
+                var professionalUser = await _genericProfessionalService.GetByIdAsync(projectProfessionalDTO.ProfessionalId);
+                if (professionalUser == null || string.IsNullOrEmpty(professionalUser.UserId))
+                {
+                    _logger.LogWarning($"Profissional com ID {projectProfessionalDTO.ProfessionalId} não tem um UserId válido.");
+                    return false;
+                }
+
+                string userId = professionalUser.UserId; // Obtém o UserId do profissional
+
+                // 3. Obtemos o chatId associado ao projeto
+                Guid chatId = await GetChatIdByProjectIdAsync(projectProfessionalDTO.ProjectId);
+
+                if (chatId == Guid.Empty)
+                {
+                    _logger.LogWarning($"ChatId não encontrado para o projeto com ID {projectProfessionalDTO.ProjectId}.");
+                    return false;
+                }
+
+                // 4. Adiciona o profissional ao chat do projeto
+                await _signalRConnection.AddUserToChat(chatId, userId);
+                _logger.LogInformation($"Profissional com ID {projectProfessionalDTO.ProfessionalId} adicionado ao chat do projeto com ID {projectProfessionalDTO.ProjectId} com sucesso.");
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Erro inesperado ao adicionar o profissional ao projeto e chat do projeto com ID {projectProfessionalDTO.ProjectId}.");
+                throw;
+            }
+        }
+
+
+        public async Task<Guid> GetChatIdByProjectIdAsync(int projectId)
+        {
+            try
+            {
+                // Criação do cliente HTTP autorizado
+                var httpClient = await CreateAuthorizedClientAsync();
+
+                // Faz a chamada para obter o chat associado ao projeto (geral ou individual)
+                var chatResponse = await httpClient.GetFromJsonAsync<ChatDto>($"api/Projects/{projectId}/chat");
+
+                // Verifica se o chat não foi encontrado ou o ID é inválido
+                if (chatResponse == null || chatResponse.Id == Guid.Empty)
+                {
+                    _logger.LogWarning($"Chat não encontrado para o projeto com ID {projectId}.");
+                    return Guid.Empty; // Retorna Guid.Empty se não encontrar o chat
+                }
+
+                // Se encontrado, loga a informação e retorna o ID do chat
+                _logger.LogInformation($"Chat encontrado: ID {chatResponse.Id} para o projeto {projectId}.");
+                return chatResponse.Id;
             }
             catch (HttpRequestException httpEx)
             {
-                _logger.LogError(httpEx, $"Erro ao acessar a API para adicionar o profissional ao projeto com ID {projectProfessionalDTO.ProjectId}.");
+                // Caso ocorra um erro de comunicação com o serviço
+                _logger.LogError(httpEx, $"Erro de comunicação ao buscar o ChatId para o projeto com ID {projectId}.");
                 throw;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Erro inesperado ao adicionar o profissional ao projeto com ID {projectProfessionalDTO.ProjectId}.");
+                // Caso ocorra um erro inesperado
+                _logger.LogError(ex, $"Erro inesperado ao buscar o ChatId para o projeto com ID {projectId}.");
                 throw;
             }
         }
+
+
 
         public async Task<IEnumerable<GenericProfessionalDTO>> GetProfessionalsByProject(int projectId)
         {

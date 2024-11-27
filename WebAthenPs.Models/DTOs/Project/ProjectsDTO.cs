@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WebAthenPs.Models.DTOs.Client;
 using WebAthenPs.Models.DTOs.Components;
+using WebAthenPs.Models.DTOs.Components.Chats;
 using WebAthenPs.Models.DTOs.Professional;
 
 namespace WebAthenPs.Models.DTOs.Project
@@ -27,7 +28,7 @@ namespace WebAthenPs.Models.DTOs.Project
         public string? State { get; set; }
         public string? PostalCode { get; set; }
         public string Country { get; set; }  // País
-        public string? Step { get; set; }
+        public string? ActStep { get; set; }
 
         // Detalhes adicionais
         public decimal? TotalArea { get; set; }  // Área total do projeto
@@ -38,6 +39,8 @@ namespace WebAthenPs.Models.DTOs.Project
         public ICollection<ProjectProfessionalDTO>? ProjectProfessionals { get; set; } = new List<ProjectProfessionalDTO>();
         public ICollection<ProposalDTO>? ProjectProposals { get; set; } = new List<ProposalDTO>();
         public ClientDTO? Client { get; set; }
+
+        public ChatDto? Chat { get; set; }
 
     }
 }
