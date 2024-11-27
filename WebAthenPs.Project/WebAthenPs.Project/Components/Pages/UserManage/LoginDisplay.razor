@@ -5,12 +5,17 @@
 
 <AuthorizeView>
     <Authorized>
-        @context.User.Identity.Name
-        <a href="Logout">Log out</a>
+        <div class="cabecalho">
+            @context.User.Identity.Name
+            <a href="Logout">Log out</a>
+        </div>
     </Authorized>
     <NotAuthorized>
-        <a href="Login">Log in</a>
-        <a href="Register">Register</a>
+        <div class="cabecalho">
+            <a href="Login">Log in</a>
+            <a href="Register">Register</a>
+        </div>
 
     </NotAuthorized>
 </AuthorizeView> 
+
