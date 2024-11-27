@@ -1,58 +1,233 @@
-﻿@using WebAthenPs.Models.DTOs.Project
-@using WebAthenPs.Models.DTOs.Professional
-@using WebAthenPs.Project.Components.Components
+﻿@using WebAthenPs.Models.DTOs.Components.Chats
 @using WebAthenPs.Project.Services.Interfaces.Project
-@inject IProjectService ProjectService
-@inject NavigationManager NavigationManager
+@inject SignalRConnection signalRConnection
+@inject IJSRuntime js
+@inject IProjectService projectService  // Serviço para obter os chats do projeto
+@implements IDisposable
 
-@if (Project != null)
-{
-    <div>
-        <h4>Projeto: @Project.ProjectName</h4>
-        @if (Architect != null)
-        {
-            <p>Arquiteto associado: @Architect.UserName</p>
-            <ChatComponent ChatId="@ChatId" CurrentChatTitle="@ChatTitle" />
-        }
-        else
-        {
-            <p>Nenhum arquiteto associado ao projeto. Por favor, selecione um arquiteto para avançar.</p>
-        }
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="card">
+            <div class="card-header display-1 fs-4 text-primary">
+                Chats Disponíveis
+            </div>
+            <div class="card-body">
+                <ul class="nav nav-tabs" id="chatTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link @activeTabClass(0)" @onclick="() => SetActiveTab(0)">
+                            Chat Geral
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link @activeTabClass(1)" @onclick="() => SetActiveTab(1)">
+                            Chats Individuais
+                        </button>
+                    </li>
+                </ul>
+                <div class="tab-content mt-3">
+                    <!-- Aba do Chat Geral -->
+                    <div class="tab-pane fade @activeTabClass(0, "show active")">
+                        @if (GeneralChat != null)
+                        {
+                            <!-- Div para exibir o chat geral -->
+                            <div class="list-group">
+                                <button class="list-group-item list-group-item-action" style="cursor: pointer" @onclick="(() => LoadChat(GeneralChat.Id, GetChatTitle(GeneralChat)))">
+                                    @GetChatTitle(GeneralChat)
+                                </button>
+                            </div>
+                        }
+                        else
+                        {
+                            <em>Nenhum chat geral disponível</em>
+                        }
+                    </div>
+
+
+                    <!-- Aba dos Chats Individuais -->
+                    <div class="tab-pane fade @activeTabClass(1, "show active")">
+                        @if (IndividualChats != null && IndividualChats.Count > 0)
+                        {
+                            <ul class="list-group">
+                                @foreach (var chat in IndividualChats)
+                                {
+                                    <li class="list-group-item list-group-item-action" style="cursor: pointer" @onclick="(() => LoadChat(chat.Id, GetChatTitle(chat)))">
+                                        @GetChatTitle(chat)
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <em>Nenhum chat individual disponível</em>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-}
-else
-{
-    <p>Carregando projeto...</p>
-}
+
+    <div class="col-md-9 mb-4">
+        <div class="card">
+            <div class="card-header display-1 fs-5 text-success">@CurrentChatTitle</div>
+            <div class="card-body">
+                @if (ChatMessages != null && ChatMessages.Count > 0)
+                {
+                    @foreach (var message in ChatMessages)
+                    {
+                        <div class="message">
+                            @((MarkupString)message)
+                        </div>
+                    }
+                }
+                else
+                {
+                    <em>Nenhuma mensagem encontrada</em>
+                }
+            </div>
+            <div class="card-footer">
+                <textarea cols="5" @bind="Message" class="form-control mb-3" placeholder="Digite sua mensagem..."></textarea>
+                <button class="btn btn-success float-end" @onclick="SendMessage">Enviar Mensagem</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
-    [Parameter] public ProjectsDTO Project { get; set; }
-    [Parameter] public int ProjectId { get; set; }
+    [Parameter] public int ProjectId { get; set; } // ID do projeto
 
-    private GenericProfessionalDTO Architect { get; set; }
-    private Guid ChatId { get; set; }
-    private string ChatTitle { get; set; }
+    private string Message = string.Empty;
+    private string CurrentChatTitle = string.Empty;
+    private ChatDto? GeneralChat;
+    private List<ChatDto> IndividualChats = new();
+    private List<string> ChatMessages = new();
+    private Guid CurrentChatId;
 
+    private string[] TabStates = { "general", "individual" }; // Estado das abas (Geral e Individuais)
+    private int activeTabIndex = 0; // Índice da aba ativa (0 = geral, 1 = individual)
+
+    // Método chamado ao inicializar o componente
     protected override async Task OnInitializedAsync()
+    {
+        // Inscreve-se para as mudanças de estado da conexão SignalR
+        signalRConnection.ConnectionStateChanged += StateHasChanged;
+
+        // Realiza a conexão com SignalR
+        await Connect();
+
+        // Carrega os chats
+        await LoadChatsFromProjectService();
+
+        // Inscreve-se para receber as mensagens de chat
+        SubscribeToMessages();
+    }
+
+    // Inscrição para receber mensagens
+    private void SubscribeToMessages()
+    {
+        signalRConnection.ReceiveMessage((userId, message) =>
+        {
+            ChatMessages.Add($"{userId}: {message}");
+            InvokeAsync(StateHasChanged);
+        });
+    }
+
+    // Método para carregar os chats gerais e individuais
+    // Método para carregar os chats gerais e individuais
+    private async Task LoadChatsFromProjectService()
     {
         try
         {
-            // Buscar os profissionais associados ao projeto
-            var professionals = await ProjectService.GetProfessionalsByProject(ProjectId);
+            // Obtém o chat geral associado ao projeto
+            var chatId = await projectService.GetChatIdByProjectIdAsync(ProjectId);
 
-            // Verificar se há um arquiteto associado
-            Architect = professionals.FirstOrDefault(p => p.GenericProfessionalTypeDTO?.ArchitectId != null);
+            // Carrega os chats individuais
+            IndividualChats = await projectService.GetIndividualChatsByProjectIdAsync(ProjectId);
 
-            if (Architect != null)
+            if (chatId != Guid.Empty)
             {
-                // Configurar chat
-                ChatId = Architect.GenericProfessionalTypeDTO.ArchitectId.Value;
-                ChatTitle = $"Chat com o Arquiteto {Architect.UserName}";
+                // Atualiza o GeneralChat com o ID do chat geral
+                GeneralChat = new ChatDto { Id = chatId, IsGeneral = true };
+            }
+            else
+            {
+                GeneralChat = null;
+                IndividualChats.Clear();
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Erro ao carregar dados do projeto: {ex.Message}");
+            Console.WriteLine($"Erro ao carregar o chat: {ex.Message}");
         }
+    }
+
+
+
+
+    // Método para carregar um chat específico (geral ou individual)
+    private async Task LoadChat(Guid chatId, string chatTitle)
+    {
+        CurrentChatId = chatId;
+        CurrentChatTitle = chatTitle;
+        ChatMessages.Clear();
+
+        // Carrega as mensagens do chat
+        var messages = await signalRConnection.GetChatMessages(chatId);
+        ChatMessages = messages.Select(m => $"{m.UserId}: {m.Message}").ToList();
+
+        // Junta o chat
+        await signalRConnection.JoinChat(chatId);
+        StateHasChanged();
+    }
+
+    // Método para enviar uma mensagem no chat
+    private async Task SendMessage()
+    {
+        if (string.IsNullOrEmpty(Message) || CurrentChatId == Guid.Empty)
+            return;
+
+        // Envia a mensagem para o chat selecionado
+        await signalRConnection.SendMessage(CurrentChatId, Message);
+
+        // Adiciona a mensagem à lista de mensagens
+        ChatMessages.Add($"Eu: {Message}");
+        Message = string.Empty;
+        StateHasChanged();
+    }
+
+    // Método para estabelecer a conexão com o SignalR
+    private async Task Connect()
+    {
+        await signalRConnection.StartConnection();
+    }
+
+    // Método que retorna o título do chat
+    private string GetChatTitle(ChatDto chat)
+    {
+        if (chat.IsGeneral)
+            return "Chat Geral";
+
+        var userNames = chat.User?.Select(u => u.UserName).ToList();
+        return userNames != null && userNames.Any()
+            ? $"Chat com {string.Join(", ", userNames)}"
+            : "Chat sem nome";
+    }
+
+    // Método que alterna a aba ativa
+    private void SetActiveTab(int index)
+    {
+        activeTabIndex = index;
+    }
+
+    // Método que define a classe ativa da aba
+    private string activeTabClass(int index, string additionalClasses = "")
+    {
+        return activeTabIndex == index ? $"active {additionalClasses}" : "";
+    }
+
+    // Método de limpeza ao destruir o componente
+    public void Dispose()
+    {
+        signalRConnection.ConnectionStateChanged -= StateHasChanged;
+        _ = signalRConnection.CloseConnection();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using WebAthenPs.Models.DTOs.Components;
+using WebAthenPs.Models.DTOs.Components.Chats;
 using WebAthenPs.Models.DTOs.Professional;
 using WebAthenPs.Models.DTOs.Project;
 
@@ -17,5 +18,7 @@ namespace WebAthenPs.Project.Services.Interfaces.Project
         Task<bool> AddProfessional(ProjectProfessionalDTO projectProfessionalDTO, ProposalDTO proposal);
         Task<IEnumerable<GenericProfessionalDTO>> GetProfessionalsByProject(int projectId);
         Task<Guid> GetChatIdByProjectIdAsync(int projectId);
+        Task<List<ChatDto>> GetChatsByProjectIdAsync(int projectId);
+        Task<List<ChatDto>> GetIndividualChatsByProjectIdAsync(int projectId);
     }
 }

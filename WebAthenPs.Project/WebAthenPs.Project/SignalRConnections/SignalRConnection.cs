@@ -131,4 +131,11 @@ public class SignalRConnection
         ConnectionState = message;
         ConnectionStateChanged?.Invoke();
     }
+
+    public async Task<List<ChatDto>> GetChatsByProjectId(int projectId)
+    {
+        await EnsureConnectionAsync();
+        return await hubConnection.InvokeAsync<List<ChatDto>>("GetChatsByProjectId", projectId);
+    }
+
 }

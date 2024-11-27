@@ -37,7 +37,6 @@
                 return Context.ConnectionId; // Retorna o ConnectionId do usuário
             }
 
-            // Adicionar este método ao SignalRConnectionHub
 
 
 
@@ -104,26 +103,19 @@
             }
 
         // Método para obter o ChatId associado ao ProjectId
-        public async Task<Guid?> GetChatByProjectId(int projectId, bool isGeneral)
+        public async Task<List<ChatDto>> GetChatsByProjectId(int projectId)
         {
-            try
-            {
-                // Tenta obter o chat do serviço HubService
-                var chatId = await _hubService.GetChatIdByProjectIdAsync(projectId, isGeneral);
+            // Chama o serviço para obter os chats associados ao projeto
+            var chats = await _hubService.GetChatsByProjectIdAsync(projectId);
 
-                // Verifica se o chatId foi encontrado
-                if (chatId == null)
-                {
-                    return null; // Retorna null se o chat não existir
-                }
-
-                return chatId.Value; // Retorna o ChatId encontrado
-            }
-            catch (Exception ex)
+            // Mapeia os chats para o DTO
+            var chatDtos = chats.Select(chat => new ChatDto
             {
-                // Retorna null ou um erro apropriado se falhar
-                return null;
-            }
+                Id = chat.Id,
+                // Aqui você pode adicionar outros campos que quiser retornar no DTO, como o nome do chat, etc.
+            }).ToList();
+
+            return chatDtos;
         }
 
 

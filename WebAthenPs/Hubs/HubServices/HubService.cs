@@ -203,15 +203,45 @@ namespace WebAthenPs.API.Hubs.HubServices
             return chat != null && chat.IsGeneral;
         }
 
-        public async Task<Guid?> GetChatIdByProjectIdAsync(int projectId, bool isGeneral)
+        public async Task<Guid?> GetChatIdByProjectIdAsync(int projectId, bool isGeneral, Guid? clientUserId = null, Guid? professionalUserId = null)
         {
-            var chat = await _context.Chats
-                .Where(c => c.ProjectId == projectId && c.IsGeneral == isGeneral)
-                .FirstOrDefaultAsync();
+            var query = _context.Chats
+                .Include(c => c.ChatAndUsers)
+                .Where(c => c.ProjectId == projectId && c.IsGeneral == isGeneral);
 
+            if (clientUserId.HasValue && professionalUserId.HasValue && !isGeneral)
+            {
+                string clientUserIdString = clientUserId.Value.ToString();
+                string professionalUserIdString = professionalUserId.Value.ToString();
+
+                query = query.Where(c =>
+                    c.ChatAndUsers.Any(u => u.UserId == clientUserIdString) &&
+                    c.ChatAndUsers.Any(u => u.UserId == professionalUserIdString));
+            }
+
+
+            var chat = await query.FirstOrDefaultAsync();
             return chat?.Id; // Retorna o chatId ou null caso não exista
         }
 
+
+
+        public async Task<List<Chats>> GetChatsByProjectIdAsync(int projectId)
+        {
+            return await _context.Chats
+                .Where(c => c.ProjectId == projectId)
+                .ToListAsync();
+        }
+
+        public async Task<List<Guid>> GetChatIdsByProjectIdAsync(int projectId, bool isGeneral)
+        {
+            var chats = await _context.Chats
+                .Where(c => c.ProjectId == projectId && c.IsGeneral == isGeneral)
+                .Select(c => c.Id)
+                .ToListAsync();
+
+            return chats;
+        }
 
     }
 }

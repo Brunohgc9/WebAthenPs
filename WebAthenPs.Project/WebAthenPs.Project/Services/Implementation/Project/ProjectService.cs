@@ -393,6 +393,36 @@ namespace WebAthenPs.Project.Services.Implementation.Project
             }
         }
 
+        public async Task<List<ChatDto>> GetChatsByProjectIdAsync(int projectId)
+        {
+            try
+            {
+                // Criação do cliente HTTP autorizado
+                var httpClient = await CreateAuthorizedClientAsync();
+
+                // Faz a chamada para obter os chats associados ao projeto
+                var chatsResponse = await httpClient.GetFromJsonAsync<List<ChatDto>>($"api/Projects/{projectId}/chats");
+
+                // Verifica se os chats não foram encontrados
+                if (chatsResponse == null || !chatsResponse.Any())
+                {
+                    _logger.LogWarning($"Chats não encontrados para o projeto com ID {projectId}.");
+                    return new List<ChatDto>(); // Retorna uma lista vazia se não encontrar os chats
+                }
+
+                return chatsResponse;
+            }
+            catch (HttpRequestException httpEx)
+            {
+                _logger.LogError(httpEx, $"Erro de comunicação ao buscar chats para o projeto com ID {projectId}.");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Erro inesperado ao buscar chats para o projeto com ID {projectId}.");
+                throw;
+            }
+        }
 
 
         public async Task<IEnumerable<GenericProfessionalDTO>> GetProfessionalsByProject(int projectId)
@@ -420,7 +450,65 @@ namespace WebAthenPs.Project.Services.Implementation.Project
             }
         }
 
+        public async Task<ChatDto> GetChatByProjectIdAsync(int projectId)
+        {
+            try
+            {
+                var httpClient = await CreateAuthorizedClientAsync();
 
+                // Faz a chamada para o endpoint da API
+                var chatResponse = await httpClient.GetFromJsonAsync<ChatDto>($"api/Projects/{projectId}/chat");
+
+                if (chatResponse == null)
+                {
+                    _logger.LogWarning($"Chat não encontrado para o projeto com ID {projectId}.");
+                    return null;
+                }
+
+                return chatResponse;
+            }
+            catch (HttpRequestException httpEx)
+            {
+                _logger.LogError(httpEx, $"Erro de comunicação ao buscar o Chat para o projeto com ID {projectId}.");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Erro inesperado ao buscar o Chat para o projeto com ID {projectId}.");
+                throw;
+            }
+        }
+
+        public async Task<List<ChatDto>> GetIndividualChatsByProjectIdAsync(int projectId)
+        {
+            try
+            {
+                // Criação do cliente HTTP autorizado
+                var httpClient = await CreateAuthorizedClientAsync();
+
+                // Chamada para o endpoint da API que retorna os chats individuais
+                var response = await httpClient.GetFromJsonAsync<List<ChatDto>>($"api/Projects/{projectId}/individual-chats");
+
+                // Verifica se a resposta contém chats
+                if (response == null || !response.Any())
+                {
+                    _logger.LogWarning($"Nenhum chat individual encontrado para o projeto com ID {projectId}.");
+                    return new List<ChatDto>(); // Retorna uma lista vazia
+                }
+
+                return response; // Retorna a lista de chats individuais
+            }
+            catch (HttpRequestException httpEx)
+            {
+                _logger.LogError(httpEx, $"Erro ao acessar a API para obter chats individuais para o projeto com ID {projectId}.");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Erro inesperado ao buscar chats individuais para o projeto com ID {projectId}.");
+                throw;
+            }
+        }
 
     }
 }

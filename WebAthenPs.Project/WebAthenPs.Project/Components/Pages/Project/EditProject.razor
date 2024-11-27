@@ -17,9 +17,9 @@
         {
             <StepOneComponent Project="Project" ProjectId="ProjectId" />
         }
-        else if (Project.ActStep == "Etapa 2")
+        @if (Project.ActStep == "Etapa 2")
         {
-            <StepTwoComponent Project="Project" ProjectId="ProjectId" />
+            <StepTwoComponent ProjectId="ProjectId" />
         }
     </div>
 }

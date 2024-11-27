@@ -1,9 +1,7 @@
 ﻿@using Microsoft.AspNetCore.SignalR.Client
 @using WebAthenPs.Models.DTOs.Components.Chats
-@using WebAthenPs.Project.Services.Interfaces.Project
 @inject SignalRConnection signalRConnection
 @inject IJSRuntime js
-@inject IProjectService projectService
 @implements IDisposable
 
 <div class="row">
@@ -13,21 +11,49 @@
                 Chats Disponíveis
             </div>
             <div class="card-body">
-                @if (AvailableChats != null && AvailableChats.Count > 0)
-                {
-                    <ul class="list-group">
-                        @foreach (var chat in AvailableChats)
+                <ul class="nav nav-tabs" id="chatTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="general-chat-tab" data-bs-toggle="tab" data-bs-target="#general-chat" type="button" role="tab" aria-controls="general-chat" aria-selected="true">
+                            Chat Geral
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="individual-chats-tab" data-bs-toggle="tab" data-bs-target="#individual-chats" type="button" role="tab" aria-controls="individual-chats" aria-selected="false">
+                            Chats Individuais
+                        </button>
+                    </li>
+                </ul>
+                <div class="tab-content mt-3">
+                    <div class="tab-pane fade show active" id="general-chat" role="tabpanel" aria-labelledby="general-chat-tab">
+                        @if (GeneralChat != null)
                         {
-                            <li class="list-group-item list-group-item-action" style="cursor: pointer" @onclick="(() => LoadChat(chat.Id))">
-                                @chat.Id
-                            </li>
+                            <button class="btn btn-link w-100 text-start" @onclick="(() => LoadChat(GeneralChat.Id, GetChatTitle(GeneralChat)))">
+                                @GetChatTitle(GeneralChat)
+                            </button>
                         }
-                    </ul>
-                }
-                else
-                {
-                    <em>Nenhum chat disponível</em>
-                }
+                        else
+                        {
+                            <em>Nenhum chat geral disponível</em>
+                        }
+                    </div>
+                    <div class="tab-pane fade" id="individual-chats" role="tabpanel" aria-labelledby="individual-chats-tab">
+                        @if (IndividualChats != null && IndividualChats.Count > 0)
+                        {
+                            <ul class="list-group">
+                                @foreach (var chat in IndividualChats)
+                                {
+                                    <li class="list-group-item list-group-item-action" style="cursor: pointer" @onclick="(() => LoadChat(chat.Id, GetChatTitle(chat)))">
+                                        @GetChatTitle(chat)
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <em>Nenhum chat individual disponível</em>
+                        }
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -59,63 +85,50 @@
 </div>
 
 @code {
-    [Parameter]
-    public Guid CurrentChatId { get; set; }
+    [Parameter] public int ProjectId { get; set; } // ID do projeto
+
     private string Message = string.Empty;
     private string CurrentChatTitle = string.Empty;
-    private List<ChatDto> AvailableChats = new List<ChatDto>();
-    private List<string> ChatMessages = new List<string>();
-
-    [Parameter]
-    public EventCallback<Guid> OnChatSelected { get; set; }
+    private ChatDto? GeneralChat;
+    private List<ChatDto> IndividualChats = new();
+    private List<string> ChatMessages = new();
+    private Guid CurrentChatId;
 
     protected override async Task OnInitializedAsync()
     {
         signalRConnection.ConnectionStateChanged += StateHasChanged;
         await Connect();
-        await LoadAvailableChats();
+        await LoadChats();
         SubscribeToMessages();
     }
 
     private void SubscribeToMessages()
     {
-        // Inscreve-se para receber mensagens em tempo real
         signalRConnection.ReceiveMessage((userId, message) =>
         {
             ChatMessages.Add($"{userId}: {message}");
-            InvokeAsync(StateHasChanged); // Atualiza a UI instantaneamente
+            InvokeAsync(StateHasChanged);
         });
     }
 
-    private async Task LoadAvailableChats()
+    private async Task LoadChats()
     {
-        // Obtém os chats disponíveis utilizando o ProjectService
-        var projects = await projectService.GetAll();
-        if (projects != null)
-        {
-            foreach (var project in projects)
-            {
-                var chatId = await GetChatIdByProjectIdAsync(project.ProjectId);
-                if (chatId != Guid.Empty)
-                {
-                    AvailableChats.Add(new ChatDto { Id = chatId });
-                }
-            }
-        }
+        var chats = await signalRConnection.GetChatsByProjectId(ProjectId);
+
+        GeneralChat = chats.FirstOrDefault(c => c.IsGeneral);
+        IndividualChats = chats.Where(c => !c.IsGeneral).ToList();
     }
 
-    private async Task LoadChat(Guid chatId)
+    private async Task LoadChat(Guid chatId, string chatTitle)
     {
         CurrentChatId = chatId;
-        CurrentChatTitle = $"Chat {chatId}";
+        CurrentChatTitle = chatTitle;
         ChatMessages.Clear();
 
         var messages = await signalRConnection.GetChatMessages(chatId);
         ChatMessages = messages.Select(m => $"{m.UserId}: {m.Message}").ToList();
 
-        // Ao entrar no chat, une-se ao grupo do SignalR
         await signalRConnection.JoinChat(chatId);
-
         StateHasChanged();
     }
 
@@ -135,25 +148,22 @@
         await signalRConnection.StartConnection();
     }
 
+    private string GetChatTitle(ChatDto chat)
+    {
+        if (chat.IsGeneral)
+            return "Chat Geral";
+
+        // Verifica se há algum usuário e retorna o nome do primeiro
+        var userNames = chat.User?.Select(u => u.UserName).ToList();
+        return userNames != null && userNames.Any()
+            ? $"Chat com {string.Join(", ", userNames)}"
+            : "Chat sem nome";
+    }
+
+
     public void Dispose()
     {
         signalRConnection.ConnectionStateChanged -= StateHasChanged;
         _ = signalRConnection.CloseConnection();
-    }
-
-    // Método para buscar o ChatId a partir do ID do projeto
-    private async Task<Guid> GetChatIdByProjectIdAsync(int projectId)
-    {
-        try
-        {
-            // Chama o ProjectService para obter o chatId
-            var chatResponse = await projectService.GetChatIdByProjectIdAsync(projectId);
-            return chatResponse != Guid.Empty ? chatResponse : Guid.Empty;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Erro ao buscar o ChatId para o projeto {projectId}: {ex.Message}");
-            return Guid.Empty;
-        }
     }
 }

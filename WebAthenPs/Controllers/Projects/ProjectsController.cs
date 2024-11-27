@@ -264,6 +264,7 @@ namespace WebAthenPs.API.Controllers.Projects
 
 
 
+
         [HttpPost("{projectId:int}/professionals")]
         public async Task<ActionResult<ProjectProfessionalDTO>> AddProfessionalToProject(int projectId, [FromBody] ProjectProfessionalDTO projectProfessionalDTO)
         {
@@ -288,32 +289,51 @@ namespace WebAthenPs.API.Controllers.Projects
 
                 // 1. Adicionar o profissional ao chat geral do projeto
                 var clientUserId = existingProject.Client.UserId;
+
+                if (!Guid.TryParse(clientUserId, out Guid clientUserIdGuid))
+                    return BadRequest("O UserId do cliente não é um GUID válido.");
+
+                if (!Guid.TryParse(professional.UserId, out Guid professionalUserIdGuid))
+                    return BadRequest("O UserId do profissional não é um GUID válido.");
+
                 var generalChatId = await _hubService.GetChatIdByProjectIdAsync(projectId, isGeneral: true);
                 if (!generalChatId.HasValue)
                 {
                     // Se o chat geral não existir, cria o chat geral
-                    generalChatId = await _hubService.CreateChatAsync(clientUserId, projectId, isGeneral: true);
+                    generalChatId = await _hubService.CreateChatAsync(clientUserIdGuid.ToString(), projectId, isGeneral: true);
                 }
 
                 // Adiciona o profissional ao chat geral
-                await _hubService.AddUserToChatAsync(professional.UserId, generalChatId.Value, projectId, isGeneralChat: true);
+                await _hubService.AddUserToChatAsync(professionalUserIdGuid.ToString(), generalChatId.Value, projectId, isGeneralChat: true);
 
                 // 2. Criar um chat entre o cliente e o profissional, se não existir
-                if (!await _hubService.IsUserInChatAsync(clientUserId, professional.UserId, projectId))
-                {
-                    var existingClientProfessionalChatId = await _hubService.GetChatIdByProjectIdAsync(projectId, isGeneral: false);
+                var existingClientProfessionalChatId = await _hubService.GetChatIdByProjectIdAsync(
+                    projectId,
+                    isGeneral: false,
+                    clientUserId: clientUserIdGuid,
+                    professionalUserId: professionalUserIdGuid
+                );
 
-                    if (!existingClientProfessionalChatId.HasValue)
-                    {
-                        // Cria um novo chat específico entre o cliente e o profissional
-                        var chatId = await _hubService.CreateChatAsync(clientUserId, projectId, isGeneral: false);
-                        await _hubService.AddUserToChatAsync(professional.UserId, chatId, projectId, isGeneralChat: false);
-                    }
-                    else
-                    {
-                        // Se o chat já existir, apenas adiciona o profissional ao chat existente
-                        await _hubService.AddUserToChatAsync(professional.UserId, existingClientProfessionalChatId.Value, projectId, isGeneralChat: false);
-                    }
+                if (!existingClientProfessionalChatId.HasValue)
+                {
+                    // Cria um novo chat específico entre o cliente e o profissional
+                    var chatId = await _hubService.CreateChatAsync(clientUserIdGuid.ToString(), projectId, isGeneral: false);
+
+                    // Adiciona o profissional e o cliente ao novo chat
+                    await _hubService.AddUserToChatAsync(professionalUserIdGuid.ToString(), chatId, projectId, isGeneralChat: false);
+                    await _hubService.AddUserToChatAsync(clientUserIdGuid.ToString(), chatId, projectId, isGeneralChat: false);
+                }
+                else
+                {
+                    // Se o chat já existir, apenas adiciona o profissional ao chat existente
+                    await _hubService.AddUserToChatAsync(professionalUserIdGuid.ToString(), existingClientProfessionalChatId.Value, projectId, isGeneralChat: false);
+                }
+
+                // **Chamando o StepOne aqui**
+                var stepOneResult = await StepOne(projectId, professional.Id);
+                if (stepOneResult is NotFoundObjectResult || stepOneResult is BadRequestObjectResult)
+                {
+                    return stepOneResult; // Retorna o erro de StepOne, se houver
                 }
 
                 // Converte a entidade para DTO
@@ -325,6 +345,9 @@ namespace WebAthenPs.API.Controllers.Projects
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao adicionar profissional ao projeto: {ex.Message}");
             }
         }
+
+
+
 
 
 
@@ -416,6 +439,52 @@ namespace WebAthenPs.API.Controllers.Projects
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao acessar o chat do projeto: {ex.Message}");
             }
         }
+
+        [HttpGet("{projectId:int}/individual-chats")]
+        public async Task<ActionResult<List<ChatDto>>> GetIndividualChatsByProjectId(int projectId)
+        {
+            try
+            {
+                // Busca o projeto no banco de dados com o projectId fornecido
+                var existingProject = await _context.Projects
+                    .FirstOrDefaultAsync(p => p.ProjectId == projectId); // Supondo que 'Projects' seja o DbSet de projetos
+
+                if (existingProject == null)
+                {
+                    return NotFound("Projeto não encontrado.");
+                }
+
+                // Tenta obter todos os chats associados ao projeto com o projectId fornecido
+                var chatIds = await _hubService.GetChatIdsByProjectIdAsync(existingProject.ProjectId, isGeneral: false);
+
+                // Verifica se algum chat foi encontrado
+                if (chatIds == null || !chatIds.Any())
+                {
+                    return NotFound("Nenhum chat individual encontrado para este projeto.");
+                }
+
+                // Cria a lista de DTOs para cada chat encontrado
+                var chatDtos = new List<ChatDto>();
+
+                foreach (var chatId in chatIds)
+                {
+                    var chatDto = new ChatDto
+                    {
+                        Id = chatId,  // Adiciona o chatId na propriedade Id do DTO
+                        ProjectId = projectId
+                    };
+
+                    chatDtos.Add(chatDto);
+                }
+
+                return Ok(chatDtos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao acessar os chats individuais do projeto: {ex.Message}");
+            }
+        }
+
 
         private async Task<ActionResult> StepOne(int projectId, int professionalId)
         {
