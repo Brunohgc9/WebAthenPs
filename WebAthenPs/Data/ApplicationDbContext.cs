@@ -8,6 +8,7 @@ using WebAthenPs.API.Entities.Professional;
 using WebAthenPs.API.Entities.Professional.ProfessionalTypes;
 using WebAthenPs.API.Entities.Professional.ProfessionalTypes.ProfessionalsRelation;
 using WebAthenPs.API.Entities.Project;
+using WebAthenPs.API.Entities.Project.Steps;
 
 namespace WebAthenPs.API.Data
 {
@@ -48,6 +49,35 @@ namespace WebAthenPs.API.Data
         public DbSet<Cabinetmaker> Cabinetmakers { get; set; }
         public DbSet<InteriorDesigner> InteriorDesigners { get; set; }
         public DbSet<Decorator> Decorators { get; set; }
+
+
+        public DbSet<ProjectSteps> ProjectSteps { get; set; }
+        public DbSet<Step1HireArchitect> Step1HireArchitects { get; set; }
+        public DbSet<Step2Project> Step2Projects { get; set; }
+        public DbSet<Step3ApprovalInCityHall> Step3ApprovalInCityHalls { get; set; }
+        public DbSet<Step4ComplementaryProjects> Step4ComplementaryProjects { get; set; }
+        public DbSet<Step5BudgetSheet> Step5BudgetSheets { get; set; }
+        public DbSet<Step6ConstructionPlanning> Step6ConstructionPlannings { get; set; }
+        public DbSet<Step7PreliminaryServices> Step7PreliminaryServices { get; set; }
+        public DbSet<Step8ConstructionLocation> Step8ConstructionLocations { get; set; }
+        public DbSet<Step9StructuralProject> Step9StructuralProjects { get; set; }
+        public DbSet<Step10Masonry> Step10Masonries { get; set; }
+        public DbSet<Step11Roofing> Step11Roofings { get; set; }
+        public DbSet<Step12SanitaryInstallations> Step12SanitaryInstallations { get; set; }
+        public DbSet<Step13ElectricalInstallations> Step13ElectricalInstallations { get; set; }
+        public DbSet<Step14ComplementaryInstallations> Step14ComplementaryInstallations { get; set; }
+        public DbSet<Step15Finishes> Step15Finishes { get; set; }
+        public DbSet<Step16DoorsAndWindows> Step16DoorsAndWindows { get; set; }
+        public DbSet<Step17CeilingsAndFinishes> Step17CeilingsAndFinishes { get; set; }
+        public DbSet<Step18Marblework> Step18Marbleworks { get; set; }
+        public DbSet<Step19Lighting> Step19Lightings { get; set; }
+        public DbSet<Step20Floors> Step20Floors { get; set; }
+        public DbSet<Step21CarpentryWashbasinsAndMetals> Step21CarpentryWashbasinsAndMetals { get; set; }
+        public DbSet<Step22Painting> Step22Paintings { get; set; }
+        public DbSet<Step23Landscaping> Step23Landscapings { get; set; }
+        public DbSet<Step24CleaningOfTheSite> Step24CleaningOfTheSites { get; set; }
+        public DbSet<Step25Decoration> Step25Decorations { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
