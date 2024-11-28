@@ -4,6 +4,7 @@ using WebAthenPs.API.Entities.Clients;
 using WebAthenPs.API.Entities.Components;
 using WebAthenPs.API.Entities.Components.ChatEntities;
 using WebAthenPs.API.Entities.Professional;
+using WebAthenPs.API.Entities.Project.Steps;
 
 namespace WebAthenPs.API.Entities.Project
 {
@@ -54,6 +55,7 @@ namespace WebAthenPs.API.Entities.Project
         public ICollection<Proposal>? ProjectProposals { get; set; } = new List<Proposal>();
 
         public ICollection<Chats>? Chats { get; set; } = new List<Chats>();
+        public ProjectSteps? ProjectSteps { get; set; }
 
     }
 }
