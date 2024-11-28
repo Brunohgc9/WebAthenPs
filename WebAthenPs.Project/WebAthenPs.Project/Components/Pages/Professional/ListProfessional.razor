@@ -22,11 +22,11 @@ else
     <div class="card-container">
         @foreach (var professional in _professionals)
         {
-            <div class="card">
+            <div class="card-body">
                 <div class="card-header">
                     <h3>@professional.UserName</h3>
                 </div>
-                <div class="card-body">
+                <div class="card">
                     <p><strong>Email:</strong> @professional.Email</p>
                     <p><strong>Telefone:</strong> @professional.PhoneNumber</p>
                     <p><strong>Tipos de Profissional:</strong> @string.Join(", ", professional.ProfessionalTypes)</p>
