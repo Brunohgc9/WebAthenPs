@@ -1,8 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 html, body {
     font-family: "Noto Sans", sans-serif;
-    background-color: #1b1b1b;
-    color: white
+    background-color: white;
+    color: black
 }
 
 a, .btn-link {
@@ -60,14 +60,14 @@ h1:focus {
     background-color: white;
     color: #001445;
     border-radius: 25px;
-    width: 50%;
     align-items: center;
-    filter: drop-shadow(3px 4px 10px #1b1b1b)
+    filter: drop-shadow(0px 4px 10px #2727278a)
 }
 
 .card{
     background: none;
     align-items: center;
+    border: none;
 }
 
 .nav-scrollable{
@@ -112,4 +112,14 @@ form{
 
 .carousel-item{
     height: 450px;
+}
+
+.carousel-item img{
+    position: relative;
+    bottom: 200px;
+}
+
+.card-container{
+    padding: 20px;
+    gap: 20px;
 }
