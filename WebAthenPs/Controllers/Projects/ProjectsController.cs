@@ -240,6 +240,9 @@ namespace WebAthenPs.API.Controllers.Projects
             var project = model.CriarProjetoEmDTO();
             project.ClientId = client.ClientId;
 
+            // Define a data de criação do projeto
+            project.StartDate = DateTime.UtcNow;  // Define a data de criação como a data atual
+
             try
             {
                 // Cria o projeto no banco

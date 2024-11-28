@@ -2,15 +2,19 @@
 @using WebAthenPs.Models.DTOs.Professional
 @using WebAthenPs.Models.DTOs.Project
 @using WebAthenPs.Models.DTOs.Components
+@using WebAthenPs.Project.Components.Components
 @using WebAthenPs.Project.Services.Interfaces.Professional
 @using WebAthenPs.Project.Services.Interfaces.Project
 @using WebAthenPs.Project.Services.Interfaces.Components
 @using Blazored.LocalStorage
+@using WebAthenPs.Project.Services.Interfaces.User
 @inject IGenericProfessionalService ProfessionalService
 @inject IProjectService ProjectService
 @inject IPostService PostService
 @inject ICommentService CommentService
 @inject ILocalStorageService LocalStorage
+@inject IAuthService _authService
+
 
 @code {
     [Parameter] public int id { get; set; }
@@ -25,6 +29,8 @@
     private string _currentUserId;
     private Dictionary<int, List<CommentDTO>> _commentsByPost = new Dictionary<int, List<CommentDTO>>();
 
+    private bool showProposalModal = false; // Controlar a visibilidade do modal
+    private int selectedProfessionalIdForProposal = 0; // Id do profissional selecionado para o modal
 
     // Ao inicializar, carrega as informações do profissional, projetos e posts.
     protected override async Task OnInitializedAsync()
@@ -34,8 +40,68 @@
         await LoadProjects();
         await LoadPosts();
     }
+    // Adiciona um novo comentário a um post específico
+    private async Task AddCommentAsync()
+    {
+        try
+        {
+            // Verifica se o conteúdo do comentário e o ID do post são válidos
+            if (!string.IsNullOrWhiteSpace(_newCommentContent) && _selectedPostId > 0)
+            {
+                // Obtém o UserId do serviço de autenticação
+                var userId = await _authService.GetUserIdFromToken(); // Chama o serviço para pegar o UserId
 
-    // Carrega o ID do usuário a partir do LocalStorage
+                if (string.IsNullOrEmpty(userId))
+                {
+                    Console.WriteLine("Usuário não autenticado.");
+                    return; // Se o UserId não for válido, retorna e não faz a criação do comentário
+                }
+
+                // Cria o DTO do comentário com o conteúdo, UserId e PostId
+                var commentDto = new CommentCreateDTO
+                    {
+                        Content = _newCommentContent,
+                        UserId = userId, // Utiliza o UserId obtido do AuthService
+                        PostId = _selectedPostId
+                    };
+
+                // Chama o serviço para criar o comentário
+                var createdComment = await CommentService.CreateComment(commentDto);
+
+                if (createdComment != null)
+                {
+                    // Atualiza a lista de comentários para o post selecionado
+                    if (_commentsByPost.ContainsKey(_selectedPostId))
+                    {
+                        _commentsByPost[_selectedPostId].Add(createdComment);
+                    }
+                    else
+                    {
+                        _commentsByPost[_selectedPostId] = new List<CommentDTO> { createdComment };
+                    }
+
+                    // Limpa o campo de conteúdo do comentário
+                    _newCommentContent = string.Empty;
+
+                    // Força a atualização da interface do usuário
+                    StateHasChanged();
+                }
+                else
+                {
+                    Console.WriteLine("Falha ao criar o comentário.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Conteúdo do comentário ou ID do post inválido.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao adicionar comentário: {ex.Message}");
+        }
+    }
+
     private async Task LoadUserIdFromLocalStorage()
     {
         _currentUserId = await LocalStorage.GetItemAsync<string>("userId");
@@ -46,7 +112,6 @@
         }
     }
 
-    // Carrega os detalhes do profissional pelo ID passado na URL
     private async Task LoadProfessionalDetails()
     {
         try
@@ -68,7 +133,6 @@
         }
     }
 
-    // Carrega os projetos associados ao profissional
     private async Task LoadProjects()
     {
         try
@@ -96,8 +160,6 @@
         }
     }
 
-    // Carrega os posts do profissional e os comentários associados
-    // Carrega os posts do profissional e os comentários associados
     private async Task LoadPosts()
     {
         try
@@ -107,11 +169,10 @@
             {
                 _posts = (await PostService.GetPostsByUserIdAsync(userId)).ToList();
 
-                // Para cada post, obtenha os comentários relacionados ao post específico
                 foreach (var post in _posts)
                 {
                     var postComments = await CommentService.GetByPostId(post.Id);
-                    _commentsByPost[post.Id] = postComments.ToList(); // Populando o dicionário
+                    _commentsByPost[post.Id] = postComments.ToList();
                 }
             }
         }
@@ -121,37 +182,17 @@
         }
     }
 
-    // Adiciona um novo comentário a um post específico
-    private async Task AddCommentAsync()
+    // Método para abrir o modal com base no ID do profissional
+    private void OpenProposalModal(int professionalId)
     {
-        try
-        {
-            if (!string.IsNullOrWhiteSpace(_newCommentContent) && _selectedPostId > 0 && !string.IsNullOrEmpty(_currentUserId))
-            {
-                var commentDto = new CommentCreateDTO
-                    {
-                        Content = _newCommentContent,
-                        UserId = _currentUserId, // Utiliza o userId obtido do LocalStorage
-                        PostId = _selectedPostId
-                    };
+        selectedProfessionalIdForProposal = professionalId;
+        showProposalModal = true; // Exibe o modal
+    }
 
-                var createdComment = await CommentService.CreateComment(commentDto);
-
-                if (createdComment != null)
-                {
-                    _comments.Add(createdComment);
-                    _newCommentContent = string.Empty;
-                }
-            }
-            else
-            {
-                Console.WriteLine("Conteúdo do comentário ou ID do post inválido.");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Erro ao adicionar comentário: {ex.Message}");
-        }
+    // Método para fechar o modal
+    private void CloseProposalModal()
+    {
+        showProposalModal = false;
     }
 }
 
@@ -176,10 +217,21 @@ else
             </p>
         </div>
 
+        <!-- Botão para abrir o modal -->
+        <button class="btn btn-primary" @onclick="() => OpenProposalModal(_professional.Id)">
+            Solicitar Proposta
+        </button>
+
+        <!-- Exibe o modal se showProposalModal for true -->
+        @if (showProposalModal)
+        {
+            <ProposalModal ModalProfessionalId="selectedProfessionalIdForProposal" OnClose="CloseProposalModal" />
+        }
+
         <!-- Sobre o Profissional -->
         <div class="about">
             <h2>Sobre</h2>
-            <p>@(@* _professional.Bio ?? *@ "Informações adicionais não disponíveis.")</p>
+            <p>@(@* _professional.Bio ??  *@"Informações adicionais não disponíveis.")</p>
         </div>
 
         <!-- Áreas de Atuação -->
@@ -192,18 +244,6 @@ else
                 }
             </ul>
         </div>
-
-@*         <!-- Detalhes Específicos de Arquitetos -->
-        @if (_professional.ProfessionalTypes.Contains("Arquiteto") && _professional.GeneralArchitect != null)
-        {
-            <div class="architect-info">
-                <h2>Detalhes do Arquiteto</h2>
-                <p><strong>Nome:</strong> @(_professional.GeneralArchitect.name ?? "Nome não disponível")</p>
-                <p><strong>Email:</strong> @(_professional.GeneralArchitect.email ?? "Email não disponível")</p>
-                <p><strong>Registro no Conselho:</strong> @(_professional.GeneralArchitect.RegistroConselho ?? "Registro não disponível")</p>
-                <p><strong>Especialidade:</strong> @(_professional.GeneralArchitect.Especialidade ?? "Especialidade não disponível")</p>
-            </div>
-        } *@
 
         <!-- Listagem de Projetos -->
         @if (_projects.Any())
@@ -228,7 +268,6 @@ else
             </div>
         }
 
-        <!-- Listagem de Posts -->
         <!-- Listagem de Posts -->
         @if (_posts.Any())
         {
@@ -265,11 +304,8 @@ else
                 </div>
             </div>
         }
-
-
     </div>
 }
-
 
 <style>
     .portfolio {
@@ -305,63 +341,57 @@ else
         margin-top: 40px;
     }
 
-        .about p {
-            font-size: 1.2em;
-            line-height: 1.6em;
-        }
-
-        .skills ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-
-        .skills li {
-            background-color: #f1f1f1;
-            display: inline-block;
-            padding: 5px 15px;
-            margin: 5px;
-            border-radius: 15px;
-        }
-
-        .projects .project-list, .posts .post-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-    .project-card, .post-card {
-        background-color: #fff;
-        border-radius: 10px;
-        padding: 20px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    .about p {
+        font-size: 1.2em;
+        color: #666;
     }
 
-        .project-card h3, .post-card h3 {
-            margin-top: 0;
-            font-size: 1.5em;
-        }
-
-        .project-card p, .post-card p {
-            font-size: 1em;
-            margin: 0.5em 0;
-        }
-
-    .comments {
-        margin-top: 10px;
-        padding: 10px;
-        border-top: 1px solid #e0e0e0;
-    }
-
-    .comment-card {
-        background-color: #f9f9f9;
+    .projects .project-card {
+        padding: 15px;
+        background: #f7f7f7;
+        margin: 10px 0;
         border-radius: 8px;
-        padding: 10px;
-        margin-bottom: 10px;
-        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
-        .comment-card p {
-            margin: 0;
-        }
+    .posts .post-card {
+        padding: 15px;
+        background: #eaeaea;
+        margin: 10px 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
 
-</style> 
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background-color: white;
+        padding: 20px;
+        border-radius: 5px;
+        max-width: 500px;
+        width: 100%;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .btn:hover {
+        background-color: #0056b3;
+    }
+</style>

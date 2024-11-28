@@ -14,6 +14,7 @@ namespace WebAthenPs.API.Data
 {
     public class ApplicationDbContext(DbContextOptions options) : IdentityDbContext<ApplicationUser>(options)
     {
+        
         public DbSet<Projecty> Projects { get; set; }
         public DbSet<GenericProfessional> GenericProfessionals { get; set; }
         public DbSet<Client> Clients { get; set; }

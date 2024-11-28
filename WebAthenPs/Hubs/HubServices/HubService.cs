@@ -278,6 +278,11 @@ namespace WebAthenPs.API.Hubs.HubServices
             await _context.SaveChangesAsync();
         }
 
+        public string GetUserNameById(string userId)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+            return user?.UserName ?? "Unknown"; // Retorna o nome do usuário ou "Unknown" se não encontrado
+        }
 
     }
 }

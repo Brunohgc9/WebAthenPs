@@ -153,6 +153,17 @@ using WebAthenPs.Models.DTOs.Components.Chats;
             }
         }
 
+        public async Task<List<string>> GetMembersName(Guid chatId)
+        {
+            // Obtém os IDs dos membros do chat
+            var members = _hubService.GetMembers(chatId);
+
+            // Obtém os nomes dos membros com base nos IDs
+            var memberNames = members.Select(userId => _hubService.GetUserNameById(userId)).ToList();
+
+            return memberNames;
+        }
+
     }
 
 

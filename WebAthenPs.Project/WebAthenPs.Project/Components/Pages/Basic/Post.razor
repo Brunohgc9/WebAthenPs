@@ -1,10 +1,8 @@
 ﻿@page "/create-post"
 @using System.ComponentModel.DataAnnotations
 @using WebAthenPs.Models.DTOs.Components
-@using Blazored.LocalStorage
 @using WebAthenPs.Project.Services.Interfaces.Components
 @inject IPostService PostService
-@inject ILocalStorageService LocalStorage
 @inject NavigationManager NavigationManager
 
 <h1>Create Post</h1>
@@ -46,18 +44,6 @@
         ShowErrors = false;
         try
         {
-            // Obtém o userId diretamente do LocalStorage
-            var userId = await LocalStorage.GetItemAsync<string>("userId");
-            if (string.IsNullOrEmpty(userId))
-            {
-                Error = "You must be logged in to create a post.";
-                ShowErrors = true;
-                return;
-            }
-
-            // Define o UserId no PostCreateDTO
-            newPost.UserId = userId;
-
             // Envia o post para o serviço PostService para ser salvo
             var result = await PostService.CreatePostAsync(newPost);
             if (result != null)

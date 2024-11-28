@@ -2,8 +2,10 @@
 @rendermode InteractiveAuto
 @using Microsoft.AspNetCore.SignalR.Client
 @using WebAthenPs.Models.DTOs.Components.Chats
+@using WebAthenPs.Project.Services.Interfaces.User
 @inject SignalRConnection signalRConnection
 @inject IJSRuntime js
+@inject IAuthService authService
 @implements IDisposable
 
 <div class="row">
@@ -19,7 +21,7 @@
                         @foreach (var chat in AvailableChats)
                         {
                             <li class="list-group-item list-group-item-action" style="cursor: pointer" @onclick="(() => LoadChat(chat.Id))">
-                                @chat.Id
+                                @string.Join(", ", chat.User != null ? chat.User.Select(u => u.UserName) : new List<string> { "Usuário Desconhecido" })
                             </li>
                         }
                     </ul>
@@ -86,12 +88,32 @@
     private async Task LoadAvailableChats()
     {
         AvailableChats = await signalRConnection.GetUserChats();
+
+        // Para cada chat, obtemos os nomes dos usuários
+        foreach (var chat in AvailableChats)
+        {
+            // Atribui o título do chat usando os nomes dos usuários do chat
+            var userNames = await GetMembersNames(chat.Id); // Usamos o método GetMembersNames para pegar os nomes
+            CurrentChatTitle = userNames.Any() ? string.Join(", ", userNames) : "Chat Desconhecido"; // Se houver nomes, junta-os, senão coloca um título genérico
+        }
+    }
+
+    private async Task<List<string>> GetMembersNames(Guid chatId)
+    {
+        // Chama o método GetMembersNames para obter os nomes dos membros do chat
+        var memberNames = await signalRConnection.GetMembersNames(chatId);
+        return memberNames ?? new List<string> { "Nenhum nome encontrado" }; // Retorna a lista de nomes ou um valor default
     }
 
     private async Task LoadChat(Guid chatId)
     {
         CurrentChatId = chatId;
-        CurrentChatTitle = $"Chat {chatId}";
+
+        // Atribui o título do chat usando os nomes dos usuários
+        var chat = AvailableChats.FirstOrDefault(c => c.Id == chatId);
+        var userNames = await GetMembersNames(chatId); // Usando o método GetMembersNames
+        CurrentChatTitle = userNames.Any() ? string.Join(", ", userNames) : "Chat Desconhecido";
+
         ChatMessages.Clear();
 
         var messages = await signalRConnection.GetChatMessages(chatId);

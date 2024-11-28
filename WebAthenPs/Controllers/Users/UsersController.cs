@@ -211,5 +211,20 @@ namespace WebAthenPs.API.Controllers.Users
 
             return Ok(user.UserType);
         }
+
+        // Método para retornar apenas o nome do usuário pelo ID
+        [HttpGet("GetUserName/{userId}")]
+        public async Task<ActionResult<string>> GetUserNameById(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound("Usuário não encontrado.");
+            }
+
+            // Retorna o nome do usuário
+            return Ok(user.UserName);
+        }
+
     }
 }

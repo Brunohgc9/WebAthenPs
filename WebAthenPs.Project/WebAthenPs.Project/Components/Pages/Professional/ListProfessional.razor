@@ -32,7 +32,8 @@ else
                     <p><strong>Tipos de Profissional:</strong> @string.Join(", ", professional.ProfessionalTypes)</p>
                 </div>
                 <div class="card-footer">
-                    <button @onclick="() => GoToProposalPage(professional.Id)" class="btn btn-primary">Enviar Proposta</button>
+                    <!-- Botão que agora redireciona para o portfólio do profissional -->
+                    <button @onclick="() => GoToPortfolioPage(professional.Id)" class="btn btn-primary">Ver Portfólio</button>
                 </div>
             </div>
         }
@@ -59,7 +60,6 @@ else
             // Filtro adicional para Arquitetos
             if (_architectFilter == "true")
             {
-                // Verifique se o GenericProfessionalTypeDTO não é nulo antes de acessar ArchitectId
                 _professionals = _professionals.Where(p => p.GenericProfessionalTypeDTO != null && p.GenericProfessionalTypeDTO.ArchitectId != null);
             }
         }
@@ -80,11 +80,13 @@ else
         await LoadProfessionals();
     }
 
-    private void GoToProposalPage(int professionalId)
+    private void GoToPortfolioPage(int professionalId)
     {
-        Navigation.NavigateTo($"/sendproposal/{professionalId}"); // Redireciona para a página de proposta
+        // Redireciona para a página de portfólio do profissional
+        Navigation.NavigateTo($"/portfolio/{professionalId}");
     }
 }
+
 
 <style>
     .filter-section {

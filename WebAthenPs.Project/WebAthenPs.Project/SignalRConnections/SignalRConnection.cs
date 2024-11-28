@@ -205,4 +205,14 @@ public class SignalRConnection
         return await hubConnection.InvokeAsync<List<ChatDto>>("GetChatsByProjectId", projectId);
     }
 
+    public async Task<List<string>> GetMembersNames(Guid chatId)
+    {
+        await EnsureConnectionAsync();  // Garante que a conexão está ativa
+
+        // Chama o método "GetMembersName" do SignalR Hub
+        var memberNames = await hubConnection.InvokeAsync<List<string>>("GetMembersName", chatId);
+
+        return memberNames;
+    }
+
 }

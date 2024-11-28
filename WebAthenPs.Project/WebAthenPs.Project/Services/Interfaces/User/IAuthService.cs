@@ -11,6 +11,7 @@ namespace WebAthenPs.Project.Services.Interfaces.User
         Task<bool> IsLoggedIn();
 
         Task<string> GetToken();
+        Task<string> GetUserNameByIdAsync(string userId);
 
     }
 }

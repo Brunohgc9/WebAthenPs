@@ -227,6 +227,43 @@ namespace WebAthenPs.Project.Services.Implementation.User
             }
             return true; // Considera expirado se não puder ser analisado
         }
+        public async Task<string> GetUserNameByIdAsync(string userId)
+        {
+            try
+            {
+                // Cria um cliente HTTP
+                var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
+
+                // Faz uma requisição para a API que retorna o usuário pelo ID
+                var response = await httpClient.GetAsync($"api/Users/{userId}"); // Supondo que esta URL retorne um objeto com os dados do usuário.
+
+                if (response.IsSuccessStatusCode)
+                {
+                    // Deserializa a resposta para um objeto de usuário
+                    var userDto = JsonSerializer.Deserialize<ApplicationUserDTO>(
+                        await response.Content.ReadAsStringAsync(),
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    if (userDto != null)
+                    {
+                        return userDto.UserName; // Retorna o nome do usuário
+                    }
+                    else
+                    {
+                        throw new Exception("Usuário não encontrado.");
+                    }
+                }
+                else
+                {
+                    throw new Exception($"Erro ao buscar usuário. Status: {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao obter nome do usuário: {ex.Message}");
+                throw; // Trate o erro conforme necessário
+            }
+        }
 
 
 

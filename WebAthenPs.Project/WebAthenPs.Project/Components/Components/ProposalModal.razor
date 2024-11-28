@@ -1,76 +1,79 @@
-﻿@page "/sendproposal/{professionalId:int}"
-@using Microsoft.AspNetCore.SignalR.Client
-@using System.Net.Http.Headers
+﻿@using Microsoft.AspNetCore.SignalR.Client
 @using WebAthenPs.Models.DTOs.Components
 @using WebAthenPs.Models.DTOs.Client
 @using WebAthenPs.Models.DTOs.Professional
 @using WebAthenPs.Models.DTOs.Project
-@using Blazored.LocalStorage
 @using WebAthenPs.Project.Services.Interfaces.User
 @using WebAthenPs.Project.Services.Interfaces.Client
 @using WebAthenPs.Project.Services.Interfaces.Project
 @using WebAthenPs.Project.Services.Interfaces.Professional
 @inject NavigationManager Navigation
-@inject ILocalStorageService LocalStorage
-@inject IHttpClientFactory HttpClientFactory
 @inject IAuthService AuthService
 @inject IClientService ClientService
 @inject IProjectService ProjectService
 @inject IGenericProfessionalService ProfessionalService
-@inject SignalRConnection SignalRConnection // Injetando a conexão SignalR
-@implements IDisposable
-@rendermode InteractiveServer
+@inject SignalRConnection SignalRConnection
 
-<h3>Enviar Proposta</h3>
+<!-- Modal -->
+<div class="modal" tabindex="-1" style="display: @(IsVisible ? "block" : "none");">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Enviar Proposta</h5>
+                <button type="button" class="btn-close" aria-label="Close" @onclick="CloseModal"></button>
+            </div>
+            <div class="modal-body">
+                <label>Projeto:</label>
+                <select @bind="selectedProjectId">
+                    <option value="">Selecione um projeto</option>
+                    @if (projects != null)
+                    {
+                        @foreach (var project in projects)
+                        {
+                            <option value="@project.ProjectId">@project.ProjectName</option>
+                        }
+                    }
+                </select>
 
-<div>
-    <label>Projeto:</label>
-    <select @bind="selectedProjectId">
-        <option value="">Selecione um projeto</option>
-        @if (projects != null)
-        {
-            @foreach (var project in projects)
-            {
-                <option value="@project.ProjectId">@project.ProjectName</option>
-            }
-        }
-    </select>
+                <label>Mensagem:</label>
+                <input type="text" @bind="proposalMessage" placeholder="Digite a mensagem da proposta" />
 
-    <label>Mensagem:</label>
-    <input type="text" @bind="proposalMessage" placeholder="Digite a mensagem da proposta" />
+                <label>Valor:</label>
+                <input type="number" @bind="proposalValue" min="0" placeholder="Digite o valor da proposta" />
 
-    <label>Valor:</label>
-    <input type="number" @bind="proposalValue" min="0" placeholder="Digite o valor da proposta" />
+                <label>Tipo de Contratação:</label>
+                <select @bind="selectedProfessionalType">
+                    <option value="">Selecione o tipo de contratação</option>
+                    @if (professionalTypes != null)
+                    {
+                        @foreach (var type in professionalTypes)
+                        {
+                            <option value="@type">@type</option>
+                        }
+                    }
+                </select>
 
-    <div>
-        <label>Tipo de Contratação:</label>
-        <select @bind="selectedProfessionalType">
-            <option value="">Selecione o tipo de contratação</option>
-            @if (professionalTypes != null)
-            {
-                @foreach (var type in professionalTypes)
+                <button @onclick="SendProposal">Enviar Proposta</button>
+
+                @if (isSuccess)
                 {
-                    <option value="@type">@type</option>
+                    <div class="alert alert-success mt-3">Proposta enviada com sucesso!</div>
                 }
-            }
-        </select>
 
-        <button @onclick="SendProposal">Enviar Proposta</button>
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="alert alert-danger mt-3">@errorMessage</div>
+                }
+            </div>
+        </div>
     </div>
 </div>
 
-@if (isSuccess)
-{
-    <div class="alert alert-success mt-3">Proposta enviada com sucesso!</div>
-}
-
-@if (!string.IsNullOrEmpty(errorMessage))
-{
-    <div class="alert alert-danger mt-3">@errorMessage</div>
-}
-
 @code {
-    [Parameter] public int ProfessionalId { get; set; }
+[Parameter] public int ModalProfessionalId { get; set; }
+[Parameter] public EventCallback<bool> OnClose { get; set; }
+
+    private bool IsVisible { get; set; } = true; // Controla a visibilidade do modal
     private HubConnection hubConnection;
     private string proposalMessage;
     private decimal proposalValue;
@@ -129,7 +132,7 @@
     {
         try
         {
-            var professional = await ProfessionalService.GetByIdAsync(ProfessionalId);
+            var professional = await ProfessionalService.GetByIdAsync(ModalProfessionalId);
             professionalTypes = professional.ProfessionalTypes; // Carrega os tipos de profissional
         }
         catch (Exception ex)
@@ -172,7 +175,7 @@
             }
 
             // Obter o userId do profissional
-            var professional = await ProfessionalService.GetByIdAsync(ProfessionalId);
+            var professional = await ProfessionalService.GetByIdAsync(ModalProfessionalId);
             var professionalUserId = professional.UserId; // Supondo que você tenha uma propriedade UserId no DTO
 
             // Criação do chat
@@ -201,7 +204,7 @@
                     ProposalType = selectedProfessionalType,
                     IsAccepted = false,
                     Client = new ClientDTO { ClientId = clientId.Value },
-                    Professional = new GenericProfessionalDTO { Id = ProfessionalId, UserId = professionalUserId }, // Adiciona o userId do profissional
+                    Professional = new GenericProfessionalDTO { Id = ModalProfessionalId, UserId = professionalUserId }, // Adiciona o userId do profissional
                     Projects = new ProjectsDTO { ProjectId = selectedProjectId.Value },
                     ToBeContractedAs = new List<string> { selectedProfessionalType }
                 };
@@ -223,8 +226,6 @@
         }
     }
 
-
-
     private void ClearForm()
     {
         proposalMessage = string.Empty;
@@ -232,6 +233,12 @@
         selectedProjectId = null;
         selectedProfessionalType = string.Empty;
         isSuccess = false;
+    }
+
+    private void CloseModal()
+    {
+        IsVisible = false;
+        OnClose.InvokeAsync(true);
     }
 
     public void Dispose()

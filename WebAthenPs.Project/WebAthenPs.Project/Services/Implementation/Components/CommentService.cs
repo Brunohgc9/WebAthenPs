@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using WebAthenPs.Models.DTOs.Components;
 using WebAthenPs.Project.Services.Interfaces.Components;
+using WebAthenPs.Project.Services.Interfaces.User;
 
 namespace WebAthenPs.Services.Implementation.Comments
 {
@@ -12,16 +13,35 @@ namespace WebAthenPs.Services.Implementation.Comments
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<CommentService> _logger;
+        private readonly IAuthService _authService;
 
-        public CommentService(IHttpClientFactory httpClientFactory, ILogger<CommentService> logger)
+        public CommentService(
+            IHttpClientFactory httpClientFactory,
+            ILogger<CommentService> logger,
+            IAuthService authService)
         {
             _httpClientFactory = httpClientFactory;
             _logger = logger;
+            _authService = authService;
         }
 
         private async Task<HttpClient> CreateAuthorizedClientAsync()
         {
             var httpClient = _httpClientFactory.CreateClient("APIWebAthenPs");
+
+            // Verifica se o usuário está autenticado
+            if (!await _authService.IsLoggedIn())
+            {
+                _logger.LogWarning("Usuário não autenticado ao tentar acessar a API.");
+                throw new UnauthorizedAccessException("Usuário não autenticado.");
+            }
+
+            var token = await _authService.GetToken(); // Obtém o token do usuário
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
+
             return httpClient;
         }
 
@@ -75,7 +95,6 @@ namespace WebAthenPs.Services.Implementation.Comments
             }
         }
 
-        // **NOVO**: Obter comentários pelo ID do post
         public async Task<IEnumerable<CommentDTO>> GetByPostId(int postId)
         {
             try
@@ -105,7 +124,21 @@ namespace WebAthenPs.Services.Implementation.Comments
         {
             try
             {
+                // Obtém o UserId do usuário autenticado
+                var userId = await _authService.GetUserIdFromToken();
+                if (string.IsNullOrEmpty(userId))
+                {
+                    _logger.LogWarning("Usuário não autenticado ao tentar criar um comentário.");
+                    throw new UnauthorizedAccessException("Usuário não autenticado.");
+                }
+
+                // Atribui o UserId ao DTO
+                dto.UserId = userId;
+
+                // Cria o cliente HTTP autorizado
                 var httpClient = await CreateAuthorizedClientAsync();
+
+                // Envia o comentário para a API
                 var response = await httpClient.PostAsJsonAsync("api/Comments", dto);
 
                 if (response.IsSuccessStatusCode)
