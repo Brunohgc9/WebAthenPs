@@ -7,6 +7,7 @@ using WebAthenPs.Models.DTOs.Client;
 using WebAthenPs.Models.DTOs.Components;
 using WebAthenPs.Models.DTOs.Components.Chats;
 using WebAthenPs.Models.DTOs.Professional;
+using WebAthenPs.Models.DTOs.Project.Steps;
 
 namespace WebAthenPs.Models.DTOs.Project
 {
@@ -41,6 +42,8 @@ namespace WebAthenPs.Models.DTOs.Project
         public ClientDTO? Client { get; set; }
 
         public ChatDto? Chat { get; set; }
+
+        public ProjectStepsDto? ProjectSteps { get; set; }
 
     }
 }

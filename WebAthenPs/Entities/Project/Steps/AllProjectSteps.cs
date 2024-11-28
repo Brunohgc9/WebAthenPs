@@ -11,6 +11,7 @@ namespace WebAthenPs.API.Entities.Project.Steps
         public Guid ProjectStepsId { get; set; }
 
         public string? Description { get; set; }
+        public bool? IsFinished { get; set; }
 
     }
 }

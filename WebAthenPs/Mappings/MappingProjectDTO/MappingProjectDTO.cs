@@ -10,6 +10,8 @@ using WebAthenPs.API.Entities;
 using WebAthenPs.API.Data;
 using WebAthenPs.Models.DTOs.Professional.ProfessionalTypes;
 using WebAthenPs.API.Entities.Professional.ProfessionalTypes.ProfessionalsRelation;
+using WebAthenPs.Models.DTOs.Project.Steps;
+using WebAthenPs.API.Entities.Project.Steps;
 
 namespace WebAthenPs.API.Mappings.MappingProjectDTO
 {
@@ -39,6 +41,38 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                 NumberOfRooms = item.NumberOfRooms,
                 ActStep = item.ActStep,
                 NumberOfBathrooms = item.NumberOfBathrooms,
+                ProjectSteps = new ProjectStepsDto
+                {
+                    Id = item.ProjectSteps?.Id ?? Guid.Empty,
+                    ProjectId = item.ProjectSteps?.ProjectId ?? default,
+
+                    // Mapeamento das etapas do projeto com os respectivos IDs
+                    Step1HireArchitectId = item.ProjectSteps?.Step1HireArchitectId,
+                    Step2ProjectId = item.ProjectSteps?.Step2ProjectId,
+                    Step3ApprovalInCityHallId = item.ProjectSteps?.Step3ApprovalInCityHallId,
+                    Step4ComplementaryProjectsId = item.ProjectSteps?.Step4ComplementaryProjectsId,
+                    Step5BudgetSheetId = item.ProjectSteps?.Step5BudgetSheetId,
+                    Step6ConstructionPlanningId = item.ProjectSteps?.Step6ConstructionPlanningId,
+                    Step7PreliminaryServicesId = item.ProjectSteps?.Step7PreliminaryServicesId,
+                    Step8ConstructionLocationId = item.ProjectSteps?.Step8ConstructionLocationId,
+                    Step9StructuralProjectId = item.ProjectSteps?.Step9StructuralProjectId,
+                    Step10MasonryId = item.ProjectSteps?.Step10MasonryId,
+                    Step11RoofingId = item.ProjectSteps?.Step11RoofingId,
+                    Step12SanitaryInstallationsId = item.ProjectSteps?.Step12SanitaryInstallationsId,
+                    Step13ElectricalInstallationsId = item.ProjectSteps?.Step13ElectricalInstallationsId,
+                    Step14ComplementaryInstallationsId = item.ProjectSteps?.Step14ComplementaryInstallationsId,
+                    Step15FinishesId = item.ProjectSteps?.Step15FinishesId,
+                    Step16DoorsAndWindowsId = item.ProjectSteps?.Step16DoorsAndWindowsId,
+                    Step17CeilingsAndFinishesId = item.ProjectSteps?.Step17CeilingsAndFinishesId,
+                    Step18MarbleworkId = item.ProjectSteps?.Step18MarbleworkId,
+                    Step19LightingId = item.ProjectSteps?.Step19LightingId,
+                    Step20FloorsId = item.ProjectSteps?.Step20FloorsId,
+                    Step21CarpentryWashbasinsAndMetalsId = item.ProjectSteps?.Step21CarpentryWashbasinsAndMetalsId,
+                    Step22PaintingId = item.ProjectSteps?.Step22PaintingId,
+                    Step23LandscapingId = item.ProjectSteps?.Step23LandscapingId,
+                    Step24CleaningOfTheSiteId = item.ProjectSteps?.Step24CleaningOfTheSiteId,
+                    Step25DecorationId = item.ProjectSteps?.Step25DecorationId
+                },
                 LProfessionals = item.Professionals?.Select(p => new GenericProfessionalDTO
                 {
                     Id = p.Id,
@@ -130,7 +164,38 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                 NumberOfRooms = project.NumberOfRooms,
                 NumberOfBathrooms = project.NumberOfBathrooms,
                 ActStep = project.ActStep ?? string.Empty,
+                ProjectSteps = new ProjectStepsDto
+                {
+                    Id = project.ProjectSteps?.Id ?? Guid.Empty,
+                    ProjectId = project.ProjectSteps?.ProjectId ?? default,
 
+                    // Mapeamento das etapas do projeto com os respectivos IDs
+                    Step1HireArchitectId = project.ProjectSteps?.Step1HireArchitectId,
+                    Step2ProjectId = project.ProjectSteps?.Step2ProjectId,
+                    Step3ApprovalInCityHallId = project.ProjectSteps?.Step3ApprovalInCityHallId,
+                    Step4ComplementaryProjectsId = project.ProjectSteps?.Step4ComplementaryProjectsId,
+                    Step5BudgetSheetId = project.ProjectSteps?.Step5BudgetSheetId,
+                    Step6ConstructionPlanningId = project.ProjectSteps?.Step6ConstructionPlanningId,
+                    Step7PreliminaryServicesId = project.ProjectSteps?.Step7PreliminaryServicesId,
+                    Step8ConstructionLocationId = project.ProjectSteps?.Step8ConstructionLocationId,
+                    Step9StructuralProjectId = project.ProjectSteps?.Step9StructuralProjectId,
+                    Step10MasonryId = project.ProjectSteps?.Step10MasonryId,
+                    Step11RoofingId = project.ProjectSteps?.Step11RoofingId,
+                    Step12SanitaryInstallationsId = project.ProjectSteps?.Step12SanitaryInstallationsId,
+                    Step13ElectricalInstallationsId = project.ProjectSteps?.Step13ElectricalInstallationsId,
+                    Step14ComplementaryInstallationsId = project.ProjectSteps?.Step14ComplementaryInstallationsId,
+                    Step15FinishesId = project.ProjectSteps?.Step15FinishesId,
+                    Step16DoorsAndWindowsId = project.ProjectSteps?.Step16DoorsAndWindowsId,
+                    Step17CeilingsAndFinishesId = project.ProjectSteps?.Step17CeilingsAndFinishesId,
+                    Step18MarbleworkId = project.ProjectSteps?.Step18MarbleworkId,
+                    Step19LightingId = project.ProjectSteps?.Step19LightingId,
+                    Step20FloorsId = project.ProjectSteps?.Step20FloorsId,
+                    Step21CarpentryWashbasinsAndMetalsId = project.ProjectSteps?.Step21CarpentryWashbasinsAndMetalsId,
+                    Step22PaintingId = project.ProjectSteps?.Step22PaintingId,
+                    Step23LandscapingId = project.ProjectSteps?.Step23LandscapingId,
+                    Step24CleaningOfTheSiteId = project.ProjectSteps?.Step24CleaningOfTheSiteId,
+                    Step25DecorationId = project.ProjectSteps?.Step25DecorationId
+                },
                 LProfessionals = project.Professionals?.Select(p => new GenericProfessionalDTO
                 {
                     Id = p.Id,
@@ -245,8 +310,50 @@ namespace WebAthenPs.API.Mappings.MappingProjectDTO
                 TotalArea = updateProjectDTO.TotalArea,
                 NumberOfRooms = updateProjectDTO.NumberOfRooms,
                 NumberOfBathrooms = updateProjectDTO.NumberOfBathrooms,
+
+                // Mapeamento de ProjectStepsDto para ProjectSteps
+                ProjectSteps = MapToProjectSteps(updateProjectDTO.ProjectSteps)
             };
         }
+
+        // Método para mapear ProjectStepsDto para ProjectSteps
+        private static ProjectSteps MapToProjectSteps(ProjectStepsDto stepsDto)
+        {
+            if (stepsDto == null)
+                return null;
+
+            return new ProjectSteps
+            {
+                Id = stepsDto.Id,
+                ProjectId = stepsDto.ProjectId,
+                Step1HireArchitectId = stepsDto.Step1HireArchitectId,
+                Step2ProjectId = stepsDto.Step2ProjectId,
+                Step3ApprovalInCityHallId = stepsDto.Step3ApprovalInCityHallId,
+                Step4ComplementaryProjectsId = stepsDto.Step4ComplementaryProjectsId,
+                Step5BudgetSheetId = stepsDto.Step5BudgetSheetId,
+                Step6ConstructionPlanningId = stepsDto.Step6ConstructionPlanningId,
+                Step7PreliminaryServicesId = stepsDto.Step7PreliminaryServicesId,
+                Step8ConstructionLocationId = stepsDto.Step8ConstructionLocationId,
+                Step9StructuralProjectId = stepsDto.Step9StructuralProjectId,
+                Step10MasonryId = stepsDto.Step10MasonryId,
+                Step11RoofingId = stepsDto.Step11RoofingId,
+                Step12SanitaryInstallationsId = stepsDto.Step12SanitaryInstallationsId,
+                Step13ElectricalInstallationsId = stepsDto.Step13ElectricalInstallationsId,
+                Step14ComplementaryInstallationsId = stepsDto.Step14ComplementaryInstallationsId,
+                Step15FinishesId = stepsDto.Step15FinishesId,
+                Step16DoorsAndWindowsId = stepsDto.Step16DoorsAndWindowsId,
+                Step17CeilingsAndFinishesId = stepsDto.Step17CeilingsAndFinishesId,
+                Step18MarbleworkId = stepsDto.Step18MarbleworkId,
+                Step19LightingId = stepsDto.Step19LightingId,
+                Step20FloorsId = stepsDto.Step20FloorsId,
+                Step21CarpentryWashbasinsAndMetalsId = stepsDto.Step21CarpentryWashbasinsAndMetalsId,
+                Step22PaintingId = stepsDto.Step22PaintingId,
+                Step23LandscapingId = stepsDto.Step23LandscapingId,
+                Step24CleaningOfTheSiteId = stepsDto.Step24CleaningOfTheSiteId,
+                Step25DecorationId = stepsDto.Step25DecorationId
+            };
+        }
+
 
         // Mapeamento de ProjectProfessionalDTO para ProjectProfessional
         // Mapeamento de ProjectProfessionalDTO para ProjectProfessional

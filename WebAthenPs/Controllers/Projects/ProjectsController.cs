@@ -17,6 +17,7 @@ using WebAthenPs.API.Entities.Professional;
 using WebAthenPs.Models.DTOs.Professional;
 using WebAthenPs.API.Hubs.HubServices;
 using WebAthenPs.Models.DTOs.Components.Chats;
+using WebAthenPs.API.Entities.Project.Steps;
 
 namespace WebAthenPs.API.Controllers.Projects
 {
@@ -500,28 +501,50 @@ namespace WebAthenPs.API.Controllers.Projects
                 if (professional == null)
                     return NotFound("Profissional não encontrado.");
 
-                // Verifica se o profissional é um arquiteto (em português ou inglês)
+                // Verifica se o profissional é um arquiteto
                 if (!professional.ProfessionalTypes.Contains("Arquiteto") && !professional.ProfessionalTypes.Contains("Architect"))
                 {
                     return BadRequest("Somente um arquiteto pode ser adicionado a este projeto.");
                 }
 
-                // Verifica se já existe um arquiteto no projeto (em português ou inglês)
-                var existingArchitect = existingProject.ProjectProfessionals
-                    .Any(p => p.ContractedAs.Contains("Arquiteto") || p.ContractedAs.Contains("Architect"));
+                // Verifica se já existe um arquiteto atribuído no Step1
+                if (existingProject.ProjectSteps?.Step1HireArchitectId != null)
+                {
+                    return BadRequest("Já existe um arquiteto atribuído para a Etapa 1 deste projeto.");
+                }
 
+                // Cria o registro de Step1HireArchitect com o arquiteto
+                var step1HireArchitect = new Step1HireArchitect
+                {
+                    Id = Guid.NewGuid(),
+                    ArchitectId = professional.GenericProfessionalType.Architect.Id,
+                    ProjectStepsId = existingProject.ProjectSteps.Id,
+                    Description = "Arquiteto contratado para o projeto",
+                    IsFinished = true
+                };
 
-                // Atualiza o ActStep para "Etapa 2" após adicionar um arquiteto
+                await _context.Step1HireArchitects.AddAsync(step1HireArchitect);
+
+                // Atualiza o ProjectSteps com o novo Step1HireArchitectId
+                existingProject.ProjectSteps.Step1HireArchitectId = step1HireArchitect.Id;
+                _context.ProjectSteps.Update(existingProject.ProjectSteps);
+
+                // Atualiza o ActStep do projeto
                 existingProject.ActStep = "Etapa 2";
-                await _projectRepository.UpdateProject(existingProject);
+                _context.Projects.Update(existingProject);
 
-                return Ok("Arquitetura verificada e Etapa 2 definida.");
+                await _context.SaveChangesAsync();
+
+                return Ok("Arquiteto registrado com sucesso na Etapa 1 e projeto avançado para a Etapa 2.");
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao validar o arquiteto e atualizar etapa: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao registrar arquiteto na Etapa 1: {ex.Message}");
             }
         }
+
+
+
 
 
     }

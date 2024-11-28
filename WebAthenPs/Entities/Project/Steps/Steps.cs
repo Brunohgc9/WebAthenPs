@@ -1,8 +1,13 @@
-﻿namespace WebAthenPs.API.Entities.Project.Steps
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using WebAthenPs.API.Entities.Professional.ProfessionalTypes;
+
+namespace WebAthenPs.API.Entities.Project.Steps
 {
     public class Step1HireArchitect : AllProjectSteps
     {
-        // 1st Step: 2,03m - HIRE AN ARCHITECT
+        [ForeignKey("ArchitectId")]
+        public Architect Architect { get; set; }
+        public Guid ArchitectId { get; set; }
     }
     public class Step2Project : AllProjectSteps
     {
