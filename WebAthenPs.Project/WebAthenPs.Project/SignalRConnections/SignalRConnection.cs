@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Client;
 using WebAthenPs.Models.DTOs.Components.Chats;
 using WebAthenPs.Project.Services.Interfaces.User;
@@ -77,6 +79,71 @@ public class SignalRConnection
         var userId = await authService.GetUserIdFromToken();
         await hubConnection.InvokeAsync("SendMessage", userId, chatId, message);
     }
+
+    public async Task SendMessageWithFile(Guid chatId, string message, byte[] fileBytes, string fileName)
+    {
+        await EnsureConnectionAsync();  // Garante que a conexão está ativa
+        var userId = await authService.GetUserIdFromToken();  // Obtém o UserId do token JWT
+
+        Console.WriteLine($"Attempting to save and send file. ChatId: {chatId}, Message: {message}, FileName: {fileName}, FileSize: {fileBytes?.Length ?? 0} bytes");
+
+        try
+        {
+            if (fileBytes == null || fileBytes.Length == 0)
+                throw new ArgumentException("File is empty.");
+
+            // Define o caminho para salvar o arquivo no cliente
+            string fileRoute = SaveFileLocally(fileBytes, fileName);
+
+            Console.WriteLine($"File saved locally at: {fileRoute}");
+
+            // Envia o UserId, chatId, message e fileRoute para o servidor
+            await hubConnection.InvokeAsync("SendMessageWithFile", userId, chatId, message, fileRoute);
+            Console.WriteLine("Message and file route sent successfully.");
+        }
+        catch (HubException ex)
+        {
+            Console.WriteLine($"SignalR HubException: {ex.Message}");
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+            throw;
+        }
+        finally
+        {
+            Console.WriteLine("SendMessageWithFile execution completed.");
+        }
+    }
+
+    /// <summary>
+    /// Salva o arquivo localmente e retorna a rota relativa.
+    /// </summary>
+    private string SaveFileLocally(byte[] fileBytes, string fileName)
+    {
+        var directory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "chatfiles");
+
+        // Garante que o diretório existe
+        if (!Directory.Exists(directory))
+            Directory.CreateDirectory(directory);
+
+        // Gera um nome único para o arquivo
+        var uniqueFileName = $"{Guid.NewGuid()}_{fileName}";
+        var filePath = Path.Combine(directory, uniqueFileName);
+
+        // Salva o arquivo no caminho gerado
+        File.WriteAllBytes(filePath, fileBytes);
+
+        // Retorna a rota relativa para o arquivo
+        return $"/chatfiles/{uniqueFileName}";
+    }
+
+
+
+
+
+
 
     public async Task<string> GetUserConnectionId()
     {

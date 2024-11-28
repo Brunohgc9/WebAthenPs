@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -36,6 +36,7 @@
     <Folder Include="Services\Implementation\Chats\" />
     <Folder Include="Services\Implementation\Professional\ProfessionalTypes\" />
     <Folder Include="Services\Interfaces\Chats\" />
+    <Folder Include="wwwroot\chatfiles\" />
   </ItemGroup>
 
 </Project>

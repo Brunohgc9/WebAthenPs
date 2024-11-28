@@ -1,4 +1,5 @@
-﻿@using WebAthenPs.Models.DTOs.Components.Chats
+﻿@using Microsoft.AspNetCore.Components.Forms
+@using WebAthenPs.Models.DTOs.Components.Chats
 @using WebAthenPs.Project.Services.Interfaces.Project
 @inject SignalRConnection signalRConnection
 @inject IJSRuntime js
@@ -29,7 +30,6 @@
                     <div class="tab-pane fade @activeTabClass(0, "show active")">
                         @if (GeneralChat != null)
                         {
-                            <!-- Div para exibir o chat geral -->
                             <div class="list-group">
                                 <button class="list-group-item list-group-item-action" style="cursor: pointer" @onclick="(() => LoadChat(GeneralChat.Id, GetChatTitle(GeneralChat)))">
                                     @GetChatTitle(GeneralChat)
@@ -41,7 +41,6 @@
                             <em>Nenhum chat geral disponível</em>
                         }
                     </div>
-
 
                     <!-- Aba dos Chats Individuais -->
                     <div class="tab-pane fade @activeTabClass(1, "show active")">
@@ -86,7 +85,19 @@
             </div>
             <div class="card-footer">
                 <textarea cols="5" @bind="Message" class="form-control mb-3" placeholder="Digite sua mensagem..."></textarea>
-                <button class="btn btn-success float-end" @onclick="SendMessage">Enviar Mensagem</button>
+
+                <!-- Botão de anexar arquivo -->
+                <button class="btn btn-outline-secondary mb-3" @onclick="TriggerFileInput">
+                    <i class="bi bi-paperclip"></i> Anexar Arquivo
+                </button>
+
+                <!-- InputFile escondido -->
+                <InputFile id="fileInput" style="display:none;" OnChange="HandleFileSelected" />
+
+                <div class="d-flex justify-content-between">
+                    <button class="btn btn-success" @onclick="SendMessage">Enviar Mensagem</button>
+                    <button class="btn btn-primary" @onclick="SendFile">Enviar Arquivo</button>
+                </div>
             </div>
         </div>
     </div>
@@ -101,6 +112,8 @@
     private List<ChatDto> IndividualChats = new();
     private List<string> ChatMessages = new();
     private Guid CurrentChatId;
+
+    private IBrowserFile? selectedFile; // Campo para armazenar o arquivo selecionado
 
     private string[] TabStates = { "general", "individual" }; // Estado das abas (Geral e Individuais)
     private int activeTabIndex = 0; // Índice da aba ativa (0 = geral, 1 = individual)
@@ -132,20 +145,15 @@
     }
 
     // Método para carregar os chats gerais e individuais
-    // Método para carregar os chats gerais e individuais
     private async Task LoadChatsFromProjectService()
     {
         try
         {
-            // Obtém o chat geral associado ao projeto
             var chatId = await projectService.GetChatIdByProjectIdAsync(ProjectId);
-
-            // Carrega os chats individuais
             IndividualChats = await projectService.GetIndividualChatsByProjectIdAsync(ProjectId);
 
             if (chatId != Guid.Empty)
             {
-                // Atualiza o GeneralChat com o ID do chat geral
                 GeneralChat = new ChatDto { Id = chatId, IsGeneral = true };
             }
             else
@@ -159,9 +167,6 @@
             Console.WriteLine($"Erro ao carregar o chat: {ex.Message}");
         }
     }
-
-
-
 
     // Método para carregar um chat específico (geral ou individual)
     private async Task LoadChat(Guid chatId, string chatTitle)
@@ -185,13 +190,63 @@
         if (string.IsNullOrEmpty(Message) || CurrentChatId == Guid.Empty)
             return;
 
-        // Envia a mensagem para o chat selecionado
         await signalRConnection.SendMessage(CurrentChatId, Message);
-
-        // Adiciona a mensagem à lista de mensagens
         ChatMessages.Add($"Eu: {Message}");
         Message = string.Empty;
         StateHasChanged();
+    }
+    private async Task<IFormFile> ConvertToIFormFile(IBrowserFile browserFile)
+    {
+        var memoryStream = new MemoryStream();
+        await browserFile.OpenReadStream().CopyToAsync(memoryStream);
+        memoryStream.Seek(0, SeekOrigin.Begin);
+
+        return new FormFile(memoryStream, 0, memoryStream.Length, browserFile.Name, browserFile.Name);
+    }
+
+    // Método para enviar um arquivo
+    private async Task SendFile()
+    {
+        if (selectedFile == null || CurrentChatId == Guid.Empty)
+            return;
+
+        // Defina o limite máximo de 5 MB
+        var maxFileSize = 5 * 1024 * 1024; // 5 MB
+
+        // Verifique se o arquivo é menor ou igual ao limite
+        if (selectedFile.Size > maxFileSize)
+        {
+            // Exiba uma mensagem ou faça outro tratamento
+            Console.WriteLine($"O arquivo excede o tamanho máximo de {maxFileSize / 1024 / 1024} MB.");
+            return;
+        }
+
+        var fileName = selectedFile.Name;
+        var fileBytes = new byte[selectedFile.Size];
+
+        using (var stream = selectedFile.OpenReadStream(maxFileSize)) // Altere o limite aqui
+        {
+            await stream.ReadAsync(fileBytes);
+        }
+
+        // Chame o método do SignalR para enviar a mensagem e o arquivo
+        await signalRConnection.SendMessageWithFile(CurrentChatId, "Arquivo enviado", fileBytes, fileName);
+
+        ChatMessages.Add($"Eu: Arquivo {fileName} enviado.");
+        StateHasChanged();
+    }
+
+
+    // Método chamado quando um arquivo é selecionado
+    private void HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        selectedFile = e.File;
+    }
+
+    // Método para acionar o InputFile com JavaScript interop
+    private async Task TriggerFileInput()
+    {
+        await js.InvokeVoidAsync("triggerFileInput", "fileInput");
     }
 
     // Método para estabelecer a conexão com o SignalR

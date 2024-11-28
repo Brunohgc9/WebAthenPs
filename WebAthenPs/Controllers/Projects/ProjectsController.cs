@@ -220,7 +220,6 @@ namespace WebAthenPs.API.Controllers.Projects
             }
         }
 
-        // Criar um novo projeto
         [HttpPost]
         public async Task<ActionResult<ProjectsDTO>> CreateProject([FromBody] RegisterProjectModel model)
         {
@@ -237,6 +236,7 @@ namespace WebAthenPs.API.Controllers.Projects
             if (client == null)
                 return NotFound("Cliente não encontrado.");
 
+            // Converte o modelo para a entidade de projeto
             var project = model.CriarProjetoEmDTO();
             project.ClientId = client.ClientId;
 
@@ -245,11 +245,21 @@ namespace WebAthenPs.API.Controllers.Projects
                 // Cria o projeto no banco
                 await _projectRepository.CreateNewProject(project);
 
+                // Cria e associa o ProjectSteps ao projeto
+                var projectSteps = new ProjectSteps
+                {
+                    Id = Guid.NewGuid(),
+                    ProjectId = project.ProjectId, // Associa o ProjectSteps ao ProjectId criado
+                };
+                _context.ProjectSteps.Add(projectSteps);
+                await _context.SaveChangesAsync();
+
                 // Cria um chat geral para o projeto, passando o ProjectId
                 var chatId = await _hubService.CreateChatAsync(client.UserId, project.ProjectId, isGeneral: true);
 
-                // Retorna o projeto criado
+                // Retorna o projeto criado como DTO
                 var createdDto = project.ConverterProjetoParaDTO();
+                createdDto.ProjectSteps.Id = projectSteps.Id; // Inclui o ID do ProjectSteps no DTO
                 return CreatedAtAction(nameof(GetById), new { id = createdDto.ProjectId }, createdDto);
             }
             catch (InvalidOperationException ex)
@@ -261,6 +271,7 @@ namespace WebAthenPs.API.Controllers.Projects
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao criar projeto: {ex.Message}");
             }
         }
+
 
 
 
@@ -508,21 +519,29 @@ namespace WebAthenPs.API.Controllers.Projects
                 }
 
                 // Verifica se já existe um arquiteto atribuído no Step1
-                if (existingProject.ProjectSteps?.Step1HireArchitectId != null)
+                var step1HireArchitect = existingProject.ProjectSteps?.Step1HireArchitect;
+                if (step1HireArchitect != null)
                 {
                     return BadRequest("Já existe um arquiteto atribuído para a Etapa 1 deste projeto.");
                 }
 
-                // Cria o registro de Step1HireArchitect com o arquiteto
-                var step1HireArchitect = new Step1HireArchitect
+                // Verifica se o tipo do profissional e o ID do arquiteto estão definidos
+                if (professional.GenericProfessionalType == null || professional.GenericProfessionalType.ArchitectId == null)
+                {
+                    return BadRequest("O tipo profissional ou o arquiteto não estão definidos.");
+                }
+
+                // Cria um novo Step1HireArchitect
+                step1HireArchitect = new Step1HireArchitect
                 {
                     Id = Guid.NewGuid(),
-                    ArchitectId = professional.GenericProfessionalType.Architect.Id,
+                    ArchitectId = professional.GenericProfessionalType.ArchitectId ?? Guid.Empty,  // Usa Guid.Empty se for nulo
                     ProjectStepsId = existingProject.ProjectSteps.Id,
                     Description = "Arquiteto contratado para o projeto",
                     IsFinished = true
                 };
 
+                // Adiciona o Step1HireArchitect à base de dados
                 await _context.Step1HireArchitects.AddAsync(step1HireArchitect);
 
                 // Atualiza o ProjectSteps com o novo Step1HireArchitectId
@@ -533,12 +552,14 @@ namespace WebAthenPs.API.Controllers.Projects
                 existingProject.ActStep = "Etapa 2";
                 _context.Projects.Update(existingProject);
 
+                // Salva as alterações no banco de dados
                 await _context.SaveChangesAsync();
 
                 return Ok("Arquiteto registrado com sucesso na Etapa 1 e projeto avançado para a Etapa 2.");
             }
             catch (Exception ex)
             {
+                // Retorna erro se ocorrer uma exceção
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao registrar arquiteto na Etapa 1: {ex.Message}");
             }
         }

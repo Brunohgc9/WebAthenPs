@@ -2,8 +2,9 @@
     using System;
     using System.Threading.Tasks;
     using WebAthenPs.API.Entities;
-    using WebAthenPs.API.Hubs.HubServices;
-    using WebAthenPs.Models.DTOs.Components.Chats;
+using WebAthenPs.API.Entities.Components.ChatEntities;
+using WebAthenPs.API.Hubs.HubServices;
+using WebAthenPs.Models.DTOs.Components.Chats;
 
     namespace WebAthenPs.API.Hubs
     {
@@ -57,9 +58,15 @@
         // Envia uma mensagem a um chat
         public async Task SendMessage(string userId, Guid chatId, string message)
         {
-            await _hubService.AddMessageAsync(userId, chatId, message);
+            string? fileRoute = null;  // Inicializa com null, já que não há arquivo
+
+            // Chama o método para adicionar a mensagem sem arquivo
+            await _hubService.AddMessageAsync(userId, chatId, message, fileRoute);
+
+            // Envia a mensagem para o grupo
             await Clients.Group(chatId.ToString()).SendAsync("ReceiveMessage", userId, message);
         }
+
 
         public async Task<List<ChatMessageDto>> GetChatMessages(string userId, Guid chatId)
         {
@@ -70,8 +77,17 @@
                 Id = msg.Id,
                 UserId = msg.UserId,
                 ChatId = msg.ChatId,
-                Message = msg.Message
+                Message = msg.Message,
+                SentAt = msg.SentAt, // Caso exista a propriedade
+                ChatMessageFile = msg.ChatMessageFile == null ? null : new ChatMessageFileDTO
+                {
+                    Id = msg.ChatMessageFile.Id,
+                    Name = msg.ChatMessageFile.Name,
+                    FileRoute = msg.ChatMessageFile.FileRoute,
+                    MessageId = msg.ChatMessageFile.MessageId
+                }
             }).ToList();
+
 
             return messageDtos;
         }
@@ -117,7 +133,32 @@
 
             return chatDtos;
         }
+        public async Task SendMessageWithFile(string userId, Guid chatId, string message, string fileRoute)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(fileRoute))
+                    throw new ArgumentException("File route is empty.");
 
+                // Adiciona a mensagem ao chat com a rota do arquivo
+                await _hubService.AddMessageAsync(userId, chatId, message, fileRoute);
+
+                // Notifica os clientes no grupo sobre a nova mensagem
+                await Clients.Group(chatId.ToString()).SendAsync("ReceiveMessage", userId, message, fileRoute);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in SendMessageWithFile: {ex.Message}");
+                throw;
+            }
+        }
 
     }
+
+
+
+
+
+
 }
+

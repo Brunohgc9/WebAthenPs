@@ -17,6 +17,8 @@ namespace WebAthenPs.Models.DTOs.Components.Chats
         public DateTime SentAt { get; set; } // Data e hora do envio
         public ApplicationUserDTO User { get; set; }
         public ChatDto Chat { get; set; }
+        public ChatMessageFileDTO? ChatMessageFile { get; set; }
+        public Guid? ChatMessageFileId { get; set; }
     }
 }
 

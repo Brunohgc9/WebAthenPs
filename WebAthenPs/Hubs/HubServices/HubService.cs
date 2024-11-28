@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using WebAthenPs.API.Data;
 using WebAthenPs.API.Entities.Components.ChatEntities;
+using WebAthenPs.Models.DTOs.Components.Chats;
 
 namespace WebAthenPs.API.Hubs.HubServices
 {
@@ -115,24 +116,52 @@ namespace WebAthenPs.API.Hubs.HubServices
 
 
         // Envia uma mensagem e a registra no banco de dados
-        public async Task AddMessageAsync(string userId, Guid chatId, string message)
+        public async Task AddMessageAsync(string userId, Guid chatId, string message, string? fileRoute)
         {
-            if (!IsUserInChat(userId, chatId))
+            try
             {
-                throw new InvalidOperationException("Usuário não está no chat.");
+                // Verifica se o UserId é válido
+                if (string.IsNullOrEmpty(userId))
+                {
+                    throw new ArgumentNullException(nameof(userId), "UserId não pode ser nulo ou vazio.");
+                }
+
+                // Cria a mensagem
+                var chatMessage = new ChatMessage
+                {
+                    UserId = userId,  // Preenche o UserId diretamente
+                    ChatId = chatId,
+                    Message = message,
+                    SentAt = DateTime.UtcNow
+                };
+
+                // Adiciona a mensagem ao banco de dados e salva
+                _context.ChatMessages.Add(chatMessage);
+                await _context.SaveChangesAsync();  // Garante que o ChatMessage seja persistido e o Id gerado
+
+                // Se um arquivo for enviado, cria o ChatMessageFile
+                if (!string.IsNullOrEmpty(fileRoute))
+                {
+                    var chatMessageFile = new ChatMessageFile
+                    {
+                        Name = Path.GetFileName(fileRoute),
+                        FileRoute = fileRoute,
+                        MessageId = chatMessage.Id  // Agora o Id já foi gerado para associar corretamente
+                    };
+
+                    // Adiciona o arquivo ao banco de dados
+                    _context.ChatMessageFiles.Add(chatMessageFile);
+                    await _context.SaveChangesAsync();  // Salva o ChatMessageFile no banco de dados
+                }
             }
-
-            var chatMessage = new ChatMessage
+            catch (Exception ex)
             {
-                Id = Guid.NewGuid(),
-                UserId = userId,
-                ChatId = chatId,
-                Message = message
-            };
-
-            _context.ChatMessages.Add(chatMessage);
-            await _context.SaveChangesAsync();
+                Console.WriteLine($"Error in AddMessageAsync: {ex.Message}");
+                throw;
+            }
         }
+
+
 
 
         // Recupera as mensagens de um chat específico
@@ -242,6 +271,13 @@ namespace WebAthenPs.API.Hubs.HubServices
 
             return chats;
         }
+
+        public async Task SaveChatFileAsync(ChatMessageFile file)
+        {
+            _context.ChatMessageFiles.Add(file);
+            await _context.SaveChangesAsync();
+        }
+
 
     }
 }

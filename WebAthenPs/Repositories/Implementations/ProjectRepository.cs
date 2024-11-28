@@ -30,14 +30,17 @@ public class ProjectRepository : IProjectRepository
     {
         return await _context.Projects
             .Include(p => p.Client)
-                .ThenInclude(c => c.User)
+                .ThenInclude(c => c.User)  // Inclui o usuário associado ao cliente
             .Include(p => p.Professionals)
-                .ThenInclude(gp => gp.User)
+                .ThenInclude(gp => gp.User)  // Inclui o usuário associado ao profissional
             .Include(p => p.ProjectProfessionals)
-                .ThenInclude(pp => pp.Professional) // Inclui o Professional associado a cada ProjectProfessional
-            .Include(p => p.ProjectProposals) // Inclui as propostas do projeto
+                .ThenInclude(pp => pp.Professional) // Inclui o profissional associado ao ProjectProfessional
+                .ThenInclude(prof => prof.GenericProfessionalType)  // Inclui o tipo do profissional (GenericProfessionalType)
+            .Include(p => p.ProjectProposals)  // Inclui as propostas associadas ao projeto
+            .Include(p => p.ProjectSteps)  // Inclui os steps associados ao projeto
             .SingleOrDefaultAsync(i => i.ProjectId == id);
     }
+
 
 
     public async Task<Projecty> CreateNewProject(Projecty project)
@@ -186,50 +189,40 @@ public class ProjectRepository : IProjectRepository
             PhoneNumber = pp.Professional.User?.PhoneNumber,
             Email = pp.Professional.User?.Email,
             ProfessionalTypes = pp.Professional.ProfessionalTypes,
+            GenericProfessionalTypeDTO = pp.Professional.GenericProfessionalType != null
+                ? new GenericProfessionalProfessionalTypeDTO
+                {
+                    Id = pp.Professional.GenericProfessionalType.Id,
+                    GenericId = pp.Professional.GenericProfessionalType.genericId,
 
-
-             GenericProfessionalTypeDTO = pp.Professional.GenericProfessionalType != null
-          ? new GenericProfessionalProfessionalTypeDTO
-          {
-              Id = pp.Professional.GenericProfessionalType.Id,
-              GenericId = pp.Professional.GenericProfessionalType.genericId,
-
-              ArchitectId = pp.Professional.GenericProfessionalType.ArchitectId,
-              CivilEngineerId = pp.Professional.GenericProfessionalType.CivilEngineerId,
-              ElectricalEngineerId = pp.Professional.GenericProfessionalType.ElectricalEngineerId,
-              HydraulicEngineerId = pp.Professional.GenericProfessionalType.HydraulicEngineerId,
-              SurveyorId = pp.Professional.GenericProfessionalType.SurveyorId,
-              ForemanId = pp.Professional.GenericProfessionalType.ForemanId,
-              MasonId = pp.Professional.GenericProfessionalType.MasonId,
-              PlumberId = pp.Professional.GenericProfessionalType.PlumberId,
-              ElectricianId = pp.Professional.GenericProfessionalType.ElectricianId,
-              CarpenterId = pp.Professional.GenericProfessionalType.CarpenterId,
-              RooferId = pp.Professional.GenericProfessionalType.RooferId,
-              PlastererId = pp.Professional.GenericProfessionalType.PlastererId,
-              TilerId = pp.Professional.GenericProfessionalType.TilerId,
-              PainterId = pp.Professional.GenericProfessionalType.PainterId,
-              MetalworkerId = pp.Professional.GenericProfessionalType.MetalworkerId,
-              GlazierId = pp.Professional.GenericProfessionalType.GlazierId,
-              MarbleWorkerId = pp.Professional.GenericProfessionalType.MarbleWorkerId,
-              LandscaperId = pp.Professional.GenericProfessionalType.LandscaperId,
-              CabinetmakerId = pp.Professional.GenericProfessionalType.CabinetmakerId,
-              InteriorDesignerId = pp.Professional.GenericProfessionalType.InteriorDesignerId,
-              DecoratorId = pp.Professional.GenericProfessionalType.DecoratorId
-          }
-          : null,
-            // Atribuindo um único ProjectProfessionalDTO
-            ProjectProfessionals = pp.Professional.ProjectProfessionals?.Select(p => new ProjectProfessionalDTO
-            {
-                Salary = p.Salary,
-                ContractedAs = p.ContractedAs,
-            }).ToList() // Convertendo a seleção em uma lista
-
-
-
-
+                    // Aqui estamos acessando os tipos de profissionais corretamente através de GenericProfessionalType
+                    ArchitectId = pp.Professional.GenericProfessionalType.ArchitectId,
+                    CivilEngineerId = pp.Professional.GenericProfessionalType.CivilEngineerId,
+                    ElectricalEngineerId = pp.Professional.GenericProfessionalType.ElectricalEngineerId,
+                    HydraulicEngineerId = pp.Professional.GenericProfessionalType.HydraulicEngineerId,
+                    SurveyorId = pp.Professional.GenericProfessionalType.SurveyorId,
+                    ForemanId = pp.Professional.GenericProfessionalType.ForemanId,
+                    MasonId = pp.Professional.GenericProfessionalType.MasonId,
+                    PlumberId = pp.Professional.GenericProfessionalType.PlumberId,
+                    ElectricianId = pp.Professional.GenericProfessionalType.ElectricianId,
+                    CarpenterId = pp.Professional.GenericProfessionalType.CarpenterId,
+                    RooferId = pp.Professional.GenericProfessionalType.RooferId,
+                    PlastererId = pp.Professional.GenericProfessionalType.PlastererId,
+                    TilerId = pp.Professional.GenericProfessionalType.TilerId,
+                    PainterId = pp.Professional.GenericProfessionalType.PainterId,
+                    MetalworkerId = pp.Professional.GenericProfessionalType.MetalworkerId,
+                    GlazierId = pp.Professional.GenericProfessionalType.GlazierId,
+                    MarbleWorkerId = pp.Professional.GenericProfessionalType.MarbleWorkerId,
+                    LandscaperId = pp.Professional.GenericProfessionalType.LandscaperId,
+                    CabinetmakerId = pp.Professional.GenericProfessionalType.CabinetmakerId,
+                    InteriorDesignerId = pp.Professional.GenericProfessionalType.InteriorDesignerId,
+                    DecoratorId = pp.Professional.GenericProfessionalType.DecoratorId
+                }
+                : null
         }).ToList();
-
     }
 
-
 }
+
+
+

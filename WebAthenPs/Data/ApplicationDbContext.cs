@@ -77,6 +77,7 @@ namespace WebAthenPs.API.Data
         public DbSet<Step23Landscaping> Step23Landscapings { get; set; }
         public DbSet<Step24CleaningOfTheSite> Step24CleaningOfTheSites { get; set; }
         public DbSet<Step25Decoration> Step25Decorations { get; set; }
+        public DbSet<ChatMessageFile> ChatMessageFiles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
